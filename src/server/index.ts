@@ -4,6 +4,8 @@ import cors from 'cors';
 import colors from 'colors';
 import utils from './utilities';
 import mongo from './mongo';
+import { Recipe, RecipeSummary, RecipeRequest } from './types/recipes';
+import ShortUniqueId from 'short-unique-id';
 import express, { Request, Response } from 'express';
 
 // Express config
@@ -28,33 +30,71 @@ serv.listen(PORT, mongo.start);
  * API
  */
 
-// Test endpoint
+/**
+ * Test endpoint
+ * 
+ * @name Test
+ * @route {GET} /test
+ */
 serv.get('/test', (req: Request, res: Response) => {
   console.log('hello');
   res.status(200).send('hello');
 });
 
-// Add a recipe
-serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
-  res.status(501);
-});
-
-// Edit a recipe
-serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
-  res.status(501);
-});
-
-// Delete a recipe
-serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
-  res.status(501);
-});
-
-// Get recipe detail
+/**
+ * Get recipe detail
+ * 
+ * @name RecipeGet
+ * @route {GET} /mp/recipe/:id
+ * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ * @returns {Recipe} requested recipe
+ */
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
   res.status(501);
 });
 
-// Serve a list of recipe  according to a search term and pagination
+/**
+ * Add a recipe
+ * 
+ * @name RecipeAdd
+ * @route {PUT} /mp/recipe/add
+ * @bodyparam {Recipe} recipe is the recipe uploaded
+ */
+serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
+  res.status(501);
+});
+
+/**
+ * Edit a recipe
+ * 
+ * @name RecipeEdit
+ * @route {PUT} /mp/recipe/:id
+ * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ * @bodyparam {Recipe} recipe is the recipe with the edits
+ */ 
+serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
+  res.status(501);
+});
+
+/**
+ * Delete a recipe
+ * 
+ * @name RecipeDelete
+ * @route {DELETE} /mp/recipe/:id
+ * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ */
+serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
+  res.status(501);
+});
+
+/**
+ * Serve a list of recipe according to a search term and pagination
+ * 
+ * @name RecipeSearch
+ * @route {POST} /mp/recipe/search
+ * @bodyparam {RecipeRequest} recipeRequest is the request containing the search term and pagination parameters
+ * @returns {Array<RecipeSummary>} List of recipes summary corresponding to the search request, sorted by pertinence
+ */
 serv.post('/mp/recipe/search', async (req: Request, res: Response) => {
   res.status(501);
 })
