@@ -88,7 +88,9 @@ serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
  */
 serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
-  res.status(501).send();
+  let result = await recipeService.deleteRecipe(req.params['id']);
+  console.log(result ? `😀 recipe deleted` : `😔 recipe not deleted`);
+  res.status(result ? 200 : 400).send();
 });
 
 /**

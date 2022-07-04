@@ -45,7 +45,18 @@ export default class recipeService {
         
     // }
 
-    // public static async deleteRecipe(recipeId: ShortUniqueId): Promise<boolean> {
-        
-    // }
+    public static async deleteRecipe(recipeId: string): Promise<boolean> {
+        if (recipeId) {
+            try {
+                await MongoDB.deleteRecipe(recipeId);
+                return true;
+            } catch (err: unknown) {
+                console.log(`🧨 Recipe not deleted (Id : ${recipeId}), reason : ${err}`);
+                return false;
+            }
+        } else{
+            console.log(`🧨 Recipe not deleted, reason : recipe Id is empty`);
+        }
+        return false;
+    }
 }

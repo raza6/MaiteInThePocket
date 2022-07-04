@@ -35,12 +35,8 @@ export default class MongoDB {
       await MongoDB.db.collection('Recipes').findOne({ slugId: recipeId })
     );
   }
-  
-  // db.collection('bkStatements').find().toArray(function(err, result) {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   console.log(result);
-  // });
 
+  public static async deleteRecipe(recipeId: string): Promise<void> {
+    await MongoDB.db.collection('Recipes').deleteOne({ slugId: recipeId });
+  }
 }
