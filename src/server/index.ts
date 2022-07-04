@@ -77,7 +77,9 @@ serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
  * @bodyparam {Recipe} recipe is the recipe with the edits
  */ 
 serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
-  res.status(501).send();
+  let result = await recipeService.editRecipe(req.params['id'], req.body);
+  console.log(result ? `😀 recipe edited` : `😔 recipe not edited`);
+  res.status(result ? 200 : 400).send();
 });
 
 /**

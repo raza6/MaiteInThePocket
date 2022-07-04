@@ -1,5 +1,5 @@
 import { Db, MongoClient, WriteConcern, WriteError } from "mongodb";
-import { Recipe } from "./types/recipes";
+import { Recipe, RecipeIngredients } from "./types/recipes";
 
 export default class MongoDB {
   private static db: Db;
@@ -34,6 +34,10 @@ export default class MongoDB {
     return <Recipe><unknown>(
       await MongoDB.db.collection('Recipes').findOne({ slugId: recipeId })
     );
+  }
+
+  public static async editRecipe(recipeId: string, recipe: Recipe): Promise<void> {
+    await MongoDB.db.collection('Recipes').replaceOne({ slugId: recipeId }, recipe);
   }
 
   public static async deleteRecipe(recipeId: string): Promise<void> {

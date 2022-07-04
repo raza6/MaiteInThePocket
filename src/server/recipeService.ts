@@ -32,18 +32,34 @@ export default class recipeService {
             recipe.slugId = new ShortUniqueId()();
             try {
                 await MongoDB.addRecipe(recipe);
+                return true;
             } catch (err: unknown) {
                 return false;
             }
-            return true;
         } else {
             return false
         }
     }
 
-    // public static async editRecipe(recipeId: ShortUniqueId, recipe: Recipe): Promise<boolean> {
-        
-    // }
+    public static async editRecipe(recipeId: string, recipe: Recipe): Promise<boolean> {
+        if (recipeId && recipe.slugId === recipeId) {
+            if (isRecipe(
+                recipe,
+                (rej: ValidationRejection) => console.log(`🧨 Recipe rejected, reason : ${rej.reason} in recipe ${rej.path.reduceRight((acc, cur) => `${acc} > ${cur.toString()}`, '').toString().trim()}`))
+            ) {
+                try {
+                    await MongoDB.editRecipe(recipeId, recipe);
+                    return true;
+                } catch (err: unknown) {
+                    console.log(`🧨 Recipe not edited (Id : ${recipeId}), reason : ${err}`);
+                    return false;
+                }
+            }
+        } else{
+            console.log(`🧨 Recipe not edited, reason : recipe Id is empty`);
+        }
+        return false;   
+    }
 
     public static async deleteRecipe(recipeId: string): Promise<boolean> {
         if (recipeId) {
