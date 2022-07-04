@@ -3,10 +3,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import colors from 'colors';
 import utils from './utilities';
-import mongo from './mongo';
 import { Recipe, RecipeSummary, RecipeRequest } from './types/recipes';
 import ShortUniqueId from 'short-unique-id';
 import express, { Request, Response } from 'express';
+import recipeService from './recipeService';
+import MongoDB from './mongo';
 
 // Express config
 const serv = express();
@@ -24,7 +25,7 @@ serv.use(bodyParser.urlencoded({ extended: true }));
 
 // Start CashMire server
 console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
-serv.listen(PORT, mongo.start);
+serv.listen(PORT, MongoDB.start);
 
 /**
  * API
@@ -50,7 +51,7 @@ serv.get('/test', (req: Request, res: Response) => {
  * @returns {Recipe} requested recipe
  */
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
-  res.status(501);
+  res.status(501).send();
 });
 
 /**
@@ -61,7 +62,9 @@ serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @bodyparam {Recipe} recipe is the recipe uploaded
  */
 serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
-  res.status(501);
+  let result = recipeService.addRecipe(req.body);
+  console.log(result ? `😀 recipe added` : `😔 recipe not added`);
+  res.status(result ? 200 : 400).send();
 });
 
 /**
@@ -73,7 +76,7 @@ serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
  * @bodyparam {Recipe} recipe is the recipe with the edits
  */ 
 serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
-  res.status(501);
+  res.status(501).send();
 });
 
 /**
@@ -84,7 +87,7 @@ serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
  */
 serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
-  res.status(501);
+  res.status(501).send();
 });
 
 /**
@@ -96,5 +99,5 @@ serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
  * @returns {Array<RecipeSummary>} List of recipes summary corresponding to the search request, sorted by pertinence
  */
 serv.post('/mp/recipe/search', async (req: Request, res: Response) => {
-  res.status(501);
+  res.status(501).send();
 })

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@altostra/type-validations": "^2.6.3",
     "body-parser": "^1.19.2",
     "colors": "^1.4.0",
     "cors": "^2.8.5",

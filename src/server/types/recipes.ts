@@ -36,4 +36,4 @@ interface RecipeRequest {
     pageIndex: number;
 }
 
-export { Recipe, RecipeSummary, RecipeIngredients, RecipeRequest };
+export { Recipe, RecipeSummary, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient };
