@@ -26,8 +26,14 @@ export default class MongoDB {
     });
   }
   
-  public static addRecipe(recipe: Recipe): void {
-    MongoDB.db.collection('Recipes').insertOne(recipe);
+  public static async addRecipe(recipe: Recipe): Promise<void> {
+    await MongoDB.db.collection('Recipes').insertOne(recipe);
+  }
+
+  public static async getRecipe(recipeId: string): Promise<Recipe> {
+    return <Recipe><unknown>(
+      await MongoDB.db.collection('Recipes').findOne({ slugId: recipeId })
+    );
   }
   
   // db.collection('bkStatements').find().toArray(function(err, result) {

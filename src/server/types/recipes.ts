@@ -2,7 +2,7 @@ import ShortUniqueId from 'short-unique-id';
 import { EUnit } from './units';
 
 interface Recipe {
-    id: ShortUniqueId;
+    slugId: string | undefined;
     summary: RecipeSummary;
     ingredients: RecipeIngredients;
     steps: Array<string>;

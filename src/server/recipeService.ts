@@ -2,23 +2,36 @@ import { ValidationRejection } from "@altostra/type-validations";
 import ShortUniqueId from "short-unique-id";
 import MongoDB from "./mongo";
 import { Recipe } from "./types/recipes";
+import { EMassUnit, EUnit } from "./types/units";
 import { isRecipe } from "./validator/recipes";
 
 export default class recipeService {
 
+    public static async getRecipe(recipeId: string): Promise<Recipe | null> {
+        if (recipeId) {
+            try {
+                let recipe = await MongoDB.getRecipe(recipeId);
+                // @ts-ignore
+                delete recipe['_id'];
+                return recipe;
+            } catch (err: unknown) {
+                console.log(`🧨 Recipe not retrieved (Id : ${recipeId}), reason : ${err}`);
+                return null;
+            }
+        } else{
+            console.log(`🧨 Recipe not retrieved, reason : recipe Id is empty`);
+        }
+        return null;
+    }
 
-    // public static async getRecipe(recipeId: ShortUniqueId): Promise<Recipe> {
-        
-    // }
-
-    public static addRecipe(recipe: Recipe): boolean {
+    public static async addRecipe(recipe: Recipe): Promise<boolean> {
         if (isRecipe(
             recipe, 
             (rej: ValidationRejection) => console.log(`🧨 Recipe rejected, reason : ${rej.reason} in recipe ${rej.path.reduceRight((acc, cur) => `${acc} > ${cur.toString()}`, '').toString().trim()}`))
         ) {
-            recipe.id = new ShortUniqueId()();
+            recipe.slugId = new ShortUniqueId()();
             try {
-                MongoDB.addRecipe(recipe);
+                await MongoDB.addRecipe(recipe);
             } catch (err: unknown) {
                 return false;
             }

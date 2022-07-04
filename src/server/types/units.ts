@@ -1,17 +1,22 @@
 enum EVolumeUnit {
-    teaspoon, tablespoon, ml, cl, dl, l
+    teaspoon = 'teaspoon',
+    tablespoon = 'tablespoon',
+    ml = 'ml',
+    cl = 'cl',
+    dl = 'dl',
+    l = 'l'
 }
 
 enum EMassUnit {
-    g, kg
+    g = 'g', kg = 'kg'
 }
 
 enum ELengthUnit {
-    mm, cm, m
+    mm = 'mm', cm = 'cm', m = 'm'
 }
 
 enum ETemperatureUnit {
-    fahrenheit, celsius, thermostat
+    fahrenheit = 'fahrenheit', celsius = 'celsius', thermostat = 'thermostat'
 }
 
 type EUnit = EVolumeUnit | EMassUnit | ELengthUnit | ETemperatureUnit;

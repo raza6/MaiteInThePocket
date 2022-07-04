@@ -1,6 +1,6 @@
-import { arrayOf, enumOf, maybe, objectOf, primitives } from "@altostra/type-validations";
+import { anyOf, arrayOf, enumOf, maybe, objectOf, primitives } from "@altostra/type-validations";
 import { Ingredient, IngredientsGroup, Recipe, RecipeIngredients, RecipeSummary } from "../types/recipes";
-import { EUnit } from "../types/units";
+import { ELengthUnit, EMassUnit, ETemperatureUnit, EUnit, EVolumeUnit } from "../types/units";
 
 const isRecipeSummary = objectOf<RecipeSummary>({
     name: primitives.string,
@@ -12,7 +12,13 @@ const isRecipeSummary = objectOf<RecipeSummary>({
 const isIngredient = objectOf<Ingredient>({
     name: primitives.string,
     quantity: primitives.maybeNumber,
-    unit: maybe(enumOf<EUnit>(), true),
+    unit: maybe(
+        anyOf(
+            enumOf<EVolumeUnit>(...Object.entries(EVolumeUnit).map(([_, val]) => val)),
+            enumOf<EMassUnit>(...Object.entries(EMassUnit).map(([_, val]) => val)),
+            enumOf<ELengthUnit>(...Object.entries(ELengthUnit).map(([_, val]) => val)),
+            enumOf<ETemperatureUnit>(...Object.entries(ETemperatureUnit).map(([_, val]) => val)),
+        ), true),
 })
 
 const isIngredientsGroup = objectOf<IngredientsGroup>({
@@ -25,7 +31,7 @@ const isRecipeIngredient = objectOf<RecipeIngredients>({
 });
 
 const isRecipe = objectOf<Recipe>({
-    id: primitives.maybeString,
+    slugId: primitives.maybeString,
     summary: isRecipeSummary,
     ingredients: isRecipeIngredient, 
     steps: arrayOf(primitives.string),

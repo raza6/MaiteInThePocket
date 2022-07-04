@@ -51,7 +51,8 @@ serv.get('/test', (req: Request, res: Response) => {
  * @returns {Recipe} requested recipe
  */
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
-  res.status(501).send();
+  let result = await recipeService.getRecipe(req.params['id']);
+  res.status(result ? 200 : 400).send(result);
 });
 
 /**
@@ -62,7 +63,7 @@ serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @bodyparam {Recipe} recipe is the recipe uploaded
  */
 serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
-  let result = recipeService.addRecipe(req.body);
+  let result = await recipeService.addRecipe(req.body);
   console.log(result ? `😀 recipe added` : `😔 recipe not added`);
   res.status(result ? 200 : 400).send();
 });
