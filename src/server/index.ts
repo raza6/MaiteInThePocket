@@ -47,7 +47,7 @@ serv.get('/test', (req: Request, res: Response) => {
  * 
  * @name RecipeGet
  * @route {GET} /mp/recipe/:id
- * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ * @routeparam {string} :id is the unique identifier for the recipe
  * @returns {Recipe} requested recipe
  */
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
@@ -73,7 +73,7 @@ serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
  * 
  * @name RecipeEdit
  * @route {PUT} /mp/recipe/:id
- * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ * @routeparam {string} :id is the unique identifier for the recipe
  * @bodyparam {Recipe} recipe is the recipe with the edits
  */ 
 serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
@@ -87,7 +87,7 @@ serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
  * 
  * @name RecipeDelete
  * @route {DELETE} /mp/recipe/:id
- * @routeparam {ShortUniqueId} :id is the unique identifier for the recipe
+ * @routeparam {string} :id is the unique identifier for the recipe
  */
 serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
   let result = await recipeService.deleteRecipe(req.params['id']);
@@ -104,5 +104,7 @@ serv.delete('/mp/recipe/:id', async (req: Request, res: Response)  => {
  * @returns {Array<RecipeSummary>} List of recipes summary corresponding to the search request, sorted by pertinence
  */
 serv.post('/mp/recipe/search', async (req: Request, res: Response) => {
-  res.status(501).send();
+  const { searchTerm, pageIndex, pageSize } = req.body;
+  let result = await recipeService.searchRecipe(searchTerm, pageIndex, pageSize);
+  res.status(200).send(result);
 })

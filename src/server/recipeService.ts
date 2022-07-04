@@ -1,7 +1,7 @@
 import { ValidationRejection } from "@altostra/type-validations";
 import ShortUniqueId from "short-unique-id";
 import MongoDB from "./mongo";
-import { Recipe } from "./types/recipes";
+import { Recipe, RecipeSummary } from "./types/recipes";
 import { EMassUnit, EUnit } from "./types/units";
 import { isRecipe } from "./validator/recipes";
 
@@ -10,10 +10,7 @@ export default class recipeService {
     public static async getRecipe(recipeId: string): Promise<Recipe | null> {
         if (recipeId) {
             try {
-                let recipe = await MongoDB.getRecipe(recipeId);
-                // @ts-ignore
-                delete recipe['_id'];
-                return recipe;
+                return await MongoDB.getRecipe(recipeId);
             } catch (err: unknown) {
                 console.log(`🧨 Recipe not retrieved (Id : ${recipeId}), reason : ${err}`);
                 return null;
@@ -74,5 +71,13 @@ export default class recipeService {
             console.log(`🧨 Recipe not deleted, reason : recipe Id is empty`);
         }
         return false;
+    }
+
+    public static async searchRecipe(term: string, pageIndex: number, pageSize: number): Promise<Array<RecipeSummary>> {
+        try {
+            return await MongoDB.searchRecipe(term.trim(), pageIndex, pageSize);
+        } catch (err: unknown) {
+            return [];
+        }
     }
 }

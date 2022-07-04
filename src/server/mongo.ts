@@ -1,5 +1,5 @@
 import { Db, MongoClient, WriteConcern, WriteError } from "mongodb";
-import { Recipe, RecipeIngredients } from "./types/recipes";
+import { Recipe, RecipeIngredients, RecipeSummary } from "./types/recipes";
 
 export default class MongoDB {
   private static db: Db;
@@ -32,7 +32,7 @@ export default class MongoDB {
 
   public static async getRecipe(recipeId: string): Promise<Recipe> {
     return <Recipe><unknown>(
-      await MongoDB.db.collection('Recipes').findOne({ slugId: recipeId })
+      await MongoDB.db.collection('Recipes').findOne({ slugId: recipeId }, { projection: { _id: 0 } })
     );
   }
 
@@ -42,5 +42,15 @@ export default class MongoDB {
 
   public static async deleteRecipe(recipeId: string): Promise<void> {
     await MongoDB.db.collection('Recipes').deleteOne({ slugId: recipeId });
+  }
+
+  public static async searchRecipe(term: string, pageIndex = 0, pageSize = 20): Promise<Array<RecipeSummary>> {
+    let cursor = MongoDB.db.collection('Recipes')
+      .find({ "$text" : { "$search" : term } }, { projection:{ _id: 0, slugId: 1, summary: 1 } })
+      .sort({ "score" : { "$meta" : "textScore" } })
+      .skip(pageIndex*pageSize).limit(pageSize);
+    return <Array<RecipeSummary>><unknown>(
+      await cursor.toArray()
+    );
   }
 }
