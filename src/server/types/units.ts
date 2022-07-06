@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 enum EVolumeUnit {
     teaspoon = 'teaspoon',
     tablespoon = 'tablespoon',
@@ -21,4 +22,6 @@ enum ETemperatureUnit {
 
 type EUnit = EVolumeUnit | EMassUnit | ELengthUnit | ETemperatureUnit;
 
-export { EVolumeUnit, EMassUnit, ELengthUnit, ETemperatureUnit, EUnit };
+export {
+  EVolumeUnit, EMassUnit, ELengthUnit, ETemperatureUnit, EUnit,
+};

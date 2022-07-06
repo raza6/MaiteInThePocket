@@ -1,12 +1,4 @@
-import ShortUniqueId from 'short-unique-id';
 import { EUnit } from './units';
-
-interface Recipe {
-    slugId: string | undefined;
-    summary: RecipeSummary;
-    ingredients: RecipeIngredients;
-    steps: Array<string>;
-}
 
 interface RecipeSummary {
     name: string;
@@ -15,19 +7,24 @@ interface RecipeSummary {
     cookingTime: number;
 }
 
-interface RecipeIngredients {
-    groups: Array<IngredientsGroup>;
-}
-
-interface IngredientsGroup {
-    ingredientsGroupName: string | null;
-    ingredientsList: Array<Ingredient>; 
-}
-
 interface Ingredient {
     name: string;
     quantity: number | null;
     unit: EUnit | null;
+}
+interface IngredientsGroup {
+    ingredientsGroupName: string | null;
+    ingredientsList: Array<Ingredient>;
+}
+
+interface RecipeIngredients {
+    groups: Array<IngredientsGroup>;
+}
+interface Recipe {
+    slugId: string | undefined;
+    summary: RecipeSummary;
+    ingredients: RecipeIngredients;
+    steps: Array<string>;
 }
 
 interface RecipeRequest {
@@ -36,4 +33,6 @@ interface RecipeRequest {
     pageIndex: number;
 }
 
-export { Recipe, RecipeSummary, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient };
+export {
+  Recipe, RecipeSummary, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient,
+};
