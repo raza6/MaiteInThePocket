@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:4.0
+    container_name: mongodb
+    volumes:
+      - "./mongo/data:/data/db"
+      - "./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro"
+    ports: 
+      - "27017:27017"
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=maite
+      - MONGO_INITDB_ROOT_PASSWORD=maitepwd
+      - MONGO_INITDB_DATABASE=MaiteInThePocket
