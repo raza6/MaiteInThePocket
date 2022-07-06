@@ -19,6 +19,7 @@ serv.use(fileUpload({
 serv.use(cors());
 serv.use(bodyParser.json());
 serv.use(bodyParser.urlencoded({ extended: true }));
+serv.use('/img', express.static('static/img'));
 
 // Start CashMire server
 console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
