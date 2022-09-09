@@ -7,7 +7,7 @@ export default class MongoDB {
   private static db: Db;
 
   public static start(): void {
-    MongoClient.connect('mongodb://127.0.0.1:27017', (err, client) => {
+    MongoClient.connect('mongodb://maite:maitepwd@127.0.0.1:27017', (err, client) => {
       if (err || client === undefined) {
         console.log('💀 Maite in the Pocket failed to connect to DB');
         throw err;
