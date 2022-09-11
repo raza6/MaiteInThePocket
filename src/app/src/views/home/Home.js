@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Badge from 'react-bootstrap/Badge';
 import MainService from '../../services/mainService';
 
 class Home extends Component {
@@ -24,6 +25,7 @@ class Home extends Component {
             <input id="fileInput" type="file"/>
           </label>
           <button type="submit">OK</button>
+          <Badge bg="secondary">New</Badge>
         </form>
       </div>
     )
