@@ -1,32 +1,34 @@
 import { Component } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import MainService from '../../services/mainService';
+import { Container, Row, Col } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
+import { FiPlusSquare, FiSearch, FiSettings } from "react-icons/fi";
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  
-  handleSubmit(e) {
-    e.preventDefault();
-    let formData = new FormData();
-    formData.append('statement', document.getElementById('fileInput').files[0]);
-    MainService.addStatementFile(formData);
-  }
-  
+class Home extends Component {  
   render() {
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Relevé de compte :
-            <input id="fileInput" type="file"/>
-          </label>
-          <button type="submit">OK</button>
-          <Badge bg="secondary">New</Badge>
-        </form>
+      <div class="col">
+        <Container>
+          <Row>
+            <Col>
+              <Link to="/recipes/list" className="d-flex flex-column align-items-center">
+                Chercher une recette
+                <FiSearch />
+              </Link>
+            </Col>
+            <Col>
+              <Link to="/recipes/add" className="d-flex flex-column align-items-center">
+                Ajouter une recette
+                <FiPlusSquare/>
+              </Link>
+            </Col>
+            <Col>
+              <Link to="/settings" className="d-flex flex-column align-items-center">
+                Paramètres
+                <FiSettings/>
+              </Link>
+            </Col>
+          </Row>
+        </Container>
       </div>
     )
   }
