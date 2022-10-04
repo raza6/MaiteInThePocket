@@ -1,17 +1,107 @@
 @import "~bootstrap/scss/bootstrap";
 
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 200;
+  src: local('Nunito'), url(./fonts/Nunito-ExtraLight.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 300;
+  src: local('Nunito'), url(./fonts/Nunito-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: local('Nunito'), url(./fonts/Nunito-Regular.ttf) format('truetype');
+}  
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 500;
+  src: local('Nunito'), url(./fonts/Nunito-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 600;
+  src: local('Nunito'), url(./fonts/Nunito-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 700;
+  src: local('Nunito'), url(./fonts/Nunito-Bold.ttf) format('truetype');
+}  
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 800;
+  src: local('Nunito'), url(./fonts/Nunito-ExtraBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-weight: 900;
+  src: local('Nunito'), url(./fonts/Nunito-Black.ttf) format('truetype');
+}
+
+:root {
+  --mp-blue:#0d6efd;
+  --mp-indigo:#6610f2;
+  --mp-purple:#6f42c1;
+  --mp-pink:#d63384;
+  --mp-red:#dc3545;
+  --mp-orange:#fd7e14;
+  --mp-yellow:#ffc107;
+  --mp-green:#198754;
+  --mp-teal:#20c997;
+  --mp-cyan:#0dcaf0;
+  --mp-gray:#757575;
+  --mp-gray-dark:#4f4f4f;
+  --mp-primary:#1266f1;
+  --mp-secondary:#b23cfd;
+  --mp-success:#00b74a;
+  --mp-info:#39c0ed;
+  --mp-warning:#ffa900;
+  --mp-danger:#f93154;
+  --mp-white:#fff;
+  --mp-black:#000;
+
+  --mp-light-lighter:#fffcf6;
+  --mp-light-base:#ecdbba;
+  --mp-light-darker:#a98d58;
+  --mp-dark-lighter:#2d2c2c;
+  --mp-dark-base:#161616;
+  --mp-dark-darker:#070707;
+  --mp-theme:#c84b31;
+  --mp-accent:#346751;
+
+  --bs-link-color: var(--mp-light-base);
+  --bs-border-color: var(--mp-dark-lighter);
+  --bs-link-hover-color: var(--mp-theme);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  background-color: var(--mp-dark-base);
 }
 
-html, #root, .app, .app .row {
+html, #root, .app, .app > .row {
   height: 100%;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
 }
 
 code {

@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Home from './views/home/Home';
 import RecipesList from './views/recipesList/RecipesList';
 import RecipeForm from './views/recipeForm/RecipeForm';
+import { FiHome, FiPlusSquare, FiSearch, FiSettings } from 'react-icons/fi';
 import './App.scss';
 
 class App extends Component {
@@ -10,11 +11,14 @@ class App extends Component {
     return (
       <div class="app">
         <div class="row">
-          <div class="col-2 border-end d-flex flex-column">
-            <Link to="/">Home</Link>
-            <Link to="/recipes/list">Chercher une recette</Link>
-            <Link to="/recipes/add">Ajouter une recette</Link>
-            <Link to="/settings">Paramètres</Link>
+          <div class="col-2 border-end d-flex flex-column" id="navbar">
+            <Link to="/">
+              <img alt="Maite in the Pocket" src="https://www.babelio.com/users/AVT_Maite_9546.jpg"/>
+            </Link>
+            <Link to="/"><FiHome size="1.3em" color="var(--mp-theme)"/> Home</Link>
+            <Link to="/recipes/list"><FiSearch size="1.3em" color="var(--mp-theme)"/> Chercher une recette</Link>
+            <Link to="/recipes/add"><FiPlusSquare size="1.3em" color="var(--mp-theme)"/> Ajouter une recette</Link>
+            <Link to="/settings"><FiSettings size="1.3em" color="var(--mp-theme)"/> Paramètres</Link>
           </div>
           <Routes>
             <Route index path="/" element={<Home/>}></Route>

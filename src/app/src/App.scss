@@ -1,0 +1,16 @@
+#navbar {
+    margin-left: calc(var(--bs-gutter-x) * 0.5);
+  
+    a {
+      margin: 8px 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+
+      img {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+    }
+}
