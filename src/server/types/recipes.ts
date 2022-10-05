@@ -5,12 +5,14 @@ interface RecipeSummary {
     servings: number;
     prepTime: number;
     cookingTime: number;
+    comment: number | null;
 }
 
 interface Ingredient {
     name: string;
     quantity: number | null;
     unit: EUnit | null;
+    optional: boolean;
 }
 interface IngredientsGroup {
     ingredientsGroupName: string | null;

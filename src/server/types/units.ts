@@ -2,6 +2,8 @@
 enum EVolumeUnit {
     teaspoon = 'teaspoon',
     tablespoon = 'tablespoon',
+    handfull = 'handfull',
+    pinch = 'pinch',
     ml = 'ml',
     cl = 'cl',
     dl = 'dl',
