@@ -1,7 +1,7 @@
 import { ValidationRejection } from '@altostra/type-validations';
 import ShortUniqueId from 'short-unique-id';
 import MongoDB from './mongo';
-import { Recipe, RecipeSummary } from './types/recipes';
+import { Recipe, RecipeSummaryShort } from './types/recipes';
 import isRecipe from './validator/recipes';
 
 export default class recipeService {
@@ -81,7 +81,7 @@ export default class recipeService {
     term: string,
     pageIndex: number,
     pageSize: number,
-  ): Promise<Array<RecipeSummary>> {
+  ): Promise<Array<RecipeSummaryShort>> {
     try {
       return await MongoDB.searchRecipe(term.trim(), pageIndex, pageSize);
     } catch (err: unknown) {

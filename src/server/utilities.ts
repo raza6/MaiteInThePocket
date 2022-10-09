@@ -4,4 +4,11 @@ function currentTimeLog(): string {
   return dayjs().format('YYYY/MM/DD-HH:mm:ss');
 }
 
-export = { currentTimeLog };
+class NoCollectionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NoCollectionError';
+  }
+}
+
+export { currentTimeLog, NoCollectionError };

@@ -13,11 +13,13 @@ const isRecipeSummary = objectOf<RecipeSummary>({
   servings: primitives.number,
   prepTime: primitives.number,
   cookingTime: primitives.number,
+  comment: primitives.maybeNumber,
 });
 
 const isIngredient = objectOf<Ingredient>({
   name: primitives.string,
   quantity: primitives.maybeNumber,
+  optional: primitives.boolean,
   unit: maybe(anyOf(
     enumOf<EVolumeUnit>(...Object.entries(EVolumeUnit).map(([, val]) => val)),
     enumOf<EMassUnit>(...Object.entries(EMassUnit).map(([, val]) => val)),

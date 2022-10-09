@@ -14,6 +14,7 @@ interface Ingredient {
     unit: EUnit | null;
     optional: boolean;
 }
+
 interface IngredientsGroup {
     ingredientsGroupName: string | null;
     ingredientsList: Array<Ingredient>;
@@ -22,11 +23,17 @@ interface IngredientsGroup {
 interface RecipeIngredients {
     groups: Array<IngredientsGroup>;
 }
+
 interface Recipe {
     slugId: string | undefined;
     summary: RecipeSummary;
     ingredients: RecipeIngredients;
     steps: Array<string>;
+}
+
+interface RecipeSummaryShort {
+    slugId: string | undefined;
+    summary: RecipeSummary;
 }
 
 interface RecipeRequest {
@@ -36,5 +43,5 @@ interface RecipeRequest {
 }
 
 export {
-  Recipe, RecipeSummary, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient,
+  Recipe, RecipeSummary, RecipeSummaryShort, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient,
 };
