@@ -25,7 +25,7 @@ export default class MongoDB {
   }
 
   public static async start(): Promise<void> {
-    MongoDB.client = new MongoClient('mongodb://maite:maitepwd@127.0.0.1:27017');
+    MongoDB.client = new MongoClient('mongodb://maite:maitepwd@raza6.fr:27017');
 
     try {
       await MongoDB.client.connect()
@@ -81,10 +81,12 @@ export default class MongoDB {
     pageIndex = 0,
     pageSize = 20,
   ): Promise<Array<RecipeSummaryShort>> {
+    const searchParam = term === '' ? {} : { $text: { $search: term } };
+
     let result = <Array<RecipeSummaryShort>><unknown> await MongoDB.run(
       () => {
         const cursor = <FindCursor><unknown> MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes)
-          .find({ $text: { $search: term } })
+          .find(searchParam)
           .project({ _id: 0, slugId: 1, summary: 1, score : { $meta : 'textScore' }})
           .sort({ score: { $meta: 'textScore' } })
           .skip(pageIndex * pageSize)
