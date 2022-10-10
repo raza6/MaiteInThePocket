@@ -9,9 +9,9 @@ import './App.scss';
 class App extends Component {
   render() {
     return (
-      <div class="app">
-        <div class="row">
-          <div class="col-2 border-end d-flex flex-column" id="navbar">
+      <div className="app">
+        <div className="row">
+          <div className="col-2 border-end d-flex flex-column" id="navbar">
             <Link to="/">
               <img alt="Maite in the Pocket" src="https://www.babelio.com/users/AVT_Maite_9546.jpg"/>
             </Link>
@@ -22,7 +22,7 @@ class App extends Component {
           </div>
           <Routes>
             <Route index path="/" element={<Home/>}></Route>
-            <Route path="/recipes" element={<RecipesList/>}></Route>
+            <Route path="/recipes/list" element={<RecipesList/>}></Route>
             <Route path="/recipes/add" element={<RecipeForm/>}></Route>
             <Route path="/recipes/edit" element={<RecipeForm/>}></Route>
           </Routes>

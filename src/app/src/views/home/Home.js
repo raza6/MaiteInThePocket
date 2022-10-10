@@ -2,12 +2,14 @@ import { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { FiPlusSquare, FiSearch, FiSettings } from "react-icons/fi";
+import './Home.scss';
 
 class Home extends Component {  
   render() {
     return (
-      <div class="col">
-        <Container>
+      <div className="col">
+        <h1>Maite in the Pocket</h1>
+        <Container id="homeWrapper">
           <Row>
             <Col>
               <Link to="/recipes/list" className="d-flex flex-column align-items-center">
