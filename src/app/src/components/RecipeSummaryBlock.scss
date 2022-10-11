@@ -1,0 +1,16 @@
+.card {
+    background-color: var(--mp-light-base);
+    transition: background-color 0.15s ease-in-out 0s;
+
+    &:hover {
+        background-color: var(--mp-light-darker);
+    }
+
+    .recipeName {
+        color: var(--mp-dark-base);
+
+        .h5 {
+            margin: 0;
+        }
+    }
+}

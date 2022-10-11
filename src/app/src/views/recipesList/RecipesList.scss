@@ -31,4 +31,12 @@ h1 {
 
 #recipeListWrapper {
     margin-top: 32px;
+    list-style-type: none;
+    flex-wrap: wrap;
+    display: flex;
+    gap: 16px;
+
+    li {
+        width: 250px;
+    }
 }
