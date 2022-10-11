@@ -1,17 +1,17 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 const API_URL = 'http://maite.raza6.fr/mp'
 
 class MainService {
-  static async searchSummary(term, pageIndex = 0, pageSize = 20) {
+  public static async searchSummary(term: string, pageIndex = 0, pageSize = 20) {
     console.info('📫 - Search summary recipes');
     const res = await axios.post(`${API_URL}/recipe/search`, { searchTerm: term, pageIndex, pageSize });
     console.info('👏 - Search summary recipes', res);
-    return handleAPIResponse(res);
+    return MainService.handleAPIResponse(res);
   }
 
-  static handleAPIResponse(response) {
+  private static handleAPIResponse(response: AxiosResponse<any,any>) {
     if (response.status === 200) {
-      return res.data
+      return response.data;
     } else {
       return null;
     }
