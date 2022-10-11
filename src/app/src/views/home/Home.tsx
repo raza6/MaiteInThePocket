@@ -12,13 +12,13 @@ class Home extends Component {
         <Container id="homeWrapper">
           <Row>
             <Col>
-              <Link to="/recipes/list" className="d-flex flex-column align-items-center">
+              <Link to="/recipe/list" className="d-flex flex-column align-items-center">
                 Chercher une recette
                 <FiSearch />
               </Link>
             </Col>
             <Col>
-              <Link to="/recipes/add" className="d-flex flex-column align-items-center">
+              <Link to="/recipe/add" className="d-flex flex-column align-items-center">
                 Ajouter une recette
                 <FiPlusSquare/>
               </Link>

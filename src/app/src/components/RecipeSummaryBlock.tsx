@@ -8,7 +8,7 @@ class RecipeSummaryBlock extends Component<{ recipe: RecipeSummary, recipeId: st
   render() {
     return (
       <li>
-        <Link to="#">
+        <Link to={`/recipe/${this.props.recipeId}`}>
           <Card>
             <Card.Img variant="top" src={process.env.PUBLIC_URL + "/placeholder.jpg"} />
             <Card.Body className="recipeName">

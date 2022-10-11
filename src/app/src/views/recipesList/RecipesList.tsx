@@ -5,10 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import './RecipesList.scss';
 import MainService from '../../services/mainService';
 import { RecipeSummaryShort } from '../../types/recipes';
-
-function getRandomOfList (list: Array<string>) {
-  return list[Math.floor((Math.random()*list.length))];
-}
+import { getRandomOfList } from '../../utils';
 
 class RecipesList extends Component<{}, { recipes: Array<RecipeSummaryShort> }> {
   constructor(props: {}) {
