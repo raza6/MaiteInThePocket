@@ -20,14 +20,10 @@ interface IngredientsGroup {
     ingredientsList: Array<Ingredient>;
 }
 
-interface RecipeIngredients {
-    groups: Array<IngredientsGroup>;
-}
-
 interface Recipe {
     slugId: string | undefined;
     summary: RecipeSummary;
-    ingredients: RecipeIngredients;
+    ingredients: Array<IngredientsGroup>;
     steps: Array<string>;
 }
 
@@ -43,5 +39,5 @@ interface RecipeRequest {
 }
 
 export type {
-  Recipe, RecipeSummary, RecipeSummaryShort, RecipeIngredients, RecipeRequest, IngredientsGroup, Ingredient,
+  Recipe, RecipeSummary, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient,
 };
