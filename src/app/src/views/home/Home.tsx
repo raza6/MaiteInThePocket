@@ -1,7 +1,7 @@
-import { Component } from 'react';
-import { Container, Row, Col } from 'react-bootstrap'
+import React, { Component } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FiPlusSquare, FiSearch, FiSettings } from "react-icons/fi";
+import { FiPlusSquare, FiSearch, FiSettings } from 'react-icons/fi';
 import './Home.scss';
 
 class Home extends Component {  
@@ -32,7 +32,7 @@ class Home extends Component {
           </Row>
         </Container>
       </div>
-    )
+    );
   }
 }
 

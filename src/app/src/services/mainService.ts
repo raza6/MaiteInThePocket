@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
-import { Recipe, RecipeSummaryShort } from "../types/recipes";
-const API_URL = 'http://maite.raza6.fr/mp'
+import axios, { AxiosResponse } from 'axios';
+import { Recipe, RecipeSummaryShort } from '../types/recipes';
+const API_URL = 'http://maite.raza6.fr/mp';
 
 class MainService {
   public static async searchSummary(term: string, pageIndex = 0, pageSize = 20): Promise<Array<RecipeSummaryShort>> {

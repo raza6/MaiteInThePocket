@@ -1,7 +1,7 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import RecipeSummary from '../../components/RecipeSummaryBlock';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { FiSearch } from "react-icons/fi";
+import { FiSearch } from 'react-icons/fi';
 import './RecipesList.scss';
 import MainService from '../../services/mainService';
 import { RecipeSummaryShort } from '../../types/recipes';
@@ -26,7 +26,7 @@ class RecipesList extends Component<{}, { recipes: Array<RecipeSummaryShort> }> 
         <h1>Chercher une recette</h1>
         <InputGroup id="searchBarWrapper">
           <Form.Control
-            placeholder={getRandomOfList(["Lasagne", "Pot au feu", "Curry", "Pizza", "Navarin", "Pancake"])}
+            placeholder={getRandomOfList(['Lasagne', 'Pot au feu', 'Curry', 'Pizza', 'Navarin', 'Pancake'])}
           />
           <Button variant="outline-secondary" id="recipeSearchInput">
             <FiSearch />
@@ -39,7 +39,7 @@ class RecipesList extends Component<{}, { recipes: Array<RecipeSummaryShort> }> 
           }
         </ul>
       </div>
-    )
+    );
   }
 }
 
