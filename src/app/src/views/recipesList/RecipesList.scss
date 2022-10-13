@@ -1,0 +1,42 @@
+h1 {
+    margin-top: 16px;
+    text-align: center;
+}
+
+#searchBarWrapper {
+    width: 80%;
+    margin: 32px auto 0 auto;
+
+    .form-control {
+        background-color: var(--mp-light-lighter);
+        border-color: var(--mp-light-lighter);
+        color: var(--mp-dark-base);
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    button {
+        background-color: var(--mp-light-base);
+        border-color: var(--mp-light-base);
+        color: var(--mp-dark-base);
+
+        &:hover, &:focus {
+            background-color: var(--mp-light-darker);
+            border-color: var(--mp-light-darker);
+        }
+    }
+}
+
+#recipeListWrapper {
+    margin-top: 32px;
+    list-style-type: none;
+    flex-wrap: wrap;
+    display: flex;
+    gap: 16px;
+
+    li {
+        width: 250px;
+    }
+}

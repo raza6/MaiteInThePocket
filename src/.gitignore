@@ -1,4 +1,9 @@
 */tmp/
+*/static/img/
+
+docker/mongo
+
+import/*
 
 ### Node ###
 # Logs
