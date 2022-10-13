@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "maite_in_the_pocket_app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -51,5 +51,8 @@
   },
   "devDependencies": {
     "eslint": "^8.25.0"
-  }
+  },
+  "keywords": ["app"],
+  "author": "raza6",
+  "license": ""
 }

@@ -31,7 +31,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint *.ts **/*.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["server"],
+  "author": "raza6",
+  "license": ""
 }
