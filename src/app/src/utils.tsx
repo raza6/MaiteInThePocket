@@ -11,4 +11,12 @@ function getRandomOfList (list: Array<string>) {
   return list[Math.floor((Math.random()*list.length))];
 }
 
-export { getRandomOfList, withParams };
+function debounce(func: Function, context: any, timeout = 300){
+  let timer: NodeJS.Timeout;
+  return (...args: any) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(context, args); }, timeout);
+  };
+}
+
+export { getRandomOfList, withParams, debounce };
