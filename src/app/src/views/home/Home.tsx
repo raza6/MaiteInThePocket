@@ -7,7 +7,7 @@ import './Home.scss';
 class Home extends Component {  
   render() {
     return (
-      <div className="col">
+      <Col>
         <h1>Maite in the Pocket</h1>
         <Container id="homeWrapper">
           <Row>
@@ -31,7 +31,7 @@ class Home extends Component {
             </Col>
           </Row>
         </Container>
-      </div>
+      </Col>
     );
   }
 }

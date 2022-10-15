@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RecipeSummary from '../../components/RecipeSummaryBlock';
-import { Button, Form, InputGroup } from 'react-bootstrap';
+import { Button, Form, InputGroup, Col } from 'react-bootstrap';
 import { FiSearch } from 'react-icons/fi';
 import './RecipesList.scss';
 import MainService from '../../services/mainService';
@@ -22,7 +22,7 @@ class RecipesList extends Component<{}, { recipes: Array<RecipeSummaryShort> }> 
 
   render() {
     return (
-      <div className="col">
+      <Col>
         <h1>Chercher une recette</h1>
         <InputGroup id="searchBarWrapper">
           <Form.Control
@@ -38,7 +38,7 @@ class RecipesList extends Component<{}, { recipes: Array<RecipeSummaryShort> }> 
               <RecipeSummary recipe={recipe.summary} recipeId={recipe.slugId as string} key={recipe.slugId}></RecipeSummary>)
           }
         </ul>
-      </div>
+      </Col>
     );
   }
 }
