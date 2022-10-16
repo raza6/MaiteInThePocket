@@ -19,7 +19,7 @@ serv.use(fileUpload({
 serv.use(cors());
 serv.use(bodyParser.json());
 serv.use(bodyParser.urlencoded({ extended: true }));
-serv.use('/img', express.static('static/img'));
+serv.use('/mp/img', express.static('static/img'));
 
 // Start CashMire server
 console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
@@ -35,7 +35,7 @@ serv.listen(PORT, MongoDB.start);
  * @name Test
  * @route {GET} /test
  */
-serv.get('/test', (req: Request, res: Response) => {
+serv.get('/mp/test', (req: Request, res: Response) => {
   console.log('hello');
   res.status(200).send('hello');
 });
@@ -99,7 +99,7 @@ serv.delete('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @name RecipeSearch
  * @route {POST} /mp/recipe/search
  * @bodyparam {RecipeRequest} recipeRequest is the request containing the search term and pagination parameters
- * @returns {Array<RecipeSummary>} List of recipes summary corresponding to the search request, sorted by pertinence
+ * @returns {RecipeSummarySearchResponse} List of recipes summary corresponding to the search request, sorted by pertinence
  */
 serv.post('/mp/recipe/search', async (req: Request, res: Response) => {
   const { searchTerm, pageIndex, pageSize } = req.body;

@@ -2,7 +2,7 @@ import {
   anyOf, arrayOf, enumOf, maybe, objectOf, primitives,
 } from '@altostra/type-validations';
 import {
-  Ingredient, IngredientsGroup, Recipe, RecipeIngredients, RecipeSummary,
+  Ingredient, IngredientsGroup, Recipe, RecipeSummary,
 } from '../types/recipes';
 import {
   ELengthUnit, EMassUnit, ETemperatureUnit, EVolumeUnit,
@@ -33,9 +33,7 @@ const isIngredientsGroup = objectOf<IngredientsGroup>({
   ingredientsList: arrayOf(isIngredient),
 });
 
-const isRecipeIngredient = objectOf<RecipeIngredients>({
-  groups: arrayOf(isIngredientsGroup),
-});
+const isRecipeIngredient = arrayOf<IngredientsGroup>(isIngredientsGroup);
 
 const isRecipe = objectOf<Recipe>({
   slugId: primitives.maybeString,

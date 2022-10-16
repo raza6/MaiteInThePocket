@@ -32,6 +32,11 @@ interface RecipeSummaryShort {
     summary: RecipeSummary;
 }
 
+interface RecipeSummarySearchResponse {
+    recipes: Array<RecipeSummaryShort>;
+    count: number;
+}
+
 interface RecipeRequest {
     searchTerm: string;
     pageSize: number;
@@ -39,5 +44,5 @@ interface RecipeRequest {
 }
 
 export type {
-  Recipe, RecipeSummary, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient,
+  Recipe, RecipeSummary, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient, RecipeSummarySearchResponse,
 };
