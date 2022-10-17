@@ -40,25 +40,25 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
   
   async componentDidUpdate(_: any, prevState: RecipeListState) {
     if (this.state.currentPage !== prevState.currentPage) {
-      await this.updateRecipesList();
+      await this.updateRecipeList();
     }
   }
 
-  updateRecipesListDebounced = debounce(this.updateRecipesList, this);
+  updateRecipeListDebounced = debounce(this.updateRecipeList, this);
   handleInput(e: React.FormEvent<HTMLInputElement>) {
     const search = e.currentTarget.value;
     this.setState({ search });
     if (search.length >= 3 || search.length === 0) {
-      this.updateRecipesListDebounced();
+      this.updateRecipeListDebounced();
     }
   }
 
   async handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await this.updateRecipesList();
+    await this.updateRecipeList();
   }
 
-  async updateRecipesList(): Promise<void> {
+  async updateRecipeList(): Promise<void> {
     const result = await MainService.searchSummary(this.state.search, this.state.currentPage, this._listSize);
     const maxPage = Math.floor(result.count/this._listSize);
     let currentPage = this.state.currentPage;
