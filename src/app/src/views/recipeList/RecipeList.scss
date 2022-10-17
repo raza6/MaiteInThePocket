@@ -24,25 +24,46 @@
     }
 }
 
-#recipeListWrapper {
+#recipeListOuterWrapper {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-    list-style-type: none;
-    margin-top: 32px;
-    padding: 0 32px 16px 32px;
+    flex-direction: column;
+    align-items: center;
 
-    li {
-        width: 250px;
+    #recipeListWrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+        list-style-type: none;
+        margin-top: 32px;
+        padding: 0 32px 16px 32px;
+    
+        li {
+            width: 250px;
+        }
+    
+        #noRecipeWrapper {
+            align-items: center;
+    
+            .mainMessage {
+                font-weight: 700;
+                font-size: larger;
+            }
+        }
     }
 
-    #noRecipeWrapper {
-        align-items: center;
-
-        .mainMessage {
-            font-weight: 700;
-            font-size: larger;
-        }
+    .pagination {
+        --bs-pagination-color: var(--mp-dark-base);
+        --bs-pagination-bg: var(--mp-light-base);
+        --bs-pagination-border-color: var(--mp-light-base);
+        --bs-pagination-hover-color: var(--mp-dark-base);
+        --bs-pagination-hover-bg: var(--mp-light-darker);
+        --bs-pagination-hover-border-color: var(--mp-light-base);
+        --bs-pagination-focus-color: var(--mp-dark-darker);
+        --bs-pagination-focus-bg: var(--mp-light-darker);
+        --bs-pagination-focus-box-shadow: none;
+        --bs-pagination-active-color: var(--mp-light-base);
+        --bs-pagination-active-bg: var(--mp-dark-lighter);
+        --bs-pagination-active-border-color: var(--mp-light-base);
     }
 }

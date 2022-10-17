@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RecipeSummary from '../../components/RecipeSummaryBlock';
-import { Button, Form, InputGroup, Col, Stack, Pagination } from 'react-bootstrap';
+import { Button, Form, InputGroup, Col, Stack, Pagination, Spinner } from 'react-bootstrap';
 import { FiSearch, FiXCircle } from 'react-icons/fi';
 import './RecipeList.scss';
 import MainService from '../../services/mainService';
@@ -12,6 +12,7 @@ interface RecipeListState {
   recipesCount: number,
   currentPage: number | undefined,
   search: string,
+  loading: boolean,
 }
 
 class RecipeList extends Component<{ params: { currentPage: string } }, RecipeListState> {
@@ -26,6 +27,7 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
       recipesCount: 0,
       currentPage: undefined,
       search: '',
+      loading: false,
     };
 
     this.handleInput = this.handleInput.bind(this);
@@ -59,13 +61,14 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
   }
 
   async updateRecipeList(): Promise<void> {
+    this.setState({ loading: true });
     const result = await MainService.searchSummary(this.state.search, this.state.currentPage, this._listSize);
     const maxPage = Math.floor(result.count/this._listSize);
     let currentPage = this.state.currentPage;
     if (currentPage === undefined || currentPage > maxPage) {
       currentPage = 0;
     }
-    this.setState({ recipes: result.recipes, recipesCount: result.count, currentPage });
+    this.setState({ recipes: result.recipes, recipesCount: result.count, currentPage, loading: false });
   } 
 
   render() {
@@ -83,10 +86,17 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
             </Button>
           </InputGroup>
         </Form>
-        <ul id="recipeListWrapper">
-          { this.state.recipes.length > 0 ? this.renderRecipeList() : this.renderNoRecipe() }
-        </ul>
-        { this.state.recipes.length > 0 ? this.renderPagination() : '' }
+        { this.state.loading ? 
+          <Col className="d-flex justify-content-center mt-5">
+            <Spinner animation="border" />
+          </Col> :
+          <div id="recipeListOuterWrapper">
+            <ul id="recipeListWrapper">
+              { this.state.recipes.length > 0 ? this.renderRecipeList() : this.renderNoRecipe() }
+            </ul>
+            { this.state.recipes.length > 0 ? this.renderPagination() : '' }
+          </div>
+        }
       </Col>
     );
   }
