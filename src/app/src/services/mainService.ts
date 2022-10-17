@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
-import { Recipe, RecipeSummaryShort } from '../types/recipes';
+import { Recipe, RecipeSummarySearchResponse } from '../types/recipes';
 const API_URL = 'http://maite.raza6.fr/mp';
 
 class MainService {
-  public static async searchSummary(term: string, pageIndex = 0, pageSize = 20): Promise<Array<RecipeSummaryShort>> {
+  public static async searchSummary(term: string, pageIndex = 0, pageSize = 20): Promise<RecipeSummarySearchResponse> {
     console.info('📫 - Search summary recipes');
     const res = await axios.post(`${API_URL}/recipe/search`, { searchTerm: term, pageIndex, pageSize });
     console.info('👏 - Search summary recipes', res);

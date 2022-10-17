@@ -25,9 +25,10 @@ class App extends Component {
           <Routes>
             <Route index path="/" element={<Home/>}></Route>
             <Route path="/recipe/list" element={<RecipesList/>}></Route>
+            <Route path="/recipe/list/:currentPage" element={<RecipesList/>}></Route>
             <Route path="/recipe/add" element={<RecipeForm/>}></Route>
             <Route path="/recipe/edit" element={<RecipeForm/>}></Route>
-            <Route path="/recipe/:id" element={<RecipeDetail/>}></Route>
+            <Route path="/recipe/detail/:id" element={<RecipeDetail/>}></Route>
           </Routes>
         </div>
       </Container>
