@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import RecipeSummary from '../../components/RecipeSummaryBlock';
 import { Button, Form, InputGroup, Col, Stack, Pagination } from 'react-bootstrap';
 import { FiSearch, FiXCircle } from 'react-icons/fi';
-import './RecipesList.scss';
+import './RecipeList.scss';
 import MainService from '../../services/mainService';
 import { RecipeSummaryShort } from '../../types/recipes';
 import { debounce, getRandomOfList, withParams } from '../../utils';
 
-interface RecipesListState {
+interface RecipeListState {
   recipes: Array<RecipeSummaryShort>,
   recipesCount: number,
   currentPage: number | undefined,
   search: string,
 }
 
-class RecipesList extends Component<{ params: { currentPage: string } }, RecipesListState> {
+class RecipeList extends Component<{ params: { currentPage: string } }, RecipeListState> {
   private _listSize = 10;
   
   private _paginationReach = 2;
@@ -38,7 +38,7 @@ class RecipesList extends Component<{ params: { currentPage: string } }, Recipes
     this.setState({ currentPage: currentPageClean });
   }
   
-  async componentDidUpdate(_: any, prevState: RecipesListState) {
+  async componentDidUpdate(_: any, prevState: RecipeListState) {
     if (this.state.currentPage !== prevState.currentPage) {
       await this.updateRecipesList();
     }
@@ -151,4 +151,4 @@ class RecipesList extends Component<{ params: { currentPage: string } }, Recipes
   }
 }
 
-export default withParams(RecipesList);
+export default withParams(RecipeList);

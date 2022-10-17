@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Home from './views/home/Home';
-import RecipesList from './views/recipesList/RecipesList';
+import RecipeList from './views/recipeList/RecipeList';
 import RecipeForm from './views/recipeForm/RecipeForm';
 import { FiHome, FiPlusSquare, FiSearch, FiSettings } from 'react-icons/fi';
 import './App.scss';
@@ -24,8 +24,8 @@ class App extends Component {
         <div id="appWrapper">
           <Routes>
             <Route index path="/" element={<Home/>}></Route>
-            <Route path="/recipe/list" element={<RecipesList/>}></Route>
-            <Route path="/recipe/list/:currentPage" element={<RecipesList/>}></Route>
+            <Route path="/recipe/list" element={<RecipeList/>}></Route>
+            <Route path="/recipe/list/:currentPage" element={<RecipeList/>}></Route>
             <Route path="/recipe/add" element={<RecipeForm/>}></Route>
             <Route path="/recipe/edit" element={<RecipeForm/>}></Route>
             <Route path="/recipe/detail/:id" element={<RecipeDetail/>}></Route>
