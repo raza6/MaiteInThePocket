@@ -16,19 +16,19 @@ class App extends Component {
           <Link to="/">
             <Image alt="Maite in the Pocket" src="https://www.babelio.com/users/AVT_Maite_9546.jpg"></Image>
           </Link>
-          <Link to="/"><FiHome size="1.3em" color="var(--mp-theme)"/> Home</Link>
-          <Link to="/recipe/list"><FiSearch size="1.3em" color="var(--mp-theme)"/> Chercher une recette</Link>
-          <Link to="/recipe/add"><FiPlusSquare size="1.3em" color="var(--mp-theme)"/> Ajouter une recette</Link>
-          <Link to="/settings"><FiSettings size="1.3em" color="var(--mp-theme)"/> Paramètres</Link>
+          <Link to="/app/"><FiHome size="1.3em" color="var(--mp-theme)"/> Home</Link>
+          <Link to="/app/recipe/list"><FiSearch size="1.3em" color="var(--mp-theme)"/> Chercher une recette</Link>
+          <Link to="/app/recipe/add"><FiPlusSquare size="1.3em" color="var(--mp-theme)"/> Ajouter une recette</Link>
+          <Link to="/app/settings"><FiSettings size="1.3em" color="var(--mp-theme)"/> Paramètres</Link>
         </Col>
         <div id="appWrapper">
           <Routes>
-            <Route index path="/" element={<Home/>}></Route>
-            <Route path="/recipe/list" element={<RecipeList/>}></Route>
-            <Route path="/recipe/list/:currentPage" element={<RecipeList/>}></Route>
-            <Route path="/recipe/add" element={<RecipeForm/>}></Route>
-            <Route path="/recipe/edit" element={<RecipeForm/>}></Route>
-            <Route path="/recipe/detail/:id" element={<RecipeDetail/>}></Route>
+            <Route index path="/app/" element={<Home/>}></Route>
+            <Route path="/app/recipe/list" element={<RecipeList/>}></Route>
+            <Route path="/app/recipe/list/:currentPage" element={<RecipeList/>}></Route>
+            <Route path="/app/recipe/add" element={<RecipeForm/>}></Route>
+            <Route path="/app/recipe/edit" element={<RecipeForm/>}></Route>
+            <Route path="/app/recipe/detail/:id" element={<RecipeDetail/>}></Route>
           </Routes>
         </div>
       </Container>

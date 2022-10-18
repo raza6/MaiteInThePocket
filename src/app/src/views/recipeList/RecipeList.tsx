@@ -116,9 +116,9 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     const paginationStart = [];
     for (let i = currentPage - 1; i >= 0; i--) {
       if (i > currentPage - 1 - this._paginationReach) {
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
       } else if (i === 0) { //first page
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationStart.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -129,9 +129,9 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     const paginationEnd = [];
     for (let i = currentPage + 1; i <= maxPage; i++) {
       if (i < currentPage + 1 + this._paginationReach) {
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
       } else if (i === maxPage) { //last page
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationEnd.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -139,13 +139,13 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     }
     return (
       <Pagination>
-        {this.state.currentPage !== 0 && <Pagination.First href={`/recipe/list/${0}`} />}
-        {this.state.currentPage !== 0 && <Pagination.Prev href={`/recipe/list/${currentPage - 1}`} />}
+        {this.state.currentPage !== 0 && <Pagination.First href={`/app/recipe/list/${0}`} />}
+        {this.state.currentPage !== 0 && <Pagination.Prev href={`/app/recipe/list/${currentPage - 1}`} />}
         {paginationStart.map(v => v)}
         <Pagination.Item active>{currentPage + 1}</Pagination.Item>
         {paginationEnd.map(v => v)}
-        {this.state.currentPage !== maxPage && <Pagination.Next href={`/recipe/list/${currentPage + 1}`} />}
-        {this.state.currentPage !== maxPage && <Pagination.Last href={`/recipe/list/${maxPage}`} />}
+        {this.state.currentPage !== maxPage && <Pagination.Next href={`/app/recipe/list/${currentPage + 1}`} />}
+        {this.state.currentPage !== maxPage && <Pagination.Last href={`/app/recipe/list/${maxPage}`} />}
       </Pagination>
     );
   }
