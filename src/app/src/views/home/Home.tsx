@@ -12,19 +12,19 @@ class Home extends Component {
         <Container id="homeWrapper">
           <Row>
             <Col>
-              <Link to="/recipe/list" className="d-flex flex-column align-items-center">
+              <Link to="/app/recipe/list" className="d-flex flex-column align-items-center">
                 Chercher une recette
                 <FiSearch />
               </Link>
             </Col>
             <Col>
-              <Link to="/recipe/add" className="d-flex flex-column align-items-center">
+              <Link to="/app/recipe/add" className="d-flex flex-column align-items-center">
                 Ajouter une recette
                 <FiPlusSquare/>
               </Link>
             </Col>
             <Col>
-              <Link to="/settings" className="d-flex flex-column align-items-center">
+              <Link to="/app/settings" className="d-flex flex-column align-items-center">
                 Paramètres
                 <FiSettings/>
               </Link>
