@@ -14,7 +14,7 @@ Additionnaly a **MongoDB** server need to be available with a collection named `
 
 To use the app locally :
 
-Launch the server using `npm run start` in the `src/server` directory. Make sure the connection string to your mongo server is correct (`src/server/mongo.ts`). You can check that the server is launched by requesting the `/app/test` endpoint.
+Launch the server using `npm run start` in the `src/server` directory. Make sure the connection string to your mongo server is correct (`src/server/mongo.ts`). You can check that the server is launched by requesting the `/mp/test` endpoint.
 
 Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/services/mainServices.ts`). The app should automatically open in your browser of choice.
 
