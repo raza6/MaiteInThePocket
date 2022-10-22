@@ -5,6 +5,20 @@ import { Recipe, RecipeSummarySearchResponse } from './types/recipes';
 import isRecipe from './validator/recipes';
 
 export default class recipeService {
+  public static async checkRecipe(recipeId: string): Promise<boolean> {
+    if (recipeId) {
+      try {
+        return await MongoDB.checkRecipe(recipeId);
+      } catch (err: unknown) {
+        console.log(`🧨 Could not verify recipe (Id : ${recipeId}), reason : ${err}`);
+        return false;
+      }
+    } else {
+      console.log('🧨 Recipe not verified, reason : recipe Id is empty');
+    }
+    return false;
+  }
+
   public static async getRecipe(recipeId: string): Promise<Recipe | null> {
     if (recipeId) {
       try {

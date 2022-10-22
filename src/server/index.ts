@@ -19,7 +19,7 @@ serv.use(fileUpload({
 serv.use(cors());
 serv.use(bodyParser.json());
 serv.use(bodyParser.urlencoded({ extended: true }));
-serv.use('/mp/img', express.static('static/img'));
+serv.use('/mp/static/img', express.static('static/img'));
 
 // Start CashMire server
 console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
@@ -51,6 +51,45 @@ serv.get('/mp/test', (req: Request, res: Response) => {
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
   const result = await recipeService.getRecipe(req.params.id);
   res.status(result ? 200 : 400).send(result);
+});
+
+/**
+ * Add image to a recipe
+ *
+ * @name RecipeAddImg
+ * @route {POST} /mp/recipe/img/:id
+ */
+serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
+  let error;
+  // check if file is valid
+  if (req.files === undefined || req.files.img === undefined) {
+    error = 'No img file attached';
+  } else if (Array.isArray(req.files.img)) {
+    error = 'More than 1 img file attached';
+  } else {
+    const reqFile = req.files.img;
+
+    if (!['image/jpeg', 'image/png'].includes(reqFile.mimetype)) {
+      error = 'Attached file is not a .png or a .jpg';
+    } else if (req.files.img.size >= 4 * 1024 * 1024) {
+      error = 'Attached file size is more than 4MB';
+    } else {
+      const recipeId = req.params.id;
+
+      if (!await recipeService.checkRecipe(recipeId)) {
+        error = `Recipe ${recipeId} does not exist`;
+      } else {
+        const fileExt = req.files.img.mimetype === 'image/png' ? 'png' : 'jpg';
+        req.files.img.mv(`./static/img/${recipeId}.${fileExt}`);
+      }
+    }
+  }
+
+  // TODO
+  // Handle error (too big, wrong width/length)
+  // Resize img (jimp)
+
+  res.status(error ? 400 : 200).send(error);
 });
 
 /**

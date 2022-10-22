@@ -54,6 +54,12 @@ export default class MongoDB {
     }
   }
 
+  public static async checkRecipe(recipeId: string): Promise<boolean> {
+    return await MongoDB.run(
+      () => MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes).countDocuments({ slugId: recipeId }),
+    ) === 1;
+  }
+
   public static async addRecipe(recipe: Recipe): Promise<void> {
     await MongoDB.run(
       () => MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes).insertOne(recipe),
