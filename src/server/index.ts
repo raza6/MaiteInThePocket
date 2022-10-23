@@ -30,10 +30,11 @@ serv.listen(PORT, MongoDB.start);
  */
 
 /**
- * Test endpoint
+ * @apiName Test
+ * @apiGroup Test
+ * @api {GET} /mp/test Test endpoint
  *
- * @name Test
- * @route {GET} /test
+ * @apiDescription Will return a 200 with "hello" if the api is up and running
  */
 serv.get('/mp/test', (req: Request, res: Response) => {
   console.log('hello');
@@ -41,12 +42,14 @@ serv.get('/mp/test', (req: Request, res: Response) => {
 });
 
 /**
- * Get recipe detail
+ * @apiName RecipeGet
+ * @apiGroup Recipe
+ * @api {GET} /mp/recipe/:id Get recipe detail
  *
- * @name RecipeGet
- * @route {GET} /mp/recipe/:id
- * @routeparam {string} :id is the unique identifier for the recipe
- * @returns {Recipe} requested recipe
+ * @apiparam {string} id Unique identifier of the recipe
+ *
+ * @apiUse RecipeSuccess
+ * @apiError (400) {null} RecipeNotFound Recipe with id <code>id</code> was not found
  */
 serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
   const result = await recipeService.getRecipe(req.params.id);
@@ -54,10 +57,19 @@ serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * Add image to a recipe
+ * @apiName RecipeAddImg
+ * @apiGroup Recipe
+ * @api {POST} /mp/recipe/img/:id Add image to a recipe
  *
- * @name RecipeAddImg
- * @route {POST} /mp/recipe/img/:id
+ * @apiparam {string} id Unique identifier of the recipe
+ * @apiBody {File} files.img The cover image of the recipe
+ *
+ * @apiError (400) {string} NoFileAttached No image file attached with the request
+ * @apiError (400) {string} ManyFileAttached More than one image file attached with the request
+ * @apiError (400) {string} FileAttachedFormat File attached with the request are not .png or .jpg
+ * @apiError (400) {string} FileAttachedSize File attached with the request are more than 4MB in size
+ * @apiError (400) {string} NoFileAttached No image file attached with the request
+ * @apiError (400) {string} RecipeNotFound Recipe with id <code>id</code> was not found
  */
 serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
   let error;
@@ -93,11 +105,11 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * Add a recipe
+ * @apiName RecipeAdd
+ * @apiGroup Recipe
+ * @api {PUT} /mp/recipe/add Add a recipe
  *
- * @name RecipeAdd
- * @route {PUT} /mp/recipe/add
- * @bodyparam {Recipe} recipe is the recipe uploaded
+ * @apiBody {Recipe} recipe The recipe to add
  */
 serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
   const result = await recipeService.addRecipe(req.body);
@@ -106,12 +118,12 @@ serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
 });
 
 /**
- * Edit a recipe
+ * @apiName RecipeEdit
+ * @apiGroup Recipe
+ * @api {PUT} /mp/recipe/:id Edit a recipe
  *
- * @name RecipeEdit
- * @route {PUT} /mp/recipe/:id
- * @routeparam {string} :id is the unique identifier for the recipe
- * @bodyparam {Recipe} recipe is the recipe with the edits
+ * @apiParam {string} id Unique identifier of the recipe
+ * @apiBody {Recipe} recipe The edited recipe
  */
 serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
   const result = await recipeService.editRecipe(req.params.id, req.body);
@@ -120,11 +132,11 @@ serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * Delete a recipe
+ * @apiName RecipeDelete
+ * @apiGroup Recipe
+ * @api {DELETE} /mp/recipe/:id Delete a recipe
  *
- * @name RecipeDelete
- * @route {DELETE} /mp/recipe/:id
- * @routeparam {string} :id is the unique identifier for the recipe
+ * @apiParam {string} id Unique identifier of the recipe
  */
 serv.delete('/mp/recipe/:id', async (req: Request, res: Response) => {
   const result = await recipeService.deleteRecipe(req.params.id);
@@ -133,15 +145,32 @@ serv.delete('/mp/recipe/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * Serve a list of recipe according to a search term and pagination
+ * @apiName RecipeSearch
+ * @apiGroup Recipe
+ * @api {POST} /mp/recipe/search Search for recipes
+ * @apiDescription Serve a list of recipe according to a search term and pagination
  *
- * @name RecipeSearch
- * @route {POST} /mp/recipe/search
- * @bodyparam {RecipeRequest} recipeRequest is the request containing the search term and pagination parameters
- * @returns {RecipeSummarySearchResponse} List of recipes summary corresponding to the search request, sorted by pertinence
+ * @apiBody {RecipeRequest} recipeRequest The request containing the search term and pagination parameters
+ * @apiUse RecipeSearchSuccess
  */
 serv.post('/mp/recipe/search', async (req: Request, res: Response) => {
   const { searchTerm, pageIndex, pageSize } = req.body;
   const result = await recipeService.searchRecipe(searchTerm, pageIndex, pageSize);
   res.status(200).send(result);
 });
+
+/* API DEFINITION */
+
+/**
+ * @apiDefine RecipeSuccess
+ * @apiSuccess {string} slugId The short unique identifier of a recipe
+ * @apiSuccess {RecipeSummary} summary The summary of a recipe (title, servings...)
+ * @apiSuccess {IngredientsGroup[]} ingredients List of ingredients of a recipe for the default serving
+ * @apiSuccess {string[]} steps List of intructions to cook the recipe
+ */
+
+/**
+ * @apiDefine RecipeSearchSuccess
+ * @apiSuccess {RecipeSummaryShort[]} recipes List of recipes summary corresponding to the search request, sorted by pertinence
+ * @apiSuccess {number} count Total number of recipes matching the search request
+ */

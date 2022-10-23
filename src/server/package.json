@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@altostra/type-validations": "^2.6.5",
+    "apidoc": "^0.53.1",
     "body-parser": "^1.20.1",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
@@ -29,9 +30,12 @@
   "scripts": {
     "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint *.ts **/*.ts"
+    "lint": "eslint *.ts **/*.ts",
+    "doc": "npx apidoc -i . -o doc/"
   },
-  "keywords": ["server"],
+  "keywords": [
+    "server"
+  ],
   "author": "raza6",
   "license": ""
 }
