@@ -6,6 +6,7 @@ interface RecipeSummary {
     prepTime: number;
     cookingTime: number;
     comment: number | null;
+    hasImg: boolean;
 }
 
 interface Ingredient {

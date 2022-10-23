@@ -53,6 +53,21 @@ export default class recipeService {
     }
   }
 
+  public static async setRecipeImg(recipeId: string, hasImg: boolean): Promise<boolean> {
+    if (recipeId) {
+      try {
+        await MongoDB.setRecipeImg(recipeId, hasImg);
+        return true;
+      } catch (err: unknown) {
+        console.log(`🧨 Recipe not edited (Id : ${recipeId}), reason : ${err}`);
+        return false;
+      }
+    } else {
+      console.log('🧨 Recipe not edited, reason : recipe Id is empty');
+    }
+    return false;
+  }
+
   public static async editRecipe(recipeId: string, recipe: Recipe): Promise<boolean> {
     if (recipeId && recipe.slugId === recipeId) {
       if (isRecipe(

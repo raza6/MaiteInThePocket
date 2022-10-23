@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import MainService from '../../services/mainService';
 import { Ingredient, Recipe } from '../../types/recipes';
-import { withParams } from '../../utils';
+import { getRecipeImg, withParams } from '../../utils';
 import Image from 'react-bootstrap/Image';
 import './recipeDetail.scss';
 import { Col, Row, Stack } from 'react-bootstrap';
@@ -30,7 +30,10 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
         <Col>
           <Row>
             <Col id="recipeSummaryDetail">
-              <Image alt={`Photo de ${this.state.recipe?.summary.name}`} src={process.env.PUBLIC_URL + '/placeholder.jpg'}></Image>
+              <Image 
+                alt={`Photo de ${this.state.recipe?.summary.name}`} 
+                src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
+              ></Image>
               <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper">
                 <span>
                   <AiOutlinePieChart />

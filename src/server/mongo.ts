@@ -72,6 +72,15 @@ export default class MongoDB {
     );
   }
 
+  public static async setRecipeImg(recipeId: string, hasImg: boolean): Promise<void> {
+    await MongoDB.run(
+      () => MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes).updateOne(
+        { slugId: recipeId },
+        { $set: { 'recipe.summary': hasImg } },
+      ),
+    );
+  }
+
   public static async editRecipe(recipeId: string, recipe: Recipe): Promise<void> {
     await MongoDB.run(
       () => MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes).replaceOne({ slugId: recipeId }, recipe),

@@ -14,6 +14,7 @@ const isRecipeSummary = objectOf<RecipeSummary>({
   prepTime: primitives.number,
   cookingTime: primitives.number,
   comment: primitives.maybeNumber,
+  hasImg: primitives.boolean,
 });
 
 const isIngredient = objectOf<Ingredient>({

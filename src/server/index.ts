@@ -93,13 +93,15 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
       } else {
         const fileExt = req.files.img.mimetype === 'image/png' ? 'png' : 'jpg';
         req.files.img.mv(`./static/img/${recipeId}.${fileExt}`);
+        await recipeService.setRecipeImg(recipeId, true);
       }
     }
   }
 
   // TODO
-  // Handle error (too big, wrong width/length)
+  // Handle error (wrong width/length)
   // Resize img (jimp)
+  // Convert to jpg
 
   res.status(error ? 400 : 200).send(error);
 });
