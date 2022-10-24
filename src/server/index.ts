@@ -2,6 +2,7 @@ import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import colors from 'colors';
+import Jimp from 'jimp';
 import express, { Request, Response } from 'express';
 import recipeService from './recipeService';
 import MongoDB from './mongo';
@@ -70,6 +71,7 @@ serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
  * @apiError (400) {string} FileAttachedSize File attached with the request are more than 4MB in size
  * @apiError (400) {string} NoFileAttached No image file attached with the request
  * @apiError (400) {string} RecipeNotFound Recipe with id <code>id</code> was not found
+ * @apiError (400) {string} ImageManipulation Fatal error while manipulating the recipe image
  */
 serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
   let error;
@@ -83,7 +85,7 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
 
     if (!['image/jpeg', 'image/png'].includes(reqFile.mimetype)) {
       error = 'Attached file is not a .png or a .jpg';
-    } else if (req.files.img.size >= 4 * 1024 * 1024) {
+    } else if (reqFile.size >= 4 * 1024 * 1024) {
       error = 'Attached file size is more than 4MB';
     } else {
       const recipeId = req.params.id;
@@ -91,17 +93,19 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
       if (!await recipeService.checkRecipe(recipeId)) {
         error = `Recipe ${recipeId} does not exist`;
       } else {
-        const fileExt = req.files.img.mimetype === 'image/png' ? 'png' : 'jpg';
-        req.files.img.mv(`./static/img/${recipeId}.${fileExt}`);
-        await recipeService.setRecipeImg(recipeId, true);
+        Jimp.read(reqFile.tempFilePath)
+          .then(async (image) => {
+            await image
+              .cover(1000, 667)
+              .writeAsync(`./static/img/${recipeId}.jpg`);
+            await recipeService.setRecipeImg(recipeId, true);
+          })
+          .catch((err) => {
+            error = `Error while manipulating image : ${err}`;
+          });
       }
     }
   }
-
-  // TODO
-  // Handle error (wrong width/length)
-  // Resize img (jimp)
-  // Convert to jpg
 
   res.status(error ? 400 : 200).send(error);
 });

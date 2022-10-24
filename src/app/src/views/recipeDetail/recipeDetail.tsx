@@ -20,7 +20,12 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
   async componentDidMount() {
     const { id } = this.props.params;
     const recipe = await MainService.getRecipe(id);
+    document.title = `${recipe.summary.name} - Maite in the Pocket`;
     this.setState({ recipe });
+  }
+
+  componentWillUnmount() {
+    document.title = 'Maite in the Pocket';
   }
 
   render() {
