@@ -3,11 +3,12 @@ import MainService from '../../services/mainService';
 import { Ingredient, Recipe } from '../../types/recipes';
 import { getRecipeImg, withParams } from '../../utils';
 import Image from 'react-bootstrap/Image';
-import './recipeDetail.scss';
 import { Col, Row, Stack } from 'react-bootstrap';
-import { FiClock } from 'react-icons/fi';
+import { FiClock, FiEdit } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
+import { Link } from 'react-router-dom';
+import './recipeDetail.scss';
 
 class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recipe | undefined }> {
   constructor(props: { params: { id: string } }) {
@@ -40,11 +41,12 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
                 src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
               ></Image>
               <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper">
-                <span>
-                  <AiOutlinePieChart />
-                  {this.state.recipe?.summary.servings !== undefined ? 
-                    `${this.state.recipe?.summary.servings} part${this.state.recipe?.summary.servings > 1 ? 's' : ''}`
-                    : ''}</span>
+                {this.state.recipe?.summary.servings !== undefined ? 
+                  <span>
+                    <AiOutlinePieChart />
+                    {`${this.state.recipe?.summary.servings} part${this.state.recipe?.summary.servings > 1 ? 's' : ''}`}
+                  </span>
+                  : ''}
                 <span><FiClock />{this.state.recipe?.summary.prepTime}mn</span>
                 <span><AiOutlineFire />{this.state.recipe?.summary.cookingTime}mn</span>
               </Stack>
@@ -60,6 +62,9 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
                     </li>)}
                   </ul>
                 </div>)}
+            </Col>
+            <Col id="recipeActionWrapper">
+              <Link to={`/app/recipe/edit/${this.state.recipe?.slugId}`}><FiEdit/></Link>
             </Col>
           </Row>
           <Row id="recipeStepsWrapper">

@@ -1,11 +1,20 @@
-#recipeDetailWrapper {
+#recipeEditWrapper {
   h1 {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
   .row {
     margin-left: 0;
     margin-right: 0;
+  }
+
+  #recipeEditActionWrapper {
+    justify-content: center;
+    margin-bottom: 16px;
+  
+    svg {
+      color: var(--mp-dark-base);
+    }
   }
   
   #recipeSummaryDetail {
@@ -36,11 +45,6 @@
 
   #recipeIngredientsWrapper {
     margin-left: 32px;
-  }
-
-  #recipeActionWrapper {
-    flex: 0;
-    margin-right: 48px;
   }
 
   #recipeStepsWrapper {

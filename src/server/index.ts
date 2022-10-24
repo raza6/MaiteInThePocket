@@ -96,7 +96,7 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
         Jimp.read(reqFile.tempFilePath)
           .then(async (image) => {
             await image
-              .cover(1000, 667)
+              .cover(600, 200)
               .writeAsync(`./static/img/${recipeId}.jpg`);
             await recipeService.setRecipeImg(recipeId, true);
           })

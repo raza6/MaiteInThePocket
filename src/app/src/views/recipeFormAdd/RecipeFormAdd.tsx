@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { FiPlusSquare } from 'react-icons/fi';
 
-class RecipesForm extends Component {  
+class RecipesFormAdd extends Component {  
   render() {
     return (
       <div className="col">
@@ -15,4 +15,4 @@ class RecipesForm extends Component {
   }
 }
 
-export default RecipesForm;
+export default RecipesFormAdd;
