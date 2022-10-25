@@ -83,6 +83,22 @@
   --bs-link-color: var(--mp-light-base);
   --bs-border-color: var(--mp-dark-lighter);
   --bs-link-hover-color: var(--mp-theme);
+  
+  .modal {
+    --bs-modal-bg: var(--mp-dark-base);
+
+    .btn-secondary {
+      --bs-btn-color: var(--mp-black);
+      --bs-btn-bg: var(--mp-light-base);
+      --bs-btn-border-color: var(--mp-light-base);
+      --bs-btn-hover-color: var(--mp-black);
+      --bs-btn-hover-bg: var(--mp-light-base);
+      --bs-btn-hover-border-color: var(--mp-light-base);
+      --bs-btn-active-color: var(--mp-black);
+      --bs-btn-active-bg: var(--mp-light-base);
+      --bs-btn-active-border-color: var(--mp-light-base);
+    }
+  }
 }
 
 body {

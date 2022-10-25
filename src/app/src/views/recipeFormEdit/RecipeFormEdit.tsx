@@ -1,30 +1,63 @@
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import { Row, Col, Stack, Image, Button, Modal } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckSquare, FiClock, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
 import { getRecipeImg, withParams } from '../../utils';
 import './RecipeFormEdit.scss';
 
-class RecipesFormEdit extends Component<{ params: { id: string } }, { recipe: Recipe | undefined, show: boolean }> {  
+enum EModalEdit {
+  CancelEdit = 0,
+  DeleteRecipe = 1
+}
+
+interface RecipeFormEditState {
+  recipe: Recipe | undefined,
+  show: Array<boolean>,
+  currentModal: EModalEdit | undefined,
+  navigate: string | undefined
+}
+
+class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEditState> {  
   constructor(props: { params: { id: string } }) {
     super(props);
     this.state = {
       recipe: undefined,
-      show: false,
+      show: new Array(2).fill(false),
+      currentModal: undefined,
+      navigate: undefined
     };
 
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleClose() {
-    this.setState({ show: false });
+  handleClose(currentModal: EModalEdit) {
+    this.setState({ show: this.state.show.map((v, i) => i === currentModal ? false : v) });
   }
 
-  handleShow() {
-    this.setState({ show: true });
+  handleShow(currentModal: EModalEdit) {
+    this.setState({ show: this.state.show.map((v, i) => i === currentModal ? true : v) });
+  }
+
+  handleSubmit() {
+    //await submit call
+    this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
+  }
+
+  handleCancel() {
+    this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
+  }
+
+  handleDelete() {
+    //await delete call
+    this.setState({ navigate: '/app/recipe/list' });
   }
 
   async componentDidMount() {
@@ -32,16 +65,16 @@ class RecipesFormEdit extends Component<{ params: { id: string } }, { recipe: Re
     const recipe = await MainService.getRecipe(id);
     this.setState({ recipe });
   }
-  
-  // FORM IN MODAL
+
   render() {
     return (
       <Col id="recipeEditWrapper">
+        {this.state.navigate && <Navigate to={this.state.navigate}/>}
         <h1>Modifier une recette</h1>
         <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
-          <Button variant="success"><FiCheckSquare /></Button>
-          <Button variant="warning" onClick={() => this.handleShow()}><FiXSquare /></Button>
-          <Button variant="danger"><FiTrash2 /></Button>
+          <Button variant="success" onClick={this.handleSubmit}><FiCheckSquare /></Button>
+          <Button variant="warning" onClick={() => this.handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
+          <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>
         </Stack>
         <Col>
           <Row>
@@ -72,15 +105,32 @@ class RecipesFormEdit extends Component<{ params: { id: string } }, { recipe: Re
           </Row>
         </Col>
 
-        <Modal show={this.state.show} onHide={this.handleClose}>
-          <Modal.Header closeButton>
+        <Modal show={this.state.show[EModalEdit.CancelEdit]} onHide={() => this.handleClose(EModalEdit.CancelEdit)}>
+          <Modal.Header>
             <Modal.Title>Annuler les modifications</Modal.Title>
           </Modal.Header>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
+            <Button variant="secondary" onClick={() => this.handleClose(EModalEdit.CancelEdit)}>
               Fermer
             </Button>
-            <Button variant="primary" onClick={this.handleClose}>
+            <Button variant="warning" onClick={this.handleCancel}>
+              Continuer
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={this.state.show[EModalEdit.DeleteRecipe]} onHide={() => this.handleClose(EModalEdit.DeleteRecipe)}>
+          <Modal.Header>
+            <Modal.Title>Supprimer la recette</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>La suppression est définitive</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => this.handleClose(EModalEdit.DeleteRecipe)}>
+              Fermer
+            </Button>
+            <Button variant="danger" onClick={this.handleDelete}>
               Continuer
             </Button>
           </Modal.Footer>
@@ -90,4 +140,4 @@ class RecipesFormEdit extends Component<{ params: { id: string } }, { recipe: Re
   }
 }
 
-export default withParams(RecipesFormEdit);
+export default withParams(RecipeFormEdit);
