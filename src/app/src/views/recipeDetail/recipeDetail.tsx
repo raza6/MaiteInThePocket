@@ -7,22 +7,27 @@ import { Col, Row, Stack } from 'react-bootstrap';
 import { FiClock, FiEdit } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import './recipeDetail.scss';
 
-class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recipe | undefined }> {
+class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recipe | undefined, navigate: string | undefined }> {
   constructor(props: { params: { id: string } }) {
     super(props);
     this.state = {
-      recipe: undefined 
+      recipe: undefined,
+      navigate: undefined
     };
   }
 
   async componentDidMount() {
     const { id } = this.props.params;
     const recipe = await MainService.getRecipe(id);
-    document.title = `${recipe.summary.name} - Maite in the Pocket`;
-    this.setState({ recipe });
+    if (recipe != null) {
+      document.title = `${recipe.summary.name} - Maite in the Pocket`;
+      this.setState({ recipe });
+    } else {
+      this.setState({ navigate: '/app/recipe/list' });
+    }
   }
 
   componentWillUnmount() {
@@ -32,6 +37,7 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
   render() {
     return (
       <div id="recipeDetailWrapper">
+        {this.state.navigate && <Navigate to={this.state.navigate}/>}
         <h1>{this.state.recipe?.summary.name}</h1>
         <Col>
           <Row>

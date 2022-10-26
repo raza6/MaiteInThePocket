@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import { Row, Col, Stack, Image, Button, Modal } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
@@ -63,7 +62,11 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
   async componentDidMount() {
     const { id } = this.props.params;
     const recipe = await MainService.getRecipe(id);
-    this.setState({ recipe });
+    if (recipe !== null) {
+      this.setState({ recipe });
+    } else {
+      this.setState({ navigate: '/app/recipe/list' });
+    }
   }
 
   render() {
