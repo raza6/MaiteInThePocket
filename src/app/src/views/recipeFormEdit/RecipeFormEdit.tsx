@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Stack, Image, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Stack, Image, Button, Modal, Form } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
-import { FiCheckSquare, FiClock, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { FiCheckSquare, FiClock, FiImage, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
@@ -35,6 +35,22 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleRecipeChange(value: string, recipeProperty: Array<string>) {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    if (recipeProperty[0] === 'summary') {
+      if (recipeProperty[1] === 'name') {
+        newRecipe.summary.name = value.trim();
+      } else if (recipeProperty[1] === 'servings') {
+        newRecipe.summary.servings = parseInt(value, 10);
+      } else if (recipeProperty[1] === 'cookingTime') {
+        newRecipe.summary.cookingTime = parseInt(value, 10);
+      } else if (recipeProperty[1] === 'prepTime') {
+        newRecipe.summary.prepTime = parseInt(value, 10);
+      }
+    }
+    this.setState({ recipe: newRecipe });
   }
 
   handleClose(currentModal: EModalEdit) {
@@ -79,22 +95,45 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
           <Button variant="warning" onClick={() => this.handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
           <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>
         </Stack>
-        <Col>
+        <Form>
           <Row>
             <Col id="recipeSummaryDetail">
-              <Image 
-                alt={`Photo de ${this.state.recipe?.summary.name}`}
-                src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
-              ></Image>
-              <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper">
-                {this.state.recipe?.summary.servings !== undefined ? 
-                  <span>
-                    <AiOutlinePieChart />
-                    {`${this.state.recipe?.summary.servings} part${this.state.recipe?.summary.servings > 1 ? 's' : ''}`}
-                  </span>
-                  : ''}
-                <span><FiClock />{this.state.recipe?.summary.prepTime}mn</span>
-                <span><AiOutlineFire />{this.state.recipe?.summary.cookingTime}mn</span>
+              <Form.Control size="sm" type="text" required id="recipeNameInput"
+                value={this.state.recipe?.summary.name ?? ''} minLength={1} maxLength={50} 
+                onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'name'])}
+              ></Form.Control>
+              <Stack direction="horizontal" gap={3} id="recipeImageInputWrapper">
+                <Image 
+                  alt={`Photo de ${this.state.recipe?.summary.name}`}
+                  src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
+                ></Image>
+                <Button>
+                  <FiImage />
+                </Button>
+              </Stack>
+              <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper"> 
+                <span>
+                  <AiOutlinePieChart />
+                  <Form.Control size="sm" type="number" required id="recipeServingsInput"
+                    value={this.state.recipe?.summary.servings ?? 1} min="1" 
+                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'servings'])}
+                  ></Form.Control>
+                  {` part${(this.state.recipe?.summary.servings ?? 1) > 1 ? 's' : ''}`}
+                </span>
+                <span>
+                  <FiClock />
+                  <Form.Control size="sm" type="number" required id="recipePreptimeInput"
+                    value={this.state.recipe?.summary.prepTime ?? 0} min="0" 
+                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'prepTime'])}
+                  ></Form.Control>mn
+                </span>
+                <span>
+                  <AiOutlineFire />
+                  <Form.Control size="sm" type="number" required id="recipeCookingtimeInput"
+                    value={this.state.recipe?.summary.cookingTime ?? 0} min="0" 
+                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'cookingTime'])}
+                  ></Form.Control>mn
+                </span>
               </Stack>
             </Col>
             <Col id="recipeIngredientsWrapper">
@@ -106,7 +145,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
               {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>{step}</li>)}
             </ol>
           </Row>
-        </Col>
+        </Form>
 
         <Modal show={this.state.show[EModalEdit.CancelEdit]} onHide={() => this.handleClose(EModalEdit.CancelEdit)}>
           <Modal.Header>

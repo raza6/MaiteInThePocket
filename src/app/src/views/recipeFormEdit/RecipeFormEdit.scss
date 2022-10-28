@@ -41,6 +41,20 @@
         }
       }
     }
+
+    #recipeNameInput {
+      width: calc(60% + 2rem + 24px);
+      margin-bottom: 8px;
+    }
+
+    #recipeImageInputWrapper {
+      justify-content: center;
+    }
+
+    #recipeServingsInput, #recipePreptimeInput, #recipeCookingtimeInput {
+      width: 70px;
+      margin-right: 4px;
+    }
   }
 
   #recipeIngredientsWrapper {
