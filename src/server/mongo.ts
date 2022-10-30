@@ -76,7 +76,7 @@ export default class MongoDB {
     await MongoDB.run(
       () => MongoDB.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes).updateOne(
         { slugId: recipeId },
-        { $set: { 'recipe.summary': hasImg } },
+        { $set: { 'summary.hasImg': hasImg } },
       ),
     );
   }
