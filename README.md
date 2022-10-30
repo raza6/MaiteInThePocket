@@ -4,7 +4,7 @@ Maite in the Pocket is an online cookbook application.
 
 ## Installation
 
-The project is splitted in two parts: **server** and **app**.
+The project is split in two parts: **server** and **app**.
 
 Both project have to be installed using `npm install` in both folders `src/server` and `src/app`.
 
@@ -12,7 +12,7 @@ Additionnaly a **MongoDB** server need to be available with a collection named `
 
 ## Usage
 
-To use the app locally :
+To use the app locally:
 
 Launch the server using `npm run start` in the `src/server` directory. Make sure the connection string to your mongo server is correct (`src/server/mongo.ts`). You can check that the server is launched by requesting the `/mp/test` endpoint.
 
