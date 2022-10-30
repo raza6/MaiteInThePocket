@@ -72,8 +72,10 @@
 
   --mp-light-lighter:#fffcf6;
   --mp-light-base:#ecdbba;
+  --mp-light-base2:#d6c8aa;
   --mp-light-darker:#a98d58;
-  --mp-dark-lighter:#2d2c2c;
+  --mp-dark-lighter:#2c2c2c;
+  --mp-dark-lighter2:#242424;
   --mp-dark-base:#161616;
   --mp-dark-darker:#070707;
   --mp-theme:#c84b31;
@@ -86,17 +88,39 @@
   
   .modal {
     --bs-modal-bg: var(--mp-dark-base);
+  }
 
-    .btn-secondary {
-      --bs-btn-color: var(--mp-black);
-      --bs-btn-bg: var(--mp-light-base);
-      --bs-btn-border-color: var(--mp-light-base);
-      --bs-btn-hover-color: var(--mp-black);
-      --bs-btn-hover-bg: var(--mp-light-base);
-      --bs-btn-hover-border-color: var(--mp-light-base);
-      --bs-btn-active-color: var(--mp-black);
-      --bs-btn-active-bg: var(--mp-light-base);
-      --bs-btn-active-border-color: var(--mp-light-base);
+  .btn-primary {
+    --bs-btn-color: var(--mp-light-base);
+    --bs-btn-bg: var(--mp-dark-lighter);
+    --bs-btn-border-color: var(--mp-dark-lighter);
+    --bs-btn-hover-color: var(--mp-light-base);
+    --bs-btn-hover-bg: var(--mp-dark-lighter2);
+    --bs-btn-hover-border-color: var(--mp-dark-lighter2);
+    --bs-btn-active-color: var(--mp-light-base);
+    --bs-btn-active-bg: var(--mp-dark-lighter2);
+    --bs-btn-active-border-color: var(--mp-dark-lighter2);
+  }
+
+  .btn-secondary {
+    --bs-btn-color: var(--mp-black);
+    --bs-btn-bg: var(--mp-light-base);
+    --bs-btn-border-color: var(--mp-light-base);
+    --bs-btn-hover-color: var(--mp-black);
+    --bs-btn-hover-bg: var(--mp-light-base2);
+    --bs-btn-hover-border-color: var(--mp-light-base2);
+    --bs-btn-active-color: var(--mp-black);
+    --bs-btn-active-bg: var(--mp-light-base2);
+    --bs-btn-active-border-color: var(--mp-light-base2);
+  }
+
+  .form-control {
+    background-color: var(--mp-dark-lighter);
+    border-color: var(--mp-dark-lighter);
+    color: var(--mp-light-base);
+
+    &:focus {
+      box-shadow: 0 0 0 0.25rem rgb(44 44 44 / 25%);
     }
   }
 }

@@ -15,7 +15,9 @@
     border-right: 1px solid var(--mp-light-base);
 
     img {
-      width: 60%;
+      object-fit: cover;
+      width: 300px;
+      height: 200px;
       margin-bottom: 4px;
     }
 

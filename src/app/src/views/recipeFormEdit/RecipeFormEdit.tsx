@@ -15,6 +15,8 @@ enum EModalEdit {
 
 interface RecipeFormEditState {
   recipe: Recipe | undefined,
+  recipeImg: File | undefined,
+  recipeImgUrl: string | undefined,
   show: Array<boolean>,
   currentModal: EModalEdit | undefined,
   navigate: string | undefined
@@ -25,6 +27,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     super(props);
     this.state = {
       recipe: undefined,
+      recipeImg: undefined,
+      recipeImgUrl: undefined,
       show: new Array(2).fill(false),
       currentModal: undefined,
       navigate: undefined
@@ -35,6 +39,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleImgChange = this.handleImgChange.bind(this);
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
@@ -51,6 +56,18 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       }
     }
     this.setState({ recipe: newRecipe });
+  }
+
+  handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file !== undefined) {
+      if (file.size > 4 * 1024 * 1024) {
+        console.error('too big');
+      } else {
+        const fileUrl = window.URL.createObjectURL(file);
+        this.setState({ recipeImg: file, recipeImgUrl: fileUrl });
+      }
+    }
   }
 
   handleClose(currentModal: EModalEdit) {
@@ -105,13 +122,20 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
               <Stack direction="horizontal" gap={3} id="recipeImageInputWrapper">
                 <Image 
                   alt={`Photo de ${this.state.recipe?.summary.name}`}
-                  src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
+                  src={
+                    this.state.recipeImg !== undefined
+                      ? this.state.recipeImgUrl
+                      : getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)
+                  }
                 ></Image>
-                <Button>
-                  <FiImage />
+                <Button variant="primary" id="recipeImgButton">
+                  <label htmlFor="recipeImgInput">
+                    <FiImage />
+                  </label>
+                  <input type="file" accept=".jpeg,.jpg,.png,image/jpeg,image/png" name="img" id="recipeImgInput" onChange={this.handleImgChange}></input>
                 </Button>
               </Stack>
-              <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper"> 
+              <Stack direction="horizontal" gap={4} id="recipeSummaryCounterWrapper"> 
                 <span>
                   <AiOutlinePieChart />
                   <Form.Control size="sm" type="number" required id="recipeServingsInput"
