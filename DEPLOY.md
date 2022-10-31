@@ -51,6 +51,12 @@ The app is simply served as static files. It just needs to be built by the dedic
 
 ## Appendix - File configuration
 
+### Database dump
+
+The following command can be used with cron to create backups of the database on a regular basis
+
+`docker-compose -f /path/to/docker-compose.yaml exec -T mongo sh -c 'mongodump --authenticationDatabase admin -u user -p ******* --db MaiteInThePocket --archive' > "/path/to/dump/directory/db_$(date +"%d-%m-%Y").dump"`
+
 ### docker-compose.yaml
 
 ```yaml
