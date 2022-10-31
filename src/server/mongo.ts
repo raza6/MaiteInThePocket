@@ -11,7 +11,11 @@ export default class MongoDB {
 
   private static dbConnect = 'mongodb://maite:maitepwd@raza6.fr:27017';
 
-  private client: MongoClient = new MongoClient(MongoDB.dbConnect);
+  private client: MongoClient;
+
+  constructor() {
+    this.client = new MongoClient(MongoDB.dbConnect);
+  }
 
   private async run(command: Function): Promise<void|unknown> {
     let res;
