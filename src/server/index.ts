@@ -24,7 +24,8 @@ serv.use('/mp/static/img', express.static('static/img'));
 
 // Start CashMire server
 console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
-serv.listen(PORT, MongoDB.start);
+const mongoStart = new MongoDB();
+serv.listen(PORT, mongoStart.start);
 
 /**
  * API

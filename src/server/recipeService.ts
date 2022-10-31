@@ -8,7 +8,8 @@ export default class recipeService {
   public static async checkRecipe(recipeId: string): Promise<boolean> {
     if (recipeId) {
       try {
-        return await MongoDB.checkRecipe(recipeId);
+        const mongo = new MongoDB();
+        return await mongo.checkRecipe(recipeId);
       } catch (err: unknown) {
         console.log(`🧨 Could not verify recipe (Id : ${recipeId}), reason : ${err}`);
         return false;
@@ -22,7 +23,8 @@ export default class recipeService {
   public static async getRecipe(recipeId: string): Promise<Recipe | null> {
     if (recipeId) {
       try {
-        return await MongoDB.getRecipe(recipeId);
+        const mongo = new MongoDB();
+        return await mongo.getRecipe(recipeId);
       } catch (err: unknown) {
         console.log(`🧨 Recipe not retrieved (Id : ${recipeId}), reason : ${err}`);
         return null;
@@ -43,7 +45,8 @@ export default class recipeService {
     ) {
       const recipeDb = { ...recipe, slugId: new ShortUniqueId()() };
       try {
-        await MongoDB.addRecipe(recipeDb);
+        const mongo = new MongoDB();
+        await mongo.addRecipe(recipeDb);
         return true;
       } catch (err: unknown) {
         return false;
@@ -56,7 +59,8 @@ export default class recipeService {
   public static async setRecipeImg(recipeId: string, hasImg: boolean): Promise<boolean> {
     if (recipeId) {
       try {
-        await MongoDB.setRecipeImg(recipeId, hasImg);
+        const mongo = new MongoDB();
+        await mongo.setRecipeImg(recipeId, hasImg);
         return true;
       } catch (err: unknown) {
         console.log(`🧨 Recipe not edited (Id : ${recipeId}), reason : ${err}`);
@@ -78,7 +82,8 @@ export default class recipeService {
       )
       ) {
         try {
-          await MongoDB.editRecipe(recipeId, recipe);
+          const mongo = new MongoDB();
+          await mongo.editRecipe(recipeId, recipe);
           return true;
         } catch (err: unknown) {
           console.log(`🧨 Recipe not edited (Id : ${recipeId}), reason : ${err}`);
@@ -94,7 +99,8 @@ export default class recipeService {
   public static async deleteRecipe(recipeId: string): Promise<boolean> {
     if (recipeId) {
       try {
-        await MongoDB.deleteRecipe(recipeId);
+        const mongo = new MongoDB();
+        await mongo.deleteRecipe(recipeId);
         return true;
       } catch (err: unknown) {
         console.log(`🧨 Recipe not deleted (Id : ${recipeId}), reason : ${err}`);
@@ -112,7 +118,8 @@ export default class recipeService {
     pageSize: number,
   ): Promise<RecipeSummarySearchResponse> {
     try {
-      return await MongoDB.searchRecipe(term.trim(), pageIndex, pageSize);
+      const mongo = new MongoDB();
+      return await mongo.searchRecipe(term.trim(), pageIndex, pageSize);
     } catch (err: unknown) {
       return {
         recipes: [],
