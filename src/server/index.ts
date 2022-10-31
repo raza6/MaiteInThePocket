@@ -77,7 +77,7 @@ serv.get('/mp/recipe/:id', async (req: Request, res: Response) => {
 serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
   let error;
   // check if file is valid
-  if (req.files === undefined || req.files.img === undefined) {
+  if (req.files === undefined || req.files === null || req.files.img === undefined) {
     error = 'No img file attached';
   } else if (Array.isArray(req.files.img)) {
     error = 'More than 1 img file attached';
