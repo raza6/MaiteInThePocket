@@ -40,6 +40,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleImgChange = this.handleImgChange.bind(this);
+    this.handleAddStep = this.handleAddStep.bind(this);
+    this.handleRemoveStep = this.handleRemoveStep.bind(this);
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
@@ -54,6 +56,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       } else if (recipeProperty[1] === 'prepTime') {
         newRecipe.summary.prepTime = parseInt(value, 10);
       }
+    } else if (recipeProperty[0] === 'steps'){
+      newRecipe.steps[parseInt(recipeProperty[1], 10)] = value;
     }
     this.setState({ recipe: newRecipe });
   }
@@ -68,6 +72,18 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
         this.setState({ recipeImg: file, recipeImgUrl: fileUrl });
       }
     }
+  }
+
+  handleAddStep() {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.steps.push('');
+    this.setState({ recipe: newRecipe });
+  }
+
+  handleRemoveStep(index: number) {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.steps.splice(index, 1);
+    this.setState({ recipe: newRecipe });
   }
 
   handleClose(currentModal: EModalEdit) {
@@ -175,12 +191,14 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
               <ol>
                 {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>
                   <div className="recipeStepWrapper">
-                    <Form.Control as="textarea" rows={2} value={step}/>
-                    <Button variant="primary"><FiTrash2 /></Button>
+                    <Form.Control as="textarea" rows={2} value={step}
+                      onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['steps', i.toString()])}
+                    />
+                    <Button variant="primary" onClick={() => this.handleRemoveStep(i)}><FiTrash2 /></Button>
                   </div>
                 </li>)}
               </ol>
-              <Button variant="primary"><FiPlusSquare /></Button>
+              <Button variant="primary" onClick={this.handleAddStep}><FiPlusSquare /></Button>
             </Col>
           </Row>
         </Form>
