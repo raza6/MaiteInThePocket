@@ -9,7 +9,9 @@ export default class MongoDB {
 
   private static collectionRecipes = 'Recipes';
 
-  private client!: MongoClient;
+  private static dbConnect = 'mongodb://maite:maitepwd@raza6.fr:27017';
+
+  private client: MongoClient = new MongoClient(MongoDB.dbConnect);
 
   private async run(command: Function): Promise<void|unknown> {
     let res;
@@ -27,8 +29,6 @@ export default class MongoDB {
   }
 
   public async start(): Promise<void> {
-    this.client = new MongoClient('mongodb://maite:maitepwd@raza6.fr:27017');
-
     try {
       await this.client.connect();
 
