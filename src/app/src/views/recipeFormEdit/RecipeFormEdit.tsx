@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Stack, Image, Button, Modal, Form } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
-import { FiCheckSquare, FiClock, FiImage, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { FiCheckSquare, FiClock, FiImage, FiPlusSquare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
@@ -121,7 +121,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
         <Form>
           <Row>
             <Col id="recipeSummaryDetail">
-              <Form.Control size="sm" type="text" required id="recipeNameInput"
+              <Form.Control type="text" required id="recipeNameInput"
                 value={this.state.recipe?.summary.name ?? ''} minLength={1} maxLength={50} 
                 onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'name'])}
               ></Form.Control>
@@ -170,10 +170,18 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
               <h4>Ingrédients :</h4>
             </Col>
           </Row>
-          <Row id="recipeStepsWrapper">
-            <ol>
-              {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>{step}</li>)}
-            </ol>
+          <Row>
+            <Col id="recipeStepsWrapper">
+              <ol>
+                {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>
+                  <div className="recipeStepWrapper">
+                    <Form.Control as="textarea" rows={2} value={step}/>
+                    <Button variant="primary"><FiTrash2 /></Button>
+                  </div>
+                </li>)}
+              </ol>
+              <Button variant="primary"><FiPlusSquare /></Button>
+            </Col>
           </Row>
         </Form>
 
