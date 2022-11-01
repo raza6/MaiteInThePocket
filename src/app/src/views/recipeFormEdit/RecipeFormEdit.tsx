@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Stack, Image, Button, Modal, Form } from 'react-bootstrap';
+import { Row, Col, Stack, Image, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckSquare, FiClock, FiImage, FiPlusSquare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
@@ -19,7 +19,8 @@ interface RecipeFormEditState {
   recipeImgUrl: string | undefined,
   show: Array<boolean>,
   currentModal: EModalEdit | undefined,
-  navigate: string | undefined
+  navigate: string | undefined,
+  errors: Array<string>
 }
 
 class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEditState> {  
@@ -31,7 +32,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       recipeImgUrl: undefined,
       show: new Array(2).fill(false),
       currentModal: undefined,
-      navigate: undefined
+      navigate: undefined,
+      errors: []
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -42,6 +44,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     this.handleImgChange = this.handleImgChange.bind(this);
     this.handleAddStep = this.handleAddStep.bind(this);
     this.handleRemoveStep = this.handleRemoveStep.bind(this);
+    this.handleCloseError = this.handleCloseError.bind(this);
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
@@ -66,7 +69,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     const file = e.target.files?.[0];
     if (file !== undefined) {
       if (file.size > 4 * 1024 * 1024) {
-        console.error('too big');
+        this.setState({ errors: ['L\'image est trop volumineuse'] });
       } else {
         const fileUrl = window.URL.createObjectURL(file);
         this.setState({ recipeImg: file, recipeImgUrl: fileUrl });
@@ -84,6 +87,12 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.steps.splice(index, 1);
     this.setState({ recipe: newRecipe });
+  }
+
+  handleCloseError(index: number) {
+    const newErrors = [...this.state.errors];
+    newErrors.splice(index, 1);
+    this.setState({ errors: newErrors });
   }
 
   handleClose(currentModal: EModalEdit) {
@@ -128,6 +137,9 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     return (
       <Col id="recipeEditWrapper">
         {this.state.navigate && <Navigate to={this.state.navigate}/>}
+        {this.state.errors.map((error, i) => <Alert dismissible key={`alert_${i}`} variant="danger" onClose={() => this.handleCloseError(i)}>
+          {error}
+        </Alert>)}
         <h1>Modifier une recette</h1>
         <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
           <Button variant="success" onClick={this.handleSubmit}><FiCheckSquare /></Button>
