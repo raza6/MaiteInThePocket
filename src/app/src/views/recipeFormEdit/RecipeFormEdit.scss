@@ -73,13 +73,51 @@
   }
 
   #recipeIngredientsWrapper {
-    margin-left: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .ingredientGroupWrapper {
+      width: 100%;
+
+      .ingredientGroupInputWrapper {
+        margin-bottom: 8px;
+        display: flex;
+  
+        .ingredientGroupInput {
+          width: 300px;
+          margin-right: 4px;
+        }
+      }
+  
+      .ingredientAddWrapper {
+        display: flex;
+        justify-content: center;
+      }
+
+      ul {
+        list-style-type: none;
+  
+        li {
+          margin-bottom: 4px;
+  
+          .ingredientQuantityInput {
+            width: 80px;
+          }
+
+          .ingredientUnitInput {
+            width: 150px;
+          }
+        }
+      }
+    }
   }
 
   #recipeStepsWrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 16px;
 
     ol {
       display: flex;

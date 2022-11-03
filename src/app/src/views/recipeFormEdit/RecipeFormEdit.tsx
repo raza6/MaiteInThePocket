@@ -5,6 +5,7 @@ import { FiCheckSquare, FiClock, FiImage, FiPlusSquare, FiTrash2, FiXSquare } fr
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
+import { ELengthUnit, EMassUnit, EVolumeUnit } from '../../types/units';
 import { getRecipeImg, withParams } from '../../utils';
 import './RecipeFormEdit.scss';
 
@@ -45,6 +46,10 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     this.handleAddStep = this.handleAddStep.bind(this);
     this.handleRemoveStep = this.handleRemoveStep.bind(this);
     this.handleCloseError = this.handleCloseError.bind(this);
+    this.handleAddIngredientGroup = this.handleAddIngredientGroup.bind(this);
+    this.handleAddIngredient = this.handleAddIngredient.bind(this);
+    this.handleRemoveIngredientGroup = this.handleRemoveIngredientGroup.bind(this);
+    this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
@@ -86,6 +91,30 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
   handleRemoveStep(index: number) {
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.steps.splice(index, 1);
+    this.setState({ recipe: newRecipe });
+  }
+
+  handleAddIngredientGroup() {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
+    this.setState({ recipe: newRecipe });
+  }
+
+  handleRemoveIngredientGroup(index: number) {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.ingredients.splice(index, 1);
+    this.setState({ recipe: newRecipe });
+  }
+
+  handleAddIngredient(index: number) {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
+    this.setState({ recipe: newRecipe });
+  }
+
+  handleRemoveIngredient(indexGroup: number, indexIngredient: number) {
+    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    newRecipe.ingredients[indexGroup].ingredientsList.splice(indexIngredient, 1);
     this.setState({ recipe: newRecipe });
   }
 
@@ -196,6 +225,42 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
             </Col>
             <Col id="recipeIngredientsWrapper">
               <h4>Ingrédients :</h4>
+              {this.state.recipe?.ingredients.map((group, i) => 
+                <div className="ingredientGroupWrapper" key={'ingredientGroup_' + i}>
+                  <div className="ingredientGroupInputWrapper">
+                    <Form.Control value={group.ingredientsGroupName ?? ''} className="ingredientGroupInput"></Form.Control>
+                    <Button variant="primary" onClick={() => this.handleRemoveIngredientGroup(i)}><FiTrash2 /></Button>
+                  </div>
+                  <ul>
+                    {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
+                      <Stack direction="horizontal" gap={1}>
+                        <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"></Form.Control>
+                        <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput">
+                          <option value=''></option>
+                          <option value={EMassUnit.g}>g</option>
+                          <option value={EMassUnit.g}>kg</option>
+                          <option value={EVolumeUnit.teaspoon}>c.à.c</option>
+                          <option value={EVolumeUnit.tablespoon}>c.à.s</option>
+                          <option value={EVolumeUnit.handfull}>poignée</option>
+                          <option value={EVolumeUnit.pinch}>pincée</option>
+                          <option value={EVolumeUnit.ml}>ml</option>
+                          <option value={EVolumeUnit.cl}>cl</option>
+                          <option value={EVolumeUnit.dl}>dl</option>
+                          <option value={EVolumeUnit.l}>l</option>
+                          <option value={ELengthUnit.mm}>mm</option>
+                          <option value={ELengthUnit.cm}>cm</option>
+                          <option value={ELengthUnit.m}>m</option>
+                        </Form.Select>
+                        <Form.Control value={ingredient.name}></Form.Control>
+                        <Button variant="primary" onClick={() => this.handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
+                      </Stack>
+                    </li>)}
+                    <div className="ingredientAddWrapper">
+                      <Button variant="primary" onClick={() => this.handleAddIngredient(i)}><FiPlusSquare /> Ingrédient</Button>
+                    </div>
+                  </ul>
+                </div>)}
+              <Button variant="primary" onClick={this.handleAddIngredientGroup}><FiPlusSquare /> Groupe</Button>
             </Col>
           </Row>
           <Row>
