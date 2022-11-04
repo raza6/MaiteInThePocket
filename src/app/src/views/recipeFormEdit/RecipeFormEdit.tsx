@@ -158,6 +158,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
         const recipeImg = this.state.recipeImg ?? new File([], '');
         await MainService.addImgRecipe(recipeId, recipeImg);
       }
+      // Temp fix
+      recipe.summary.comment ??= undefined;
       await MainService.editRecipe(recipeId, recipe);
       setTimeout(() => {
         this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
