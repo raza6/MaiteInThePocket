@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import MainService from '../../services/mainService';
 import { Ingredient, Recipe } from '../../types/recipes';
-import { getRecipeImg, withParams } from '../../utils';
+import { getRecipeImg, withRouter } from '../../utils';
 import Image from 'react-bootstrap/Image';
 import { Col, Row, Stack } from 'react-bootstrap';
 import { FiClock, FiEdit } from 'react-icons/fi';
@@ -10,8 +10,19 @@ import { EVolumeUnit } from '../../types/units';
 import { Link, Navigate } from 'react-router-dom';
 import './recipeDetail.scss';
 
-class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recipe | undefined, navigate: string | undefined }> {
-  constructor(props: { params: { id: string } }) {
+interface RecipeDetailState { 
+  recipe: Recipe | undefined,
+  navigate: string | undefined
+}
+
+interface RecipeDetailProps { 
+  router: {
+    params: { id: string }
+  }
+}
+
+class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
+  constructor(props: RecipeDetailProps) {
     super(props);
     this.state = {
       recipe: undefined,
@@ -20,7 +31,7 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
   }
 
   async componentDidMount() {
-    const { id } = this.props.params;
+    const { id } = this.props.router.params;
     const recipe = await MainService.getRecipe(id);
     if (recipe != null) {
       document.title = `${recipe.summary.name} - Maite in the Pocket`;
@@ -130,4 +141,4 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
   }
 }
 
-export default withParams(RecipeDetail);
+export default withRouter(RecipeDetail);

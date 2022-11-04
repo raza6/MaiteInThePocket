@@ -5,7 +5,7 @@ import { FiSearch, FiXCircle } from 'react-icons/fi';
 import './RecipeList.scss';
 import MainService from '../../services/mainService';
 import { RecipeSummaryShort } from '../../types/recipes';
-import { debounce, getRandomOfList, withParams } from '../../utils';
+import { debounce, getRandomOfList, withRouter } from '../../utils';
 
 interface RecipeListState {
   recipes: Array<RecipeSummaryShort>,
@@ -16,8 +16,10 @@ interface RecipeListState {
 }
 
 interface RecipeListProps {
-  params: { currentPage: string },
-  searchParams: URLSearchParams,
+  router: {
+    params: { currentPage: string },
+    searchParams: URLSearchParams,
+  }
 }
 
 class RecipeList extends Component<RecipeListProps, RecipeListState> {
@@ -40,9 +42,9 @@ class RecipeList extends Component<RecipeListProps, RecipeListState> {
   }
 
   componentDidMount() {
-    const { currentPage } = this.props.params;
+    const { currentPage } = this.props.router.params;
     const currentPageClean = currentPage !== undefined ? parseInt(currentPage, 10) : 0;
-    const search = this.props.searchParams.get('search') ?? '';
+    const search = this.props.router.searchParams.get('search') ?? '';
     this.setState({ currentPage: currentPageClean, search });
   }
   
@@ -172,4 +174,4 @@ class RecipeList extends Component<RecipeListProps, RecipeListState> {
   }
 }
 
-export default withParams(RecipeList);
+export default withRouter(RecipeList);

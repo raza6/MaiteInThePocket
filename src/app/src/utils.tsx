@@ -1,10 +1,16 @@
 import React from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
-function withParams(Component: unknown): Function {
+function withRouter(Component: unknown): Function {
   // @ts-ignore
   // eslint-disable-next-line react/display-name
-  return (props: unknown) => <Component {...props} params={useParams()} searchParams={useSearchParams()[0]} />;
+  return (props: unknown) => <Component {...props}
+    router={{
+      params: useParams(), 
+      searchParams: useSearchParams()[0],
+      location: useLocation()
+    }}
+  />;
 }
 
 function getRandomOfList (list: Array<string>): string {
@@ -25,4 +31,4 @@ function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
     process.env.PUBLIC_URL + '/placeholder.jpg';
 }
 
-export { getRandomOfList, withParams, debounce, getRecipeImg };
+export { getRandomOfList, withRouter, debounce, getRecipeImg };

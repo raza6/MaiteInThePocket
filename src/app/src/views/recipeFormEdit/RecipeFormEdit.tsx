@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
-import { getRecipeImg, withParams } from '../../utils';
+import { getRecipeImg, withRouter } from '../../utils';
 import './RecipeFormEdit.scss';
 
 enum EModalEdit {
@@ -21,11 +21,20 @@ interface RecipeFormEditState {
   show: Array<boolean>,
   currentModal: EModalEdit | undefined,
   navigate: string | undefined,
-  errors: Array<string>
+  errors: Array<string>,
+  addMode: boolean
 }
 
-class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEditState> {  
-  constructor(props: { params: { id: string } }) {
+interface RecipeFormEditProps {
+  router: {
+    params: { id: string },
+    location: Location
+  }
+  addMode: boolean
+}
+
+class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState> {  
+  constructor(props: RecipeFormEditProps) {
     super(props);
     this.state = {
       recipe: undefined,
@@ -34,7 +43,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       show: new Array(2).fill(false),
       currentModal: undefined,
       navigate: undefined,
-      errors: []
+      errors: [],
+      addMode: false
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -178,12 +188,17 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
   }
 
   async componentDidMount() {
-    const { id } = this.props.params;
-    const recipe = await MainService.getRecipe(id);
-    if (recipe !== null) {
-      this.setState({ recipe });
+    const addMode = this.props.addMode ?? false;
+    if (addMode) {
+      console.log('addMode');
     } else {
-      this.setState({ navigate: '/app/recipe/list' });
+      const { id } = this.props.router.params;
+      const recipe = await MainService.getRecipe(id);
+      if (recipe !== null) {
+        this.setState({ recipe, addMode });
+      } else {
+        this.setState({ navigate: '/app/recipe/list' });
+      }
     }
   }
 
@@ -409,4 +424,4 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
   }
 }
 
-export default withParams(RecipeFormEdit);
+export default withRouter(RecipeFormEdit);
