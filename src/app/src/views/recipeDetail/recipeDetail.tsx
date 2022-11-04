@@ -56,6 +56,7 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
                 <span><FiClock />{this.state.recipe?.summary.prepTime}mn</span>
                 <span><AiOutlineFire />{this.state.recipe?.summary.cookingTime}mn</span>
               </Stack>
+              <span>{this.state.recipe?.summary.comment}</span>
             </Col>
             <Col id="recipeIngredientsWrapper">
               <h4>Ingrédients :</h4>
@@ -84,7 +85,7 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
   }
 
   private renderIngredient(ingredient: Ingredient): ReactNode {
-    const { quantity, unit, name } = ingredient;
+    const { quantity, unit, name, optional } = ingredient;
     
     let unitClear = '';
     if (unit !== null) {
@@ -114,7 +115,13 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
     } else if (quantity && !unit) {
       spacer = ' ';
     }
-    return `${quantifier}${spacer}${name}`;
+    
+    let optionalText = '';
+    if (optional) {
+      optionalText = ' (facultatif)';
+    }
+
+    return `${quantifier}${spacer}${name}${optionalText}`;
   }
 }
 

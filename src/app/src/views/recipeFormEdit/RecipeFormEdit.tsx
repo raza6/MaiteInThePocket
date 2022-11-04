@@ -63,6 +63,8 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
         newRecipe.summary.cookingTime = value !== '' ? parseInt(value, 10) : 0;
       } else if (recipeProperty[1] === 'prepTime') {
         newRecipe.summary.prepTime = value !== '' ? parseInt(value, 10) : 0;
+      } else if (recipeProperty[1] === 'comment') {
+        newRecipe.summary.comment = value !== '' ? value.trim() : null;
       }
     } else if (recipeProperty[0] === 'steps') {
       newRecipe.steps[parseInt(recipeProperty[1], 10)] = value.trim();
@@ -84,7 +86,6 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       }
     }
     this.setState({ recipe: newRecipe });
-    console.log(newRecipe);
   }
 
   handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -288,6 +289,12 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
                     onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'cookingTime'])}
                   ></Form.Control>mn
                 </span>
+              </Stack>
+              <Stack id="recipeSummaryCommentWrapper">
+                <Form.Label htmlFor="recipeSummaryComment">Commentaire</Form.Label>
+                <Form.Control as="textarea" rows={2} id="recipeSummaryComment" value={this.state.recipe?.summary.comment ?? ''}
+                  onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'comment'])}
+                ></Form.Control>
               </Stack>
             </Col>
             <Col id="recipeIngredientsWrapper">

@@ -5,7 +5,7 @@ interface RecipeSummary {
     servings: number;
     prepTime: number;
     cookingTime: number;
-    comment: number | null;
+    comment: string | null;
     hasImg: boolean;
 }
 

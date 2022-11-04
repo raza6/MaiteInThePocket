@@ -57,6 +57,11 @@
       }
     }
 
+    #recipeSummaryCommentWrapper {
+      width: calc(300px + 2rem + 24px);
+      margin: 16px auto 0 auto;
+    }
+
     #recipeNameInput {
       width: calc(300px + 2rem + 24px);
       margin-bottom: 8px;
