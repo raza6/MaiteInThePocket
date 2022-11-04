@@ -8,18 +8,21 @@ import {
   ELengthUnit, EMassUnit, ETemperatureUnit, EVolumeUnit,
 } from '../types/units';
 
+const maybeNullString = maybe(primitives.string, true);
+const maybeNullNumber = maybe(primitives.number, true);
+
 const isRecipeSummary = objectOf<RecipeSummary>({
   name: primitives.string,
   servings: primitives.number,
   prepTime: primitives.number,
   cookingTime: primitives.number,
-  comment: primitives.maybeString,
+  comment: maybeNullString,
   hasImg: primitives.boolean,
 });
 
 const isIngredient = objectOf<Ingredient>({
   name: primitives.string,
-  quantity: primitives.maybeNumber,
+  quantity: maybeNullNumber,
   optional: primitives.boolean,
   unit: maybe(anyOf(
     enumOf<EVolumeUnit>(...Object.entries(EVolumeUnit).map(([, val]) => val)),
@@ -30,7 +33,7 @@ const isIngredient = objectOf<Ingredient>({
 });
 
 const isIngredientsGroup = objectOf<IngredientsGroup>({
-  ingredientsGroupName: primitives.maybeString,
+  ingredientsGroupName: maybeNullString,
   ingredientsList: arrayOf(isIngredient),
 });
 

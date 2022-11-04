@@ -71,10 +71,10 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     } else if (recipeProperty[0] === 'ingredients') {
       if (recipeProperty[1] === 'quantity') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
-          .ingredientsList[parseInt(recipeProperty[3], 10)].quantity = value !== '' ? parseInt(value, 10) : undefined;
+          .ingredientsList[parseInt(recipeProperty[3], 10)].quantity = value !== '' ? parseInt(value, 10) : null;
       } else if (recipeProperty[1] === 'unit') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
-          .ingredientsList[parseInt(recipeProperty[3], 10)].unit = value !== '' ? value as EUnit : undefined;
+          .ingredientsList[parseInt(recipeProperty[3], 10)].unit = value !== '' ? value as EUnit : null;
       } else if (recipeProperty[1] === 'name') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
           .ingredientsList[parseInt(recipeProperty[3], 10)].name = value.trim();
@@ -113,7 +113,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
 
   handleAddIngredientGroup() {
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
-    newRecipe.ingredients.push({ ingredientsGroupName: undefined, ingredientsList: [] });
+    newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
     this.setState({ recipe: newRecipe });
   }
 
@@ -125,7 +125,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
 
   handleAddIngredient(index: number) {
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
-    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: undefined, unit: undefined, optional: false });
+    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
     this.setState({ recipe: newRecipe });
   }
 
@@ -158,8 +158,6 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
         const recipeImg = this.state.recipeImg ?? new File([], '');
         await MainService.addImgRecipe(recipeId, recipeImg);
       }
-      // Temp fix
-      recipe.summary.comment ??= undefined;
       await MainService.editRecipe(recipeId, recipe);
       setTimeout(() => {
         this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });

@@ -5,19 +5,19 @@ interface RecipeSummary {
   servings: number;
   prepTime: number;
   cookingTime: number;
-  comment: number | undefined;
+  comment: number | null;
   hasImg: boolean;
 }
 
 interface Ingredient {
   name: string;
-  quantity: number | undefined;
-  unit: EUnit | undefined;
+  quantity: number | null;
+  unit: EUnit | null;
   optional: boolean;
 }
 
 interface IngredientsGroup {
-  ingredientsGroupName: string | undefined;
+  ingredientsGroupName: string | null;
   ingredientsList: Array<Ingredient>;
 }
 
