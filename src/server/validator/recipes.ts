@@ -13,7 +13,7 @@ const isRecipeSummary = objectOf<RecipeSummary>({
   servings: primitives.number,
   prepTime: primitives.number,
   cookingTime: primitives.number,
-  comment: primitives.maybeNumber,
+  comment: primitives.maybeString,
   hasImg: primitives.boolean,
 });
 

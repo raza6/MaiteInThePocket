@@ -21,7 +21,7 @@ class MainService {
     return res;
   }
 
-  public static async addImgRecipe(id: string, file: File): Promise<Recipe> {
+  public static async addImgRecipe(id: string, file: File): Promise<boolean> {
     console.info('📫 - Add recipe image');
     const formData = new FormData();
     formData.append('img', file);
@@ -32,6 +32,13 @@ class MainService {
     };
     const res = await MainService.handleApiCall(EHttpVerb.POST, `${API_URL}/recipe/img/${id}`, formData, config);
     console.info('👏 - Add recipe image', res);
+    return res;
+  }
+
+  public static async editRecipe(id: string, recipe: Recipe): Promise<Recipe> {
+    console.info('📫 - Edit recipe');
+    const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/${id}`, recipe);
+    console.info('👏 - Edit recipe', res);
     return res;
   }
 

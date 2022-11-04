@@ -102,7 +102,7 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
         unitClear = ' cuillère à café';
         break;
       default:
-        unitClear = unit.toString();
+        unitClear = unit?.toString() ?? '';
         break;
       }
     }

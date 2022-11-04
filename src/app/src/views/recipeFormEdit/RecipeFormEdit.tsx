@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Stack, Image, Button, Modal, Form, Alert } from 'react-bootstrap';
+import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
-import { FiCheckSquare, FiClock, FiImage, FiPlusSquare, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
-import { ELengthUnit, EMassUnit, EVolumeUnit } from '../../types/units';
+import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg, withParams } from '../../utils';
 import './RecipeFormEdit.scss';
 
@@ -58,16 +58,33 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
       if (recipeProperty[1] === 'name') {
         newRecipe.summary.name = value.trim();
       } else if (recipeProperty[1] === 'servings') {
-        newRecipe.summary.servings = parseInt(value, 10);
+        newRecipe.summary.servings = value !== '' ? parseInt(value, 10) : 0;
       } else if (recipeProperty[1] === 'cookingTime') {
-        newRecipe.summary.cookingTime = parseInt(value, 10);
+        newRecipe.summary.cookingTime = value !== '' ? parseInt(value, 10) : 0;
       } else if (recipeProperty[1] === 'prepTime') {
-        newRecipe.summary.prepTime = parseInt(value, 10);
+        newRecipe.summary.prepTime = value !== '' ? parseInt(value, 10) : 0;
       }
-    } else if (recipeProperty[0] === 'steps'){
-      newRecipe.steps[parseInt(recipeProperty[1], 10)] = value;
+    } else if (recipeProperty[0] === 'steps') {
+      newRecipe.steps[parseInt(recipeProperty[1], 10)] = value.trim();
+    } else if (recipeProperty[0] === 'ingredientsGroupName') {
+      newRecipe.ingredients[parseInt(recipeProperty[1], 10)].ingredientsGroupName = value.trim();
+    } else if (recipeProperty[0] === 'ingredients') {
+      if (recipeProperty[1] === 'quantity') {
+        newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
+          .ingredientsList[parseInt(recipeProperty[3], 10)].quantity = value !== '' ? parseInt(value, 10) : undefined;
+      } else if (recipeProperty[1] === 'unit') {
+        newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
+          .ingredientsList[parseInt(recipeProperty[3], 10)].unit = value !== '' ? value as EUnit : undefined;
+      } else if (recipeProperty[1] === 'name') {
+        newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
+          .ingredientsList[parseInt(recipeProperty[3], 10)].name = value.trim();
+      } else if (recipeProperty[1] === 'optional') {
+        newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
+          .ingredientsList[parseInt(recipeProperty[3], 10)].optional = value === 'true';
+      }
     }
     this.setState({ recipe: newRecipe });
+    console.log(newRecipe);
   }
 
   handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -96,7 +113,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
 
   handleAddIngredientGroup() {
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
-    newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
+    newRecipe.ingredients.push({ ingredientsGroupName: undefined, ingredientsList: [] });
     this.setState({ recipe: newRecipe });
   }
 
@@ -108,7 +125,7 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
 
   handleAddIngredient(index: number) {
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
-    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
+    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: undefined, unit: undefined, optional: false });
     this.setState({ recipe: newRecipe });
   }
 
@@ -133,14 +150,21 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
   }
 
   async handleSubmit() {
-    if (this.state.recipeImg !== undefined) {
-      const recipeId = this.state.recipe?.slugId ?? '';
-      const recipeImg = this.state.recipeImg ?? new File([], '');
-      await MainService.addImgRecipe(recipeId, recipeImg);
+    const errors = this.validateRecipe();
+    if (errors.length === 0 && this.state.recipe !== undefined) {
+      const recipeId = this.state.recipe.slugId ?? '';
+      const recipe = this.state.recipe;
+      if (this.state.recipeImg !== undefined) {
+        const recipeImg = this.state.recipeImg ?? new File([], '');
+        await MainService.addImgRecipe(recipeId, recipeImg);
+      }
+      await MainService.editRecipe(recipeId, recipe);
+      setTimeout(() => {
+        this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
+      }, 300);
+    } else {
+      this.setState({ errors: errors });
     }
-    setTimeout(() => {
-      this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
-    }, 300);
   }
 
   handleCancel() {
@@ -160,6 +184,49 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
     } else {
       this.setState({ navigate: '/app/recipe/list' });
     }
+  }
+
+  validateRecipe() {
+    const errors = [];
+    const recipe = this.state.recipe;
+    if (!recipe?.summary.name) {
+      errors.push('Le nom de la recette n\'est pas renseigné');
+    }
+    if (recipe?.summary.servings == null) {
+      errors.push('Le nombre de couverts n\'est pas renseigné');
+    }
+    if (recipe?.summary.prepTime == null) {
+      errors.push('Le temps de préparation n\'est pas renseigné');
+    }
+    if (recipe?.summary.cookingTime == null) {
+      errors.push('Le temps de cuisson n\'est pas renseigné');
+    }
+    if (recipe?.ingredients.length === 0) {
+      errors.push('La recette n\'a pas d\'ingrédient');
+    } else if (recipe !== undefined) {
+      if (recipe.ingredients.length > 1 && recipe.ingredients.some(group => !group.ingredientsGroupName)) {
+        errors.push('La recette a des groupes d\'ingrédients non-nommés');
+      }
+      if (recipe.ingredients.flatMap(group => group.ingredientsList).length === 0) {
+        errors.push('La recette n\'a pas d\'ingrédient');
+      } else {
+        const allIngredients = recipe.ingredients.flatMap(group => group.ingredientsList);
+        if (allIngredients.some(ingr => !ingr.name)) {
+          errors.push('La recette a des ingrédients non-nommés');
+        }
+        if (allIngredients.some(ingr => ingr.unit != null && ingr.quantity == null)) {
+          errors.push('La recette a des ingrédients mesurés sans quantité');
+        }
+      }
+    }
+    if (recipe?.steps.length === 0) {
+      errors.push('La recette n\'a pas d\'instruction');
+    } else {
+      if (recipe?.steps.some(step => !step)) {
+        errors.push('La recette a des instructions non-renseignées');
+      }
+    }
+    return errors;
   }
 
   render() {
@@ -228,17 +295,23 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
               {this.state.recipe?.ingredients.map((group, i) => 
                 <div className="ingredientGroupWrapper" key={'ingredientGroup_' + i}>
                   <div className="ingredientGroupInputWrapper">
-                    <Form.Control value={group.ingredientsGroupName ?? ''} className="ingredientGroupInput"></Form.Control>
+                    <Form.Control value={group.ingredientsGroupName ?? ''} className="ingredientGroupInput"
+                      onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredientsGroupName', i.toString()])}
+                    ></Form.Control>
                     <Button variant="primary" onClick={() => this.handleRemoveIngredientGroup(i)}><FiTrash2 /></Button>
                   </div>
                   <ul>
                     {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
                       <Stack direction="horizontal" gap={1}>
-                        <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"></Form.Control>
-                        <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput">
+                        <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
+                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
+                        ></Form.Control>
+                        <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput" 
+                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'unit', i.toString(), j.toString()])}
+                        >
                           <option value=''></option>
                           <option value={EMassUnit.g}>g</option>
-                          <option value={EMassUnit.g}>kg</option>
+                          <option value={EMassUnit.kg}>kg</option>
                           <option value={EVolumeUnit.teaspoon}>c.à.c</option>
                           <option value={EVolumeUnit.tablespoon}>c.à.s</option>
                           <option value={EVolumeUnit.handfull}>poignée</option>
@@ -251,7 +324,21 @@ class RecipeFormEdit extends Component<{ params: { id: string } }, RecipeFormEdi
                           <option value={ELengthUnit.cm}>cm</option>
                           <option value={ELengthUnit.m}>m</option>
                         </Form.Select>
-                        <Form.Control value={ingredient.name}></Form.Control>
+                        <Form.Control value={ingredient.name} 
+                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
+                        ></Form.Control>
+                        <OverlayTrigger
+                          placement="left"
+                          overlay={
+                            <Tooltip>
+                              {ingredient.optional ? 'Facultatif' : 'Non facultatif'}
+                            </Tooltip>
+                          }
+                        >
+                          <div className="ingredientOptionalInput" onClick={() => this.handleRecipeChange((!ingredient.optional).toString(), ['ingredients', 'optional', i.toString(), j.toString()])}>
+                            {ingredient.optional ? <FiHelpCircle /> : <FiCheckCircle />}
+                          </div>
+                        </OverlayTrigger>
                         <Button variant="primary" onClick={() => this.handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
                       </Stack>
                     </li>)}
