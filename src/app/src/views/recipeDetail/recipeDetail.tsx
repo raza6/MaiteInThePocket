@@ -56,7 +56,12 @@ class RecipeDetail extends Component<{ params: { id: string } }, { recipe: Recip
                 <span><FiClock />{this.state.recipe?.summary.prepTime}mn</span>
                 <span><AiOutlineFire />{this.state.recipe?.summary.cookingTime}mn</span>
               </Stack>
-              <span>{this.state.recipe?.summary.comment}</span>
+              {
+                this.state.recipe?.summary.comment &&
+                  <span id="recipeSummaryComment">
+                    <b>Commentaires :</b> {this.state.recipe?.summary.comment}
+                  </span>
+              }
             </Col>
             <Col id="recipeIngredientsWrapper">
               <h4>Ingrédients :</h4>

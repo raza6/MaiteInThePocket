@@ -1,10 +1,10 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 function withParams(Component: unknown): Function {
   // @ts-ignore
   // eslint-disable-next-line react/display-name
-  return (props: unknown) => <Component {...props} params={useParams()} />;
+  return (props: unknown) => <Component {...props} params={useParams()} searchParams={useSearchParams()[0]} />;
 }
 
 function getRandomOfList (list: Array<string>): string {

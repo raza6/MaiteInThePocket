@@ -15,12 +15,17 @@ interface RecipeListState {
   loading: boolean,
 }
 
-class RecipeList extends Component<{ params: { currentPage: string } }, RecipeListState> {
+interface RecipeListProps {
+  params: { currentPage: string },
+  searchParams: URLSearchParams,
+}
+
+class RecipeList extends Component<RecipeListProps, RecipeListState> {
   private _listSize = 10;
   
   private _paginationReach = 2;
   
-  constructor(props: { params: { currentPage: string } }) {
+  constructor(props: RecipeListProps) {
     super(props);
     this.state = {
       recipes: [],
@@ -37,12 +42,13 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
   componentDidMount() {
     const { currentPage } = this.props.params;
     const currentPageClean = currentPage !== undefined ? parseInt(currentPage, 10) : 0;
-    this.setState({ currentPage: currentPageClean });
+    const search = this.props.searchParams.get('search') ?? '';
+    this.setState({ currentPage: currentPageClean, search });
   }
   
   async componentDidUpdate(_: any, prevState: RecipeListState) {
     if (this.state.currentPage !== prevState.currentPage) {
-      await this.updateRecipeList();
+      await this.updateRecipeList(this.state.currentPage);
     }
   }
 
@@ -60,12 +66,12 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     await this.updateRecipeList();
   }
 
-  async updateRecipeList(): Promise<void> {
+  async updateRecipeList(requestedPage: number = 0): Promise<void> {
     this.setState({ loading: true });
-    const result = await MainService.searchSummary(this.state.search, this.state.currentPage, this._listSize);
+    const result = await MainService.searchSummary(this.state.search, requestedPage, this._listSize);
     const maxPage = Math.floor(result.count/this._listSize);
-    let currentPage = this.state.currentPage;
-    if (currentPage === undefined || currentPage > maxPage) {
+    let currentPage = requestedPage;
+    if (currentPage === undefined || currentPage > maxPage || currentPage < 0) {
       currentPage = 0;
     }
     this.setState({ recipes: result.recipes, recipesCount: result.count, currentPage, loading: false });
@@ -108,17 +114,22 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     );
   }
 
+  buildUrl(index: number = 0, search: string = '') {
+    return `/app/recipe/list/${index}${search !== '' ? `?search=${encodeURI(search)}` : ''}`;
+  }
+
   renderPagination() {
     const maxPage = Math.floor(this.state.recipesCount/this._listSize);
     const currentPage = this.state.currentPage ?? 0;
+    const search = this.state.search;
     
     let hasEllipsis = false;
     const paginationStart = [];
     for (let i = currentPage - 1; i >= 0; i--) {
       if (i > currentPage - 1 - this._paginationReach) {
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={this.buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (i === 0) { //first page
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={this.buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationStart.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -129,9 +140,9 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     const paginationEnd = [];
     for (let i = currentPage + 1; i <= maxPage; i++) {
       if (i < currentPage + 1 + this._paginationReach) {
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={this.buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (i === maxPage) { //last page
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={`/app/recipe/list/${i}`}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={this.buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationEnd.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -139,13 +150,13 @@ class RecipeList extends Component<{ params: { currentPage: string } }, RecipeLi
     }
     return (
       <Pagination>
-        {this.state.currentPage !== 0 && <Pagination.First href={`/app/recipe/list/${0}`} />}
-        {this.state.currentPage !== 0 && <Pagination.Prev href={`/app/recipe/list/${currentPage - 1}`} />}
+        {this.state.currentPage !== 0 && <Pagination.First href={this.buildUrl(0, search)} />}
+        {this.state.currentPage !== 0 && <Pagination.Prev href={this.buildUrl(currentPage - 1, search)} />}
         {paginationStart.map(v => v)}
         <Pagination.Item active>{currentPage + 1}</Pagination.Item>
         {paginationEnd.map(v => v)}
-        {this.state.currentPage !== maxPage && <Pagination.Next href={`/app/recipe/list/${currentPage + 1}`} />}
-        {this.state.currentPage !== maxPage && <Pagination.Last href={`/app/recipe/list/${maxPage}`} />}
+        {this.state.currentPage !== maxPage && <Pagination.Next href={this.buildUrl(currentPage + 1, search)} />}
+        {this.state.currentPage !== maxPage && <Pagination.Last href={this.buildUrl(maxPage, search)} />}
       </Pagination>
     );
   }
