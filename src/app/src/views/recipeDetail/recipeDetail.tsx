@@ -8,7 +8,7 @@ import { FiClock, FiEdit } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
 import { Link, Navigate } from 'react-router-dom';
-import './recipeDetail.scss';
+import './RecipeDetail.scss';
 
 interface RecipeDetailState { 
   recipe: Recipe | undefined,
@@ -37,7 +37,7 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
       document.title = `${recipe.summary.name} - Maite in the Pocket`;
       this.setState({ recipe });
     } else {
-      this.setState({ navigate: '/app/recipe/list' });
+      this.setState({ navigate: `/app/recipe/detail/${id}/notfound` });
     }
   }
 

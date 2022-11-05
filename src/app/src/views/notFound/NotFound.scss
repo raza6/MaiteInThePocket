@@ -1,0 +1,10 @@
+#notFoundWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: fit-content;
+    margin-top: 32px;
+  }
+}
