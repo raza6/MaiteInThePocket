@@ -35,7 +35,7 @@ export default class recipeService {
     return null;
   }
 
-  public static async addRecipe(recipe: Recipe): Promise<boolean> {
+  public static async addRecipe(recipe: Recipe): Promise<string|null> {
     if (isRecipe(
       recipe,
       (rej: ValidationRejection) => console.log(
@@ -43,16 +43,17 @@ export default class recipeService {
       ),
     )
     ) {
-      const recipeDb = { ...recipe, slugId: new ShortUniqueId()() };
+      const slugId = new ShortUniqueId()();
+      const recipeDb = { ...recipe, slugId };
       try {
         const mongo = new MongoDB();
         await mongo.addRecipe(recipeDb);
-        return true;
+        return slugId;
       } catch (err: unknown) {
-        return false;
+        return null;
       }
     } else {
-      return false;
+      return null;
     }
   }
 

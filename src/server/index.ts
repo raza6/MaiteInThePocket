@@ -120,8 +120,8 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
  */
 serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
   const result = await recipeService.addRecipe(req.body);
-  console.log(result ? '😀 recipe added' : '😔 recipe not added');
-  res.status(result ? 200 : 400).send();
+  console.log(result !== null ? '😀 recipe added' : '😔 recipe not added');
+  res.status(result !== null ? 200 : 400).send(result);
 });
 
 /**

@@ -163,15 +163,23 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   async handleSubmit() {
     const errors = this.validateRecipe();
     if (errors.length === 0 && this.state.recipe !== undefined) {
-      const recipeId = this.state.recipe.slugId ?? '';
+      let recipeId: string | undefined;
       const recipe = this.state.recipe;
-      if (this.state.recipeImg !== undefined) {
+      if (this.state.addMode) {
+        const recipeRes = await MainService.addRecipe(recipe);
+        recipeId = recipeRes.slugId;
+      } else {
+        recipeId = this.state.recipe.slugId;
+        if (recipeId !== undefined) {
+          await MainService.editRecipe(recipeId, recipe);
+        }
+      }
+      if (this.state.recipeImg !== undefined && recipeId !== undefined) {
         const recipeImg = this.state.recipeImg ?? new File([], '');
         await MainService.addImgRecipe(recipeId, recipeImg);
       }
-      await MainService.editRecipe(recipeId, recipe);
       setTimeout(() => {
-        this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
+        this.setState({ navigate: `/app/recipe/detail/${recipeId}` });
       }, 300);
     } else {
       this.setState({ errors: errors });
@@ -182,22 +190,47 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
   }
 
-  handleDelete() {
-    //await delete call
+  async handleDelete() {
+    await MainService.deleteRecipe(this.state.recipe?.slugId ?? '');
     this.setState({ navigate: '/app/recipe/list' });
   }
 
   async componentDidMount() {
     const addMode = this.props.addMode ?? false;
     if (addMode) {
-      console.log('addMode');
+      const recipe = {
+        slugId: undefined,
+        summary: {
+          name: '',
+          servings: 1,
+          prepTime: 0,
+          cookingTime: 0,
+          comment: null,
+          hasImg: false
+        },
+        ingredients: [
+          {
+            ingredientsGroupName: null,
+            ingredientsList: [
+              {
+                name: '',
+                quantity: null,
+                unit: null,
+                optional: false
+              }
+            ]
+          }
+        ],
+        steps: ['']
+      };
+      this.setState({ recipe, addMode });
     } else {
       const { id } = this.props.router.params;
       const recipe = await MainService.getRecipe(id);
       if (recipe !== null) {
         this.setState({ recipe, addMode });
       } else {
-        this.setState({ navigate: '/app/recipe/list' });
+        this.setState({ navigate: `/app/recipe/edit/${id}/notfound` });
       }
     }
   }
@@ -252,11 +285,11 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
         {this.state.errors.map((error, i) => <Alert dismissible key={`alert_${i}`} variant="danger" onClose={() => this.handleCloseError(i)}>
           {error}
         </Alert>)}
-        <h1>Modifier une recette</h1>
+        <h1>{this.state.addMode ? 'Ajouter' : 'Modifier'} une recette</h1>
         <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
           <Button variant="success" onClick={this.handleSubmit}><FiCheckSquare /></Button>
           <Button variant="warning" onClick={() => this.handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
-          <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>
+          {!this.state.addMode && <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>}
         </Stack>
         <Form>
           <Row>

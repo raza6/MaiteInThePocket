@@ -35,6 +35,20 @@ class MainService {
     return res;
   }
 
+  public static async addRecipe(recipe: Recipe): Promise<Recipe> {
+    console.info('📫 - Add recipe');
+    const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/add`, recipe);
+    console.info('👏 - Add recipe', res);
+    return res;
+  }
+
+  public static async deleteRecipe(id: string): Promise<void> {
+    console.info('📫 - Delete recipe');
+    await MainService.handleApiCall(EHttpVerb.DELETE, `${API_URL}/recipe/${id}`);
+    console.info('👏 - Delete recipe');
+    return;
+  }
+
   public static async editRecipe(id: string, recipe: Recipe): Promise<Recipe> {
     console.info('📫 - Edit recipe');
     const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/${id}`, recipe);
