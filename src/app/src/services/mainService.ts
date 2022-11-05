@@ -35,7 +35,7 @@ class MainService {
     return res;
   }
 
-  public static async addRecipe(recipe: Recipe): Promise<Recipe> {
+  public static async addRecipe(recipe: Recipe): Promise<string> {
     console.info('📫 - Add recipe');
     const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/add`, recipe);
     console.info('👏 - Add recipe', res);

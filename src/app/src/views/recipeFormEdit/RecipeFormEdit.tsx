@@ -166,8 +166,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       let recipeId: string | undefined;
       const recipe = this.state.recipe;
       if (this.state.addMode) {
-        const recipeRes = await MainService.addRecipe(recipe);
-        recipeId = recipeRes.slugId;
+        recipeId = await MainService.addRecipe(recipe);
       } else {
         recipeId = this.state.recipe.slugId;
         if (recipeId !== undefined) {
