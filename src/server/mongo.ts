@@ -111,7 +111,7 @@ export default class MongoDB {
           .project({
             _id: 0, slugId: 1, summary: 1, score: { $meta: 'textScore' },
           })
-          .sort({ score: { $meta: 'textScore' } })
+          .sort(term !== '' ? { score: { $meta: 'textScore' } } : { 'summary.name': 1 })
           .skip(pageIndex * pageSize)
           .limit(pageSize);
 
