@@ -66,7 +66,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
     if (recipeProperty[0] === 'summary') {
       if (recipeProperty[1] === 'name') {
-        newRecipe.summary.name = value.trim();
+        newRecipe.summary.name = value;
       } else if (recipeProperty[1] === 'servings') {
         newRecipe.summary.servings = value !== '' ? parseInt(value, 10) : 0;
       } else if (recipeProperty[1] === 'cookingTime') {
@@ -74,12 +74,12 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       } else if (recipeProperty[1] === 'prepTime') {
         newRecipe.summary.prepTime = value !== '' ? parseInt(value, 10) : 0;
       } else if (recipeProperty[1] === 'comment') {
-        newRecipe.summary.comment = value !== '' ? value.trim() : null;
+        newRecipe.summary.comment = value !== '' ? value : null;
       }
     } else if (recipeProperty[0] === 'steps') {
-      newRecipe.steps[parseInt(recipeProperty[1], 10)] = value.trim();
+      newRecipe.steps[parseInt(recipeProperty[1], 10)] = value;
     } else if (recipeProperty[0] === 'ingredientsGroupName') {
-      newRecipe.ingredients[parseInt(recipeProperty[1], 10)].ingredientsGroupName = value.trim();
+      newRecipe.ingredients[parseInt(recipeProperty[1], 10)].ingredientsGroupName = value;
     } else if (recipeProperty[0] === 'ingredients') {
       if (recipeProperty[1] === 'quantity') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
@@ -89,7 +89,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
           .ingredientsList[parseInt(recipeProperty[3], 10)].unit = value !== '' ? value as EUnit : null;
       } else if (recipeProperty[1] === 'name') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
-          .ingredientsList[parseInt(recipeProperty[3], 10)].name = value.trim();
+          .ingredientsList[parseInt(recipeProperty[3], 10)].name = value;
       } else if (recipeProperty[1] === 'optional') {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
           .ingredientsList[parseInt(recipeProperty[3], 10)].optional = value === 'true';
@@ -237,7 +237,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   validateRecipe() {
     const errors = [];
     const recipe = this.state.recipe;
-    if (!recipe?.summary.name) {
+    if (!recipe?.summary.name.trim()) {
       errors.push('Le nom de la recette n\'est pas renseigné');
     }
     if (recipe?.summary.servings == null) {
@@ -252,14 +252,14 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     if (recipe?.ingredients.length === 0) {
       errors.push('La recette n\'a pas d\'ingrédient');
     } else if (recipe !== undefined) {
-      if (recipe.ingredients.length > 1 && recipe.ingredients.some(group => !group.ingredientsGroupName)) {
+      if (recipe.ingredients.length > 1 && recipe.ingredients.some(group => !group.ingredientsGroupName?.trim())) {
         errors.push('La recette a des groupes d\'ingrédients non-nommés');
       }
       if (recipe.ingredients.flatMap(group => group.ingredientsList).length === 0) {
         errors.push('La recette n\'a pas d\'ingrédient');
       } else {
         const allIngredients = recipe.ingredients.flatMap(group => group.ingredientsList);
-        if (allIngredients.some(ingr => !ingr.name)) {
+        if (allIngredients.some(ingr => !ingr.name.trim())) {
           errors.push('La recette a des ingrédients non-nommés');
         }
         if (allIngredients.some(ingr => ingr.unit != null && ingr.quantity == null)) {
@@ -270,7 +270,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     if (recipe?.steps.length === 0) {
       errors.push('La recette n\'a pas d\'instruction');
     } else {
-      if (recipe?.steps.some(step => !step)) {
+      if (recipe?.steps.some(step => !step.trim())) {
         errors.push('La recette a des instructions non-renseignées');
       }
     }
