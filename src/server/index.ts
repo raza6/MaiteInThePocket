@@ -108,6 +108,7 @@ serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
     }
   }
 
+  console.log(error ? `😔 img not added : ${error}` : '😀 img added');
   res.status(error ? 400 : 200).send(error);
 });
 
