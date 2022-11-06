@@ -15,6 +15,15 @@
     svg {
       color: var(--mp-dark-base);
     }
+
+    #recipeRecoverWrapper svg {
+      color: var(--mp-light-base);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--mp-theme);
+      }
+    }
   }
   
   #recipeSummaryDetail {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
-import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
 import { Recipe } from '../../types/recipes';
@@ -22,7 +22,9 @@ interface RecipeFormEditState {
   currentModal: EModalEdit | undefined,
   navigate: string | undefined,
   errors: Array<string>,
-  addMode: boolean
+  addMode: boolean,
+  hasTemp: boolean,
+  exitWithoutTemp: boolean
 }
 
 interface RecipeFormEditProps {
@@ -44,7 +46,9 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       currentModal: undefined,
       navigate: undefined,
       errors: [],
-      addMode: false
+      addMode: false,
+      hasTemp: false,
+      exitWithoutTemp: false
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -60,6 +64,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     this.handleAddIngredient = this.handleAddIngredient.bind(this);
     this.handleRemoveIngredientGroup = this.handleRemoveIngredientGroup.bind(this);
     this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
+    this.handleTempImport = this.handleTempImport.bind(this);
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
@@ -178,7 +183,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
         await MainService.addImgRecipe(recipeId, recipeImg);
       }
       setTimeout(() => {
-        this.setState({ navigate: `/app/recipe/detail/${recipeId}` });
+        this.setState({ navigate: `/app/recipe/detail/${recipeId}`, exitWithoutTemp: true });
       }, 300);
     } else {
       this.setState({ errors: errors });
@@ -186,7 +191,8 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   }
 
   handleCancel() {
-    this.setState({ navigate: `/app/recipe/detail/${this.state.recipe?.slugId}` });
+    const redirectUrl = this.state.addMode ? '/app/recipe/list' : `/app/recipe/detail/${this.state.recipe?.slugId}`;
+    this.setState({ navigate: redirectUrl, exitWithoutTemp: true });
   }
 
   async handleDelete() {
@@ -194,35 +200,18 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     this.setState({ navigate: '/app/recipe/list' });
   }
 
+  handleTempImport() {
+    const recipe: Recipe = JSON.parse(localStorage.getItem('maite_recipe_temp') ?? '');
+    localStorage.removeItem('maite_recipe_temp');
+    this.setState({ recipe, hasTemp: false });
+  }
+
   async componentDidMount() {
     const addMode = this.props.addMode ?? false;
     if (addMode) {
-      const recipe = {
-        slugId: undefined,
-        summary: {
-          name: '',
-          servings: 1,
-          prepTime: 0,
-          cookingTime: 0,
-          comment: null,
-          hasImg: false
-        },
-        ingredients: [
-          {
-            ingredientsGroupName: null,
-            ingredientsList: [
-              {
-                name: '',
-                quantity: null,
-                unit: null,
-                optional: false
-              }
-            ]
-          }
-        ],
-        steps: ['']
-      };
-      this.setState({ recipe, addMode });
+      const recipe = this.defaultRecipe();
+      const hasTemp = localStorage.getItem('maite_recipe_temp') !== null;
+      this.setState({ recipe, addMode, hasTemp });
     } else {
       const { id } = this.props.router.params;
       const recipe = await MainService.getRecipe(id);
@@ -231,6 +220,22 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       } else {
         this.setState({ navigate: `/app/recipe/edit/${id}/notfound` });
       }
+    }
+  }
+
+  componentDidUpdate(): void {
+    if (this.state.addMode) {
+      const newRecipe = JSON.stringify(this.state.recipe);
+  
+      if (newRecipe !== JSON.stringify(this.defaultRecipe())) {
+        localStorage.setItem('maite_recipe_temp', newRecipe);
+      }
+    }
+  }
+
+  componentWillUnmount(): void {
+    if (this.state.addMode && this.state.exitWithoutTemp) {
+      localStorage.removeItem('maite_recipe_temp');
     }
   }
 
@@ -277,6 +282,34 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
     return errors;
   }
 
+  defaultRecipe() {
+    return {
+      slugId: undefined,
+      summary: {
+        name: '',
+        servings: 1,
+        prepTime: 0,
+        cookingTime: 0,
+        comment: null,
+        hasImg: false
+      },
+      ingredients: [
+        {
+          ingredientsGroupName: null,
+          ingredientsList: [
+            {
+              name: '',
+              quantity: null,
+              unit: null,
+              optional: false
+            }
+          ]
+        }
+      ],
+      steps: ['']
+    };
+  }
+
   render() {
     return (
       <Col id="recipeEditWrapper">
@@ -289,6 +322,16 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
           <Button variant="success" onClick={this.handleSubmit}><FiCheckSquare /></Button>
           <Button variant="warning" onClick={() => this.handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
           {!this.state.addMode && <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>}
+          {this.state.hasTemp &&  
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Restaurer</Tooltip>}
+            >
+              <div id="recipeRecoverWrapper">
+                <FiShare onClick={this.handleTempImport} />
+              </div>
+            </OverlayTrigger>
+          }
         </Stack>
         <Form>
           <Row>
