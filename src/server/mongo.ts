@@ -1,6 +1,7 @@
 import {
   FindCursor, MongoClient, MongoError,
 } from 'mongodb';
+import dotenv from 'dotenv';
 import { Recipe, RecipeSummarySearchResponse, RecipeSummaryShort } from './types/recipes';
 import { NoCollectionError } from './utilities';
 
@@ -9,7 +10,12 @@ export default class MongoDB {
 
   private static collectionRecipes = 'Recipes';
 
-  private static dbConnect = 'mongodb://maite:maitepwd@raza6.fr:27017';
+  private static dbConnect;
+
+  static {
+    dotenv.config();
+    this.dbConnect = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
+  }
 
   private client: MongoClient;
 

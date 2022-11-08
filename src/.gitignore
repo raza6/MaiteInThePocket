@@ -5,6 +5,8 @@ docker/mongo
 
 import/*
 
+.env
+
 ### Node ###
 # Logs
 logs
