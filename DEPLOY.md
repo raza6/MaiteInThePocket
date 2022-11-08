@@ -45,6 +45,7 @@ The app is simply served as static files. It just needs to be built by the dedic
 ## Steps
 
 - `git clone` the project in `maite` directory
+- In `maite/src/server`, Copy the `.env.template` file as `.env` and complete it with the mongo configuration.
 - In the parent directory, create a `docker-compose.yaml` file based on the configuration available in the appendix. Make sure the configuration is correct.
 - Repeat for the `default.conf` file.
 - Start containers one after the other in the following order : mongo, node server, node app, nginx. `docker-compose up -d container_name`
