@@ -11,6 +11,8 @@ import { Container, Col, Image, Button, Offcanvas } from 'react-bootstrap';
 
 interface AppState {
   menuShow: boolean,
+  appName: string,
+  appVersion: string,
 }
 
 class App extends Component<{}, AppState> {
@@ -18,7 +20,11 @@ class App extends Component<{}, AppState> {
     super(props);
     this.state = {
       menuShow: false,
+      appName: process.env.REACT_APP_NAME ?? '',
+      appVersion: process.env.REACT_APP_VERSION ?? 'x.x.x',
     };
+
+    console.log(process.env);
 
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -42,7 +48,7 @@ class App extends Component<{}, AppState> {
           <Button className="mobile" onClick={this.handleShow}>
             <FiMenu />
           </Button>
-          <div className="laptop">
+          <div className="laptop" id="laptopMenuWrapper">
             {this.renderMenuLink()}
           </div>
           <Offcanvas placement="end" show={this.state.menuShow} onHide={this.handleClose}>
@@ -71,11 +77,16 @@ class App extends Component<{}, AppState> {
 
   renderMenuLink() {
     return (
-      <div id="menuLinkWrapper">
-        <Link to="/app"><FiHome /> Home</Link>
-        <Link to="/app/recipe/list"><FiSearch /> Chercher une recette</Link>
-        <Link reloadDocument to="/app/recipe/add"><FiPlusSquare /> Ajouter une recette</Link>
-        <Link to="/app/settings"><FiSettings /> Paramètres</Link>
+      <div id="menuWrapper">
+        <div id="menuLinkWrapper">
+          <Link to="/app" onClick={this.handleClose}><FiHome /> Home</Link>
+          <Link to="/app/recipe/list" onClick={this.handleClose}><FiSearch /> Chercher une recette</Link>
+          <Link reloadDocument to="/app/recipe/add" onClick={this.handleClose}><FiPlusSquare /> Ajouter une recette</Link>
+          <Link to="/app/settings" onClick={this.handleClose}><FiSettings /> Paramètres</Link>
+        </div>
+        <span className="versionWrapper">
+          <a href="https://github.com/raza6/MaiteInThePocket">{this.state.appName} v{this.state.appVersion}</a>
+        </span>
       </div>
     );
   }
