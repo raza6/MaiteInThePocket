@@ -71,7 +71,7 @@ class RecipeList extends Component<RecipeListProps, RecipeListState> {
   async updateRecipeList(requestedPage: number = 0): Promise<void> {
     this.setState({ loading: true });
     const result = await MainService.searchSummary(this.state.search, requestedPage, this._listSize);
-    const maxPage = Math.floor(result.count/this._listSize);
+    const maxPage = Math.floor((result.count-1)/this._listSize);
     let currentPage = requestedPage;
     if (currentPage === undefined || currentPage > maxPage || currentPage < 0) {
       currentPage = 0;
@@ -121,7 +121,7 @@ class RecipeList extends Component<RecipeListProps, RecipeListState> {
   }
 
   renderPagination() {
-    const maxPage = Math.floor(this.state.recipesCount/this._listSize);
+    const maxPage = Math.floor((this.state.recipesCount-1)/this._listSize);
     const currentPage = this.state.currentPage ?? 0;
     const search = this.state.search;
     
