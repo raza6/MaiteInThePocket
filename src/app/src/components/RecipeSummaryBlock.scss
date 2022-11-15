@@ -1,3 +1,7 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
 .card {
     background-color: var(--mp-light-base);
     transition: background-color 0.15s ease-in-out 0s;
@@ -11,6 +15,18 @@
 
         .h5 {
             margin: 0;
+
+            @include media-breakpoint-down(lg) {
+                font-size: 1.1rem;
+            }
+
+            @include media-breakpoint-down(md) {
+                font-size: 1rem;
+            }
+
+            @include media-breakpoint-down(sm) {
+                font-size: 0.9rem;
+            }
         }
     }
 }
