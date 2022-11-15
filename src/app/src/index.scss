@@ -90,6 +90,19 @@
     --bs-modal-bg: var(--mp-dark-base);
   }
 
+  .offcanvas {
+    --bs-offcanvas-color: var(--mp-light-base);
+    --bs-offcanvas-bg: var(--mp-dark-base);
+
+    .offcanvas-header .btn-close {
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%20fill%3D%27%23ecdbba%27%3E%3Cpath%20d%3D%27M.293.293a1%201%200%200%201%201.414%200L8%206.586%2014.293.293a1%201%200%201%201%201.414%201.414L9.414%208l6.293%206.293a1%201%200%200%201-1.414%201.414L8%209.414l-6.293%206.293a1%201%200%200%201-1.414-1.414L6.586%208%20.293%201.707a1%201%200%200%201%200-1.414z%27%2F%3E%3C%2Fsvg%3E");
+    
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+
   .btn-primary {
     --bs-btn-color: var(--mp-light-base);
     --bs-btn-bg: var(--mp-dark-lighter);

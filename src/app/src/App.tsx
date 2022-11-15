@@ -5,22 +5,54 @@ import RecipeList from './views/recipeList/RecipeList';
 import RecipeFormEdit from './views/recipeFormEdit/RecipeFormEdit';
 import RecipeDetail from './views/recipeDetail/RecipeDetail';
 import NotFound from './views/notFound/NotFound';
-import { FiHome, FiPlusSquare, FiSearch, FiSettings } from 'react-icons/fi';
+import { FiHome, FiPlusSquare, FiSearch, FiSettings, FiMenu } from 'react-icons/fi';
 import './App.scss';
-import { Container, Col, Image } from 'react-bootstrap';
+import { Container, Col, Image, Button, Offcanvas } from 'react-bootstrap';
 
-class App extends Component {
+interface AppState {
+  menuShow: boolean,
+}
+
+class App extends Component<{}, AppState> {
+  constructor (props: {}) {
+    super(props);
+    this.state = {
+      menuShow: false,
+    };
+
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  handleShow() {
+    this.setState({ menuShow: true });
+  }
+
+  handleClose() {
+    this.setState({ menuShow: false });
+  }
+
   render() {
     return (
-      <Container fluid className="app p-0">
-        <Col xs={2} className="border-end d-flex flex-column" id="navbar">
+      <Container fluid className="app" id="mainWrapper">
+        <Col id="navbar">
           <Link to="/app">
             <Image alt="Maite in the Pocket" src={`${process.env.PUBLIC_URL}/maite.jpg`}></Image>
           </Link>
-          <Link to="/app"><FiHome size="1.3em" color="var(--mp-theme)"/> Home</Link>
-          <Link to="/app/recipe/list"><FiSearch size="1.3em" color="var(--mp-theme)"/> Chercher une recette</Link>
-          <Link reloadDocument to="/app/recipe/add"><FiPlusSquare size="1.3em" color="var(--mp-theme)"/> Ajouter une recette</Link>
-          <Link to="/app/settings"><FiSettings size="1.3em" color="var(--mp-theme)"/> Paramètres</Link>
+          <Button className="mobile" onClick={this.handleShow}>
+            <FiMenu />
+          </Button>
+          <div className="laptop">
+            {this.renderMenuLink()}
+          </div>
+          <Offcanvas placement="end" show={this.state.menuShow} onHide={this.handleClose}>
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title>Menu</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              {this.renderMenuLink()}
+            </Offcanvas.Body>
+          </Offcanvas>
         </Col>
         <div id="appWrapper">
           <Routes>
@@ -34,6 +66,17 @@ class App extends Component {
           </Routes>
         </div>
       </Container>
+    );
+  }
+
+  renderMenuLink() {
+    return (
+      <div id="menuLinkWrapper">
+        <Link to="/app"><FiHome /> Home</Link>
+        <Link to="/app/recipe/list"><FiSearch /> Chercher une recette</Link>
+        <Link reloadDocument to="/app/recipe/add"><FiPlusSquare /> Ajouter une recette</Link>
+        <Link to="/app/settings"><FiSettings /> Paramètres</Link>
+      </div>
     );
   }
 }
