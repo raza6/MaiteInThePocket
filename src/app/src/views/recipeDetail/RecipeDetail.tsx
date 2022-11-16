@@ -140,7 +140,7 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
     let adjustedQuantity = quantity;
     let unitClear = '';
     if (quantity) {
-      adjustedQuantity = Math.round(quantity * (currentServings / defaultServings));
+      adjustedQuantity = Math.max(Math.round(quantity * (currentServings / defaultServings)), 1);
       
       if (unit) {
         switch (unit) {
