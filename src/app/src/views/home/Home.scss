@@ -5,6 +5,14 @@
 #homeWrapper {
     margin-top: 32px;
 
+    .row {
+        gap: 16px;
+
+        .col {
+            padding: 0;
+        }
+    }
+
     @include media-breakpoint-up(md) {
         .row {
             margin: auto;

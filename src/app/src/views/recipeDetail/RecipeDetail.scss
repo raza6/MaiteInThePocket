@@ -1,3 +1,7 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
 #recipeDetailWrapper {
   h1 {
     margin-bottom: 16px;
@@ -7,50 +11,109 @@
     margin-left: 0;
     margin-right: 0;
   }
-  
-  #recipeSummaryDetail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-right: 1px solid var(--mp-light-base);
 
-    img {
-      object-fit: cover;
-      width: 300px;
-      height: 200px;
-      margin-bottom: 4px;
+  #recipeTopWrapper {
+    .mobile {
+      display: none;
     }
 
-    #recipeSummaryCounterWrapper {
-      justify-content: center;
-  
-      span {
-        display: inline-flex;
-        align-items: center;
-        font-weight: 700;
+    .laptop {
+      display: flex;
+    }
 
-        svg {
-          margin-right: 4px;
+    #recipeSummaryDetailWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid var(--mp-light-base);
+
+      img {
+        object-fit: cover;
+        width: 300px;
+        height: 200px;
+        margin-bottom: 4px;
+      }
+      
+      #recipeSummaryCounterWrapper {
+        justify-content: center;
+    
+        span {
+          display: inline-flex;
+          align-items: center;
+          font-weight: 700;
+  
+          svg {
+            margin-right: 4px;
+          }
         }
       }
+  
+      #recipeSummaryComment {
+        width: 300px;
+        margin-top: 16px;
+        font-size: 14px;
+      }
+    }
+  
+    #recipeIngredientsWrapper {
+      margin-left: 32px;
+
+      ul {
+        margin-bottom: 0;
+      }
+    }
+    
+    #recipeActionWrapper {
+      flex-direction: column;
+      gap: 8px;
+      flex: 0;
+      margin-right: 48px;
     }
 
-    #recipeSummaryComment {
-      width: 300px;
-      margin-top: 16px;
-      font-size: 14px;
+    @include media-breakpoint-down(md) {
+      display: flex;
+      flex-direction: column;
+
+      .mobile {
+        display: flex;
+      }
+
+      .laptop {
+        display: none;
+      }
+
+      & > .col {
+        &:not(:first-of-type) {
+          padding-top: 8px;
+        }
+
+        &:not(:last-of-type) {
+          padding-bottom: 8px;
+        }
+
+        border-bottom: 1px solid var(--mp-light-base);
+      }
+
+      #recipeSummaryDetailWrapper {
+        flex-direction: row;
+        align-items: start;
+        border-right: none;
+
+        #recipeSummaryDetail {
+          margin-left: auto;
+        }
+      }
+
+      #recipeIngredientsWrapper {
+        margin-left: 0;
+      }
+
+      #recipeActionWrapper {
+        margin: 0 0 0 auto;
+      }
     }
   }
-
-  #recipeIngredientsWrapper {
-    margin-left: 32px;
-  }
-
-  #recipeActionWrapper {
-    flex: 0;
-    margin-right: 48px;
-  }
-
+  
   #recipeStepsWrapper {
     ol {
       display: flex;

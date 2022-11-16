@@ -127,8 +127,15 @@
     --bs-btn-active-border-color: var(--mp-light-base2);
   }
 
-  .btn:focus-visible {
-    box-shadow: 0 0 0 0.25rem rgb(44 44 44 / 25%);
+  .btn {
+    &:focus-visible {
+      box-shadow: 0 0 0 0.25rem rgb(44 44 44 / 25%);
+    }
+
+    &:disabled {
+      background-color: var(--mp-gray);
+      border-color: var(--mp-gray);
+    }
   }
 
   .form-control {
