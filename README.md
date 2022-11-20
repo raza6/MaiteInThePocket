@@ -6,16 +6,16 @@ Maite in the Pocket is an online cookbook application.
 
 The project is split in two parts: **server** and **app**.
 
-Both project have to be installed using `npm install` in both folders `src/server` and `src/app`.
+Install both projects using `npm install` in both folders `src/server` and `src/app`.
 
-Additionnaly a **MongoDB** server need to be available with a collection named `Recipes`. The script `src/docker/mongo-init.js` have to be executed on that MongoDB server to create indexes on the collection.
+Additionnaly a **MongoDB** server needs to be available with a collection named `Recipes`. Then execute the script `src/docker/mongo-init.js` on that MongoDB server to create indexes on the collection.
 
 ## Usage
 
 To use the app locally:
 
-In `src/server`, copy `.env.template` as `.env` and complete the mongo connection informantion.
-Launch the server using `npm run start` in the  directory. You can check that the server is launched by requesting the `/mp/test` endpoint.
+In `src/server`, copy `.env.template` as `.env` and complete the mongo connection information.
+Launch the server using `npm run start` in the directory. You can check that the server is launched by requesting the `/mp/test` endpoint.
 
 Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/services/mainServices.ts`). The app should automatically open in your browser of choice.
 

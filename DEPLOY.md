@@ -80,8 +80,6 @@ services:
     volumes:
       - './maite/src/docker/mongo/data:/data/db'
       - './maite/src/docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro'
-    ports:
-      - '27017:27017'
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=******
