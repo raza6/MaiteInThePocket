@@ -127,6 +127,10 @@ server {
     listen 80;
     server_name ******;
 
+    location / {
+        return 301 http://$host/app;
+    }
+
     location /app {
         root   /usr/src/maite;
         index  /app/index.html;

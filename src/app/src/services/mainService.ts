@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { Recipe, RecipeSummarySearchResponse } from '../types/recipes';
-const API_URL = 'http://maite.raza6.fr/mp';
+const API_URL = 'https://maite.raza6.fr/mp';
 
 enum EHttpVerb {
   GET, POST, PUT, DELETE
