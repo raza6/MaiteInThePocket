@@ -184,7 +184,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       }
       setTimeout(() => {
         this.setState({ navigate: `/app/recipe/detail/${recipeId}`, exitWithoutTemp: true });
-      }, 300);
+      }, 1000);
     } else {
       this.setState({ errors: errors });
     }

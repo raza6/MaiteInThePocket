@@ -23,7 +23,7 @@ interface RecipeListProps {
 }
 
 class RecipeList extends Component<RecipeListProps, RecipeListState> {
-  private _listSize = 10;
+  private _listSize = 12;
   
   private _paginationReach = 2;
   
