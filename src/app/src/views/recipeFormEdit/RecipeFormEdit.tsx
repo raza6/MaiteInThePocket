@@ -4,7 +4,7 @@ import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
 import MainService from '../../services/mainService';
-import { Recipe } from '../../types/recipes';
+import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg, withRouter } from '../../utils';
 import './RecipeFormEdit.scss';
@@ -15,7 +15,7 @@ enum EModalEdit {
 }
 
 interface RecipeFormEditState {
-  recipe: Recipe | undefined,
+  recipe: Recipe<RecipeSummaryEdit> | undefined,
   recipeImg: File | undefined,
   recipeImgUrl: string | undefined,
   show: Array<boolean>,
@@ -68,16 +68,37 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   }
 
   handleRecipeChange(value: string, recipeProperty: Array<string>) {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     if (recipeProperty[0] === 'summary') {
       if (recipeProperty[1] === 'name') {
         newRecipe.summary.name = value;
       } else if (recipeProperty[1] === 'servings') {
-        newRecipe.summary.servings = value !== '' ? parseInt(value, 10) : 0;
+        let servings = null;
+        if (value !== '') {
+          servings = parseInt(value, 10);
+          if (servings < 1) {
+            servings = null;
+          }           
+        }
+        newRecipe.summary.servings = servings;
       } else if (recipeProperty[1] === 'cookingTime') {
-        newRecipe.summary.cookingTime = value !== '' ? parseInt(value, 10) : 0;
+        let cookingTime = null;
+        if (value !== '') {
+          cookingTime = parseInt(value, 10);
+          if (cookingTime < 0) {
+            cookingTime = null;
+          }           
+        }
+        newRecipe.summary.cookingTime = cookingTime;
       } else if (recipeProperty[1] === 'prepTime') {
-        newRecipe.summary.prepTime = value !== '' ? parseInt(value, 10) : 0;
+        let prepTime = null;
+        if (value !== '') {
+          prepTime = parseInt(value, 10);
+          if (prepTime < 0) {
+            prepTime = null;
+          }           
+        }
+        newRecipe.summary.prepTime = prepTime;
       } else if (recipeProperty[1] === 'comment') {
         newRecipe.summary.comment = value !== '' ? value : null;
       }
@@ -116,37 +137,37 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   }
 
   handleAddStep() {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.steps.push('');
     this.setState({ recipe: newRecipe });
   }
 
   handleRemoveStep(index: number) {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.steps.splice(index, 1);
     this.setState({ recipe: newRecipe });
   }
 
   handleAddIngredientGroup() {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
     this.setState({ recipe: newRecipe });
   }
 
   handleRemoveIngredientGroup(index: number) {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.ingredients.splice(index, 1);
     this.setState({ recipe: newRecipe });
   }
 
   handleAddIngredient(index: number) {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
     this.setState({ recipe: newRecipe });
   }
 
   handleRemoveIngredient(indexGroup: number, indexIngredient: number) {
-    const newRecipe: Recipe = JSON.parse(JSON.stringify(this.state.recipe));
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
     newRecipe.ingredients[indexGroup].ingredientsList.splice(indexIngredient, 1);
     this.setState({ recipe: newRecipe });
   }
@@ -171,11 +192,11 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       let recipeId: string | undefined;
       const recipe = this.state.recipe;
       if (this.state.addMode) {
-        recipeId = await MainService.addRecipe(recipe);
+        recipeId = await MainService.addRecipe(recipe as Recipe<RecipeSummary>);
       } else {
         recipeId = this.state.recipe.slugId;
         if (recipeId !== undefined) {
-          await MainService.editRecipe(recipeId, recipe);
+          await MainService.editRecipe(recipeId, recipe as Recipe<RecipeSummary>);
         }
       }
       if (this.state.recipeImg !== undefined && recipeId !== undefined) {
@@ -201,7 +222,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   }
 
   handleTempImport() {
-    const recipe: Recipe = JSON.parse(localStorage.getItem('maite_recipe_temp') ?? '');
+    const recipe: Recipe<RecipeSummaryEdit> = JSON.parse(localStorage.getItem('maite_recipe_temp') ?? '');
     localStorage.removeItem('maite_recipe_temp');
     this.setState({ recipe, hasTemp: false });
   }
@@ -360,7 +381,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
                 <span>
                   <AiOutlinePieChart />
                   <Form.Control size="sm" type="number" required id="recipeServingsInput"
-                    value={this.state.recipe?.summary.servings ?? 1} min="1" 
+                    value={this.state.recipe?.summary.servings ?? ''} min="1" 
                     onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'servings'])}
                   ></Form.Control>
                   {` part${(this.state.recipe?.summary.servings ?? 1) > 1 ? 's' : ''}`}
@@ -368,14 +389,14 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
                 <span>
                   <FiClock />
                   <Form.Control size="sm" type="number" required id="recipePreptimeInput"
-                    value={this.state.recipe?.summary.prepTime ?? 0} min="0" 
+                    value={this.state.recipe?.summary.prepTime ?? ''} min="0" 
                     onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'prepTime'])}
                   ></Form.Control>mn
                 </span>
                 <span>
                   <AiOutlineFire />
                   <Form.Control size="sm" type="number" required id="recipeCookingtimeInput"
-                    value={this.state.recipe?.summary.cookingTime ?? 0} min="0" 
+                    value={this.state.recipe?.summary.cookingTime ?? ''} min="0" 
                     onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'cookingTime'])}
                   ></Form.Control>mn
                 </span>

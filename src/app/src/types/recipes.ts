@@ -9,6 +9,15 @@ interface RecipeSummary {
   hasImg: boolean;
 }
 
+interface RecipeSummaryEdit {
+  name: string;
+  servings: number | null;
+  prepTime: number | null;
+  cookingTime: number | null;
+  comment: string | null;
+  hasImg: boolean;
+}
+
 interface Ingredient {
   name: string;
   quantity: number | null;
@@ -21,9 +30,9 @@ interface IngredientsGroup {
   ingredientsList: Array<Ingredient>;
 }
 
-interface Recipe {
+interface Recipe<T> {
   slugId: string | undefined;
-  summary: RecipeSummary;
+  summary: T;
   ingredients: Array<IngredientsGroup>;
   steps: Array<string>;
 }
@@ -45,5 +54,5 @@ interface RecipeRequest {
 }
 
 export type {
-  Recipe, RecipeSummary, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient, RecipeSummarySearchResponse
+  Recipe, RecipeSummary, RecipeSummaryEdit, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient, RecipeSummarySearchResponse
 };

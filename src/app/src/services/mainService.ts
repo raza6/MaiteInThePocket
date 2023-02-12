@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { Recipe, RecipeSummarySearchResponse } from '../types/recipes';
+import { Recipe, RecipeSummary, RecipeSummarySearchResponse } from '../types/recipes';
 const API_URL = 'https://maite.raza6.fr/mp';
 
 enum EHttpVerb {
@@ -14,7 +14,7 @@ class MainService {
     return res;
   }
 
-  public static async getRecipe(id: string): Promise<Recipe> {
+  public static async getRecipe(id: string): Promise<Recipe<RecipeSummary>> {
     console.info('📫 - Get recipe detail');
     const res = await MainService.handleApiCall(EHttpVerb.GET, `${API_URL}/recipe/${id}`);
     console.info('👏 - Get recipe detail', res);
@@ -35,7 +35,7 @@ class MainService {
     return res;
   }
 
-  public static async addRecipe(recipe: Recipe): Promise<string> {
+  public static async addRecipe(recipe: Recipe<RecipeSummary>): Promise<string> {
     console.info('📫 - Add recipe');
     const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/add`, recipe);
     console.info('👏 - Add recipe', res);
@@ -49,7 +49,7 @@ class MainService {
     return;
   }
 
-  public static async editRecipe(id: string, recipe: Recipe): Promise<Recipe> {
+  public static async editRecipe(id: string, recipe: Recipe<RecipeSummary>): Promise<Recipe<RecipeSummary>> {
     console.info('📫 - Edit recipe');
     const res = await MainService.handleApiCall(EHttpVerb.PUT, `${API_URL}/recipe/${id}`, recipe);
     console.info('👏 - Edit recipe', res);

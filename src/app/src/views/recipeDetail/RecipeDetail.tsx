@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import MainService from '../../services/mainService';
-import { Ingredient, Recipe } from '../../types/recipes';
+import { Ingredient, Recipe, RecipeSummary } from '../../types/recipes';
 import { getRecipeImg, withRouter } from '../../utils';
 import Image from 'react-bootstrap/Image';
 import { Button, Col, Row, Stack } from 'react-bootstrap';
@@ -11,7 +11,7 @@ import { Link, Navigate } from 'react-router-dom';
 import './RecipeDetail.scss';
 
 interface RecipeDetailState { 
-  recipe: Recipe | undefined,
+  recipe: Recipe<RecipeSummary> | undefined,
   navigate: string | undefined
   currentServings: number,
 }
