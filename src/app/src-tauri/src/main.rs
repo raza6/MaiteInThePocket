@@ -3,8 +3,6 @@
   windows_subsystem = "windows"
 )]
 
-fn main() {
-  tauri::Builder::default()
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+pub fn main() {
+  maite_in_the_pocket_cross::AppBuilder::new().run();
 }

@@ -14,6 +14,8 @@ Additionnaly a **MongoDB** server needs to be available with a collection named 
 
 This project uses [tauri](https://tauri.app/) to achieve **cross platform** compatibility. With a correct set-up of tauri, run `npm run tauri dev` to launch as a standalone app.
 
+To launch as an android app, you need to complete the steps *Setup Android dependecies*, *Generate Mobile setup* and *Development cycle* of [this doc](https://next--tauri.netlify.app/next/mobile/development/mobile_workflow).
+
 ## Usage
 
 To use the app locally:
