@@ -14,7 +14,11 @@ export default class MongoDB {
 
   static {
     dotenv.config();
-    this.dbConnect = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
+    let connectionString = `${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
+    if (process.env.MONGO_USER === '') {
+      connectionString = `${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
+    }
+    this.dbConnect = `mongodb://${connectionString}`;
   }
 
   private client: MongoClient;
