@@ -1,8 +1,8 @@
 import { ValidationRejection } from '@altostra/type-validations';
 import ShortUniqueId from 'short-unique-id';
-import MongoDB from './mongo';
-import { Recipe, RecipeSummarySearchResponse } from './types/recipes';
-import isRecipe from './validator/recipes';
+import MongoDB from '../mongo/mongo';
+import { Recipe, RecipeSummarySearchResponse } from '../types/recipes';
+import isRecipe from '../validator/recipes';
 
 export default class recipeService {
   public static async checkRecipe(recipeId: string): Promise<boolean> {

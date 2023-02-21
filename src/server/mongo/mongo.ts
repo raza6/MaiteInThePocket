@@ -2,8 +2,8 @@ import {
   FindCursor, MongoClient, MongoError,
 } from 'mongodb';
 import dotenv from 'dotenv';
-import { Recipe, RecipeSummarySearchResponse, RecipeSummaryShort } from './types/recipes';
-import { NoCollectionError } from './utilities';
+import { Recipe, RecipeSummarySearchResponse, RecipeSummaryShort } from '../types/recipes';
+import { NoCollectionError } from '../utils/utils';
 
 export default class MongoDB {
   private static dbName = 'MaiteInThePocket';
