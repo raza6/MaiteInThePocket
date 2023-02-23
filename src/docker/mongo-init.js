@@ -1,5 +1,8 @@
 db = db.getSiblingDB('MaiteInThePocket');
 
+db.createCollection('Recipes');
+db.createCollection('Sessions');
+
 const collection = db.getCollection('Recipes');
 
 collection.createIndex({

@@ -8,7 +8,7 @@ The project is split in two parts: **server** and **app**.
 
 Install both projects using `npm install` in both folders `src/server` and `src/app`.
 
-Additionnaly a **MongoDB** server needs to be available with a collection named `Recipes`. Then execute the script `src/docker/mongo-init.js` on that MongoDB server to create indexes on the collection.
+Additionnaly a **MongoDB** server needs to be available with a database named `MaiteInThePocket`. Then execute the script `src/docker/mongo-init.js` on that MongoDB server to create collections and indexes.
 
 ### Cross platform
 
@@ -18,7 +18,7 @@ This project uses [tauri](https://tauri.app/) to achieve **cross platform** comp
 
 To use the app locally:
 
-In `src/server`, copy `.env.template` as `.env` and complete the mongo connection information.
+In `src/server`, copy `.env.template` as `.env` and fill in the information.
 Launch the server using `npm run start` in the directory. You can check that the server is launched by requesting the `/mp/test` GET endpoint.
 
 Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/services/mainServices.ts`). The app should automatically open in your browser of choice.

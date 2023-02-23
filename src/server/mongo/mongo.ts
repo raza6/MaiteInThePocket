@@ -1,22 +1,22 @@
 import {
   FindCursor, MongoClient, MongoError,
 } from 'mongodb';
-import dotenv from 'dotenv';
+import colors from 'colors';
 import { Recipe, RecipeSummarySearchResponse, RecipeSummaryShort } from '../types/recipes';
 import { NoCollectionError } from '../utils/utils';
+import EnvWrap from '../utils/envWrapper';
 
 export default class MongoDB {
-  private static dbName = 'MaiteInThePocket';
+  public static dbName = 'MaiteInThePocket';
 
   private static collectionRecipes = 'Recipes';
 
   private static dbConnect;
 
   static {
-    dotenv.config();
-    let connectionString = `${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
-    if (process.env.MONGO_USER === '') {
-      connectionString = `${process.env.MONGO_URL}:${process.env.MONGO_PORT}`;
+    let connectionString = `${EnvWrap.get().value('MONGO_URL')}:${EnvWrap.get().value('MONGO_PORT')}`;
+    if (EnvWrap.get().value('MONGO_USER') !== '') {
+      connectionString = `${EnvWrap.get().value('MONGO_USER')}:${EnvWrap.get().value('MONGO_PASSWORD')}@${connectionString}`;
     }
     this.dbConnect = `mongodb://${connectionString}`;
   }
@@ -34,12 +34,16 @@ export default class MongoDB {
       res = await command();
       return res;
     } catch (ex) {
-      console.log('💀 Maite in the Pocket failed to execute command');
+      console.log(`💀 ${colors.red('Maite in the Pocket failed to execute command')}`);
       return res;
     } finally {
       // Ensures that the client will close when you finish/error
       await this.client.close();
     }
+  }
+
+  public exposeClient(): MongoClient {
+    return this.client;
   }
 
   public async start(): Promise<void> {
@@ -50,18 +54,17 @@ export default class MongoDB {
       const allCollections = allCollectionsDetail.map((detail) => detail.name);
 
       if (allCollections.length === 0) {
-        throw new NoCollectionError('Recipes missing');
+        throw new NoCollectionError('No collection found');
       }
 
       console.log('Connected to DB with collections :', allCollections.reduce((acc, c) => (acc !== '' ? `${acc}, ${c}` : c), ''));
-      console.log('🍰 Maite in the Pocket successfully launched');
     } catch (ex) {
       if (ex instanceof MongoError) {
-        console.log('💀 Maite in the Pocket failed to connect to DB');
+        console.log(`💀 ${colors.red('Maite in the Pocket failed to connect to DB')}`);
       } else if (ex instanceof NoCollectionError) {
-        console.log('💀 Maite in the Pocket has no collections available');
+        console.log(`💀 ${colors.red('Maite in the Pocket has no collections available')}`);
       } else {
-        console.log('💀 Maite in the pocket unknown error while starting');
+        console.log(`💀 ${colors.red('Maite in the pocket unknown error while starting')}`);
       }
     } finally {
       await this.client.close();
