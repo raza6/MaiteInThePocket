@@ -3,7 +3,7 @@ import RecipeSummary from '../../components/RecipeSummaryBlock';
 import { Button, Form, InputGroup, Col, Stack, Pagination, Spinner } from 'react-bootstrap';
 import { FiSearch, FiXCircle } from 'react-icons/fi';
 import './RecipeList.scss';
-import MainService from '../../services/mainService';
+import RecipeService from '../../services/recipeService';
 import { RecipeSummaryShort } from '../../types/recipes';
 import { debounce, getRandomOfList, withRouter } from '../../utils';
 
@@ -70,7 +70,7 @@ class RecipeList extends Component<RecipeListProps, RecipeListState> {
 
   async updateRecipeList(requestedPage: number = 0): Promise<void> {
     this.setState({ loading: true });
-    const result = await MainService.searchSummary(this.state.search, requestedPage, this._listSize);
+    const result = await RecipeService.searchSummary(this.state.search, requestedPage, this._listSize);
     const maxPage = Math.floor((result.count-1)/this._listSize);
     let currentPage = requestedPage;
     if (currentPage === undefined || currentPage > maxPage || currentPage < 0) {

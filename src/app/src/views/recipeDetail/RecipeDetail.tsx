@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import MainService from '../../services/mainService';
+import RecipeService from '../../services/recipeService';
 import { Ingredient, Recipe, RecipeSummary } from '../../types/recipes';
 import { getRecipeImg, withRouter } from '../../utils';
 import Image from 'react-bootstrap/Image';
@@ -8,6 +8,7 @@ import { FiClock, FiEdit, FiUserMinus, FiUserPlus } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
 import { Link, Navigate } from 'react-router-dom';
+import AuthContext from '../../components/AuthContext';
 import './RecipeDetail.scss';
 
 interface RecipeDetailState { 
@@ -37,7 +38,7 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
 
   async componentDidMount() {
     const { id } = this.props.router.params;
-    const recipe = await MainService.getRecipe(id);
+    const recipe = await RecipeService.getRecipe(id);
     if (recipe != null) {
       document.title = `${recipe.summary.name} - Maite in the Pocket`;
       this.setState({ recipe, currentServings: recipe.summary.servings });
@@ -115,13 +116,17 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
   }
 
   private renderActions(respMode: string): ReactNode {
+    const loggedIn = this.context as boolean;
     return (
       <Col id="recipeActionWrapper" className={respMode}>
-        <Link to={`/app/recipe/edit/${this.state.recipe?.slugId}`}>
-          <Button>
-            <FiEdit/>
-          </Button>
-        </Link>
+        {
+          loggedIn &&
+          <Link to={`/app/recipe/edit/${this.state.recipe?.slugId}`}>
+            <Button>
+              <FiEdit/>
+            </Button>
+          </Link>
+        }
         <Button onClick={this.handleAddServing}>
           <FiUserPlus/>
         </Button>
@@ -179,5 +184,6 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
     return `${quantifier}${spacer}${name}${optionalText}`;
   }
 }
+RecipeDetail.contextType = AuthContext;
 
 export default withRouter(RecipeDetail);

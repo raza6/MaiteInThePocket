@@ -3,7 +3,7 @@ import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTri
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate } from 'react-router-dom';
-import MainService from '../../services/mainService';
+import RecipeService from '../../services/recipeService';
 import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg, withRouter } from '../../utils';
@@ -192,16 +192,16 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       let recipeId: string | undefined;
       const recipe = this.state.recipe;
       if (this.state.addMode) {
-        recipeId = await MainService.addRecipe(recipe as Recipe<RecipeSummary>);
+        recipeId = await RecipeService.addRecipe(recipe as Recipe<RecipeSummary>);
       } else {
         recipeId = this.state.recipe.slugId;
         if (recipeId !== undefined) {
-          await MainService.editRecipe(recipeId, recipe as Recipe<RecipeSummary>);
+          await RecipeService.editRecipe(recipeId, recipe as Recipe<RecipeSummary>);
         }
       }
       if (this.state.recipeImg !== undefined && recipeId !== undefined) {
         const recipeImg = this.state.recipeImg ?? new File([], '');
-        await MainService.addImgRecipe(recipeId, recipeImg);
+        await RecipeService.addImgRecipe(recipeId, recipeImg);
       }
       setTimeout(() => {
         this.setState({ navigate: `/app/recipe/detail/${recipeId}`, exitWithoutTemp: true });
@@ -217,7 +217,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
   }
 
   async handleDelete() {
-    await MainService.deleteRecipe(this.state.recipe?.slugId ?? '');
+    await RecipeService.deleteRecipe(this.state.recipe?.slugId ?? '');
     this.setState({ navigate: '/app/recipe/list' });
   }
 
@@ -235,7 +235,7 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       this.setState({ recipe, addMode, hasTemp });
     } else {
       const { id } = this.props.router.params;
-      const recipe = await MainService.getRecipe(id);
+      const recipe = await RecipeService.getRecipe(id);
       if (recipe !== null) {
         this.setState({ recipe, addMode });
       } else {
