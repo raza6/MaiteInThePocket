@@ -67,12 +67,6 @@ const init = async (): Promise<void> => {
   // Set MaiteInThePocket online
   serv.listen(PORT);
   console.log(`🍰 Maite in the Pocket ${colors.green('successfully launched')}`);
-
-  // TODO
-  // store user in mongo
-  // session with app
-  // better auth route
-  // API definition auth
 };
 
 export default init;

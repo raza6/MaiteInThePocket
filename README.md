@@ -21,7 +21,7 @@ To use the app locally:
 In `src/server`, copy `.env.template` as `.env` and fill in the information.
 Launch the server using `npm run start` in the directory. You can check that the server is launched by requesting the `/mp/test` GET endpoint.
 
-Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/services/mainServices.ts`). The app should automatically open in your browser of choice.
+Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/config.ts`). The app should automatically open in your browser of choice.
 
 ## Deployment
 
