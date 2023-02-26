@@ -22,8 +22,13 @@ const init = async (): Promise<void> => {
   // Passport config
   serv.use(session({
     secret: <string>EnvWrap.get().value('SESSION_SECRET'),
-    resave: false,
+    resave: true,
+    rolling: true,
     saveUninitialized: false,
+    cookie: {
+      secure: <string>EnvWrap.get().value('RUN_ENV') === 'prod',
+      maxAge: 1000 * 60 * 60, // ms * s * m * h * d
+    },
     store: MongoStore.create({
       clientPromise: mongoStart.exposeClient().connect(),
       dbName: MongoDB.dbName,
@@ -32,6 +37,11 @@ const init = async (): Promise<void> => {
   }));
 
   serv.use(passport.initialize());
+  serv.use(cors({
+    origin: <string>EnvWrap.get().value('AUTH_APP_URL'), // allow to server to accept request from different origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // allow session cookie from browser to pass through
+  }));
   serv.use(passport.session());
   githubAuthConfig(passport);
 
@@ -44,7 +54,6 @@ const init = async (): Promise<void> => {
     tempFileDir: './tmp/',
   }));
 
-  serv.use(cors());
   serv.use(bodyParser.json());
   serv.use(bodyParser.urlencoded({ extended: true }));
   serv.use('/mp/static/img', express.static('static/img'));

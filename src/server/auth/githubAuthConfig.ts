@@ -1,7 +1,9 @@
 import { PassportStatic } from 'passport';
 import { Strategy as GithubStrategy } from 'passport-github2';
 import { Express } from 'express';
+import { EAuthOrigin } from '../types/user';
 import authConfig from './authConfig';
+import MongoDB from '../mongo/mongo';
 
 const githubAuthConfig = (passport: PassportStatic) => {
   passport.serializeUser((user, done) => {
@@ -21,16 +23,23 @@ const githubAuthConfig = (passport: PassportStatic) => {
       },
       async (request, accessToken, refreshToken, profile, done) => {
         try {
-          // TODO
-          console.log('auth github strat', request, accessToken, refreshToken, profile);
-          const existingUser = { email: 'emailtest', id: 1 };
-          if (existingUser) {
-            return done(null, existingUser);
+          const { _json: jsonGithubUser } = profile;
+          const cleanUser = {
+            name: jsonGithubUser.name, id: jsonGithubUser.id, avatar: jsonGithubUser.avatar_url, origin: EAuthOrigin.Github,
+          };
+
+          let userExist = false;
+          const mongo = new MongoDB();
+          userExist = await mongo.checkUser(cleanUser.id);
+          if (!userExist) {
+            console.log('🔒 Creating new user...');
+            await mongo.addUser(cleanUser);
           }
-          console.log('Creating new user...');
-          return done(null, existingUser);
+
+          return done(null, cleanUser);
         } catch (error) {
-          return done(<Error>error, false);
+          console.log('🧨 Error while authenticating via Github', error);
+          return done(<Error>error, undefined);
         }
       },
     ),

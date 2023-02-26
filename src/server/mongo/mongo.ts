@@ -1,15 +1,18 @@
 import {
-  FindCursor, MongoClient, MongoError,
+  FindCursor, MongoClient, MongoError, Sort,
 } from 'mongodb';
 import colors from 'colors';
 import { Recipe, RecipeSummarySearchResponse, RecipeSummaryShort } from '../types/recipes';
 import { NoCollectionError } from '../utils/utils';
 import EnvWrap from '../utils/envWrapper';
+import { User } from '../types/user';
 
 export default class MongoDB {
   public static dbName = 'MaiteInThePocket';
 
   private static collectionRecipes = 'Recipes';
+
+  private static userRecipes = 'Users';
 
   private static dbConnect;
 
@@ -116,15 +119,18 @@ export default class MongoDB {
     pageSize = 20,
   ): Promise<RecipeSummarySearchResponse> {
     const searchParam = term === '' ? {} : { $text: { $search: term } };
+    const projectParam = term === '' ? { _id: 0, slugId: 1, summary: 1 }
+      : {
+        _id: 0, slugId: 1, summary: 1, score: { $meta: 'textScore' },
+      };
+    const sortParam = term === '' ? { 'summary.name': 1 } : { score: { $meta: 'textScore' } };
 
     const result = <Array<RecipeSummaryShort>><unknown> await this.run(
       () => {
         const cursor = <FindCursor><unknown> this.client.db(MongoDB.dbName).collection(MongoDB.collectionRecipes)
           .find(searchParam)
-          .project({
-            _id: 0, slugId: 1, summary: 1, score: { $meta: 'textScore' },
-          })
-          .sort(term !== '' ? { score: { $meta: 'textScore' } } : { 'summary.name': 1 })
+          .project(projectParam)
+          .sort(<Sort><unknown>sortParam)
           .skip(pageIndex * pageSize)
           .limit(pageSize);
 
@@ -143,5 +149,23 @@ export default class MongoDB {
       })),
       count: countResult,
     };
+  }
+
+  public async getUser(userId: string): Promise<User> {
+    return <User><unknown> await this.run(
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).findOne({ id: userId }, { projection: { _id: 0 } }),
+    );
+  }
+
+  public async checkUser(userId: string): Promise<boolean> {
+    return await this.run(
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).countDocuments({ id: userId }),
+    ) === 1;
+  }
+
+  public async addUser(user: User): Promise<void> {
+    await this.run(
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).insertOne(user),
+    );
   }
 }

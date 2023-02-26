@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import dayjs from 'dayjs';
 
 function currentTimeLog(): string {
@@ -11,4 +12,11 @@ class NoCollectionError extends Error {
   }
 }
 
-export { currentTimeLog, NoCollectionError };
+function ensureAuthenticated(req: Request, res: Response, next: Function) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return res.sendStatus(401);
+}
+
+export { currentTimeLog, NoCollectionError, ensureAuthenticated };

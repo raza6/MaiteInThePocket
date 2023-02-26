@@ -2,6 +2,7 @@ db = db.getSiblingDB('MaiteInThePocket');
 
 db.createCollection('Recipes');
 db.createCollection('Sessions');
+db.createCollection('Users');
 
 const collection = db.getCollection('Recipes');
 
