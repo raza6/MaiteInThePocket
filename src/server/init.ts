@@ -26,7 +26,7 @@ const init = async (): Promise<void> => {
     rolling: true,
     saveUninitialized: false,
     cookie: {
-      secure: <string>EnvWrap.get().value('RUN_ENV') === 'prod',
+      secure: false, // <string>EnvWrap.get().value('RUN_ENV') === 'prod',
       maxAge: 1000 * 60 * 60, // ms * s * m * h * d
     },
     store: MongoStore.create({
