@@ -25,12 +25,16 @@ const githubAuthConfig = (passport: PassportStatic) => {
         try {
           const { _json: jsonGithubUser } = profile;
           const cleanUser = {
-            name: jsonGithubUser.name, id: jsonGithubUser.id, avatar: jsonGithubUser.avatar_url, origin: EAuthOrigin.Github,
+            name: jsonGithubUser.name,
+            id: jsonGithubUser.id,
+            avatar: jsonGithubUser.avatar_url,
+            origin: EAuthOrigin.Github,
+            lastConnection: new Date(),
           };
 
           let userExist = false;
           const mongo = new MongoDB();
-          userExist = await mongo.checkUser(cleanUser.id);
+          userExist = await mongo.checkUser(cleanUser.id, true);
           if (!userExist) {
             console.log('🔒 Creating new user...');
             await mongo.addUser(cleanUser);

@@ -7,7 +7,8 @@ interface User {
   id: string,
   name: string,
   avatar: string,
-  origin: EAuthOrigin.Github
+  origin: EAuthOrigin.Github,
+  lastConnection: Date
 }
 
 export {

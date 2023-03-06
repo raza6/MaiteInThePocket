@@ -12,7 +12,7 @@ export default class MongoDB {
 
   private static collectionRecipes = 'Recipes';
 
-  private static userRecipes = 'Users';
+  private static collectionUsers = 'Users';
 
   private static dbConnect;
 
@@ -118,7 +118,7 @@ export default class MongoDB {
     pageIndex = 0,
     pageSize = 20,
   ): Promise<RecipeSummarySearchResponse> {
-    const searchParam = term === '' ? {} : { $text: { $search: term } };
+    const searchParam = term === '' ? {} : { $or: [{ 'summary.name': { $regex: `${term}`, $options: 'i' } }, { $text: { $search: term } }] };
     const projectParam = term === '' ? { _id: 0, slugId: 1, summary: 1 }
       : {
         _id: 0, slugId: 1, summary: 1, score: { $meta: 'textScore' },
@@ -153,19 +153,26 @@ export default class MongoDB {
 
   public async getUser(userId: string): Promise<User> {
     return <User><unknown> await this.run(
-      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).findOne({ id: userId }, { projection: { _id: 0 } }),
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.collectionUsers).findOne({ id: userId }, { projection: { _id: 0 } }),
     );
   }
 
-  public async checkUser(userId: string): Promise<boolean> {
-    return await this.run(
-      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).countDocuments({ id: userId }),
+  public async checkUser(userId: string, withLastConnectionUpdate: boolean = false): Promise<boolean> {
+    const exist = await this.run(
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.collectionUsers).countDocuments({ id: userId }),
     ) === 1;
+    if (exist && withLastConnectionUpdate) {
+      await this.run(
+        () => this.client.db(MongoDB.dbName).collection(MongoDB.collectionUsers)
+          .updateOne({ id: userId }, { $currentDate: { lastConnection: true } }),
+      );
+    }
+    return exist;
   }
 
   public async addUser(user: User): Promise<void> {
     await this.run(
-      () => this.client.db(MongoDB.dbName).collection(MongoDB.userRecipes).insertOne(user),
+      () => this.client.db(MongoDB.dbName).collection(MongoDB.collectionUsers).insertOne(user),
     );
   }
 }
