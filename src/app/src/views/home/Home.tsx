@@ -44,6 +44,5 @@ function Home() {
     </Col>
   );
 }
-Home.contextType = AuthContext;
 
 export default Home;

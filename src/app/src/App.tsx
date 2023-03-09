@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Home from './views/home/Home';
 import RecipeList from './views/recipeList/RecipeList';
@@ -12,98 +12,85 @@ import Login from './views/auth/login/Login';
 import AuthContext from './components/AuthContext';
 import AuthService from './services/authService';
 
-interface AppState {
-  menuShow: boolean,
-  isLoggedIn: boolean,
-  appName: string,
-  appVersion: string,
-}
+function App() {
+  const [menuShow, setMenuShow] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [appName] = useState(process.env.REACT_APP_NAME ?? '');
+  const [appVersion] = useState(process.env.REACT_APP_VERSION ?? 'x.x.x');
 
-class App extends Component<{}, AppState> {
-  constructor (props: {}) {
-    super(props);
-    this.state = {
-      menuShow: false,
-      isLoggedIn: false,
-      appName: process.env.REACT_APP_NAME ?? '',
-      appVersion: process.env.REACT_APP_VERSION ?? 'x.x.x',
-    };
-
-    this.handleShow = this.handleShow.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  async componentDidMount() {
+  const handleLoginCheck = async () => {
     const res = await AuthService.checkAuth();
-    this.setState({ isLoggedIn: res !== null });
-  }
+    setLoggedIn(res);
+  };
 
-  handleShow() {
-    this.setState({ menuShow: true });
-  }
+  useEffect(() => {
+    handleLoginCheck();
+  }, []);
 
-  handleClose() {
-    this.setState({ menuShow: false });
-  }
+  const handleShow = () => {
+    setMenuShow(true);
+  };
 
-  render() {
-    return (
-      <AuthContext.Provider value={this.state.isLoggedIn}>
-        <Container fluid className="app" id="mainWrapper">
-          <Col id="navbar">
-            <Link to="/app">
-              <Image alt="Maite in the Pocket" src={`${process.env.PUBLIC_URL}/maite.jpg`}></Image>
-            </Link>
-            <Button className="mobile" onClick={this.handleShow}>
-              <FiMenu />
-            </Button>
-            <div className="laptop" id="laptopMenuWrapper">
-              {this.renderMenuLink()}
-            </div>
-            <Offcanvas placement="end" show={this.state.menuShow} onHide={this.handleClose}>
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Menu</Offcanvas.Title>
-              </Offcanvas.Header>
-              <Offcanvas.Body>
-                {this.renderMenuLink()}
-              </Offcanvas.Body>
-            </Offcanvas>
-          </Col>
-          <div id="appWrapper">
-            <Routes>
-              <Route index path="/app" element={<Home/>}></Route>
-              <Route path="/app/login" element={<Login/>}></Route>
-              <Route path="/app/recipe/list" element={<RecipeList/>}></Route>
-              <Route path="/app/recipe/list/:currentPage" element={<RecipeList/>}></Route>
-              <Route path="/app/recipe/add" element={<RecipeFormEdit addMode={true}/>}></Route>
-              <Route path="/app/recipe/edit/:id" element={<RecipeFormEdit/>}></Route>
-              <Route path="/app/recipe/detail/:id" element={<RecipeDetail/>}></Route>
-              <Route path="/app/*" element={<NotFound/>} />
-            </Routes>
-          </div>
-        </Container>
-      </AuthContext.Provider>
-    );
-  }
+  const handleClose = () => {
+    setMenuShow(false);
+  };
 
-  renderMenuLink() {
+  const renderMenuLink = () => {
     return (
       <div id="menuWrapper">
         <div id="menuLinkWrapper">
-          <Link to="/app" onClick={this.handleClose}><FiHome /> Home</Link>
-          <Link to="/app/recipe/list" onClick={this.handleClose}><FiSearch /> Chercher une recette</Link>
-          {this.state.isLoggedIn && 
-            <Link reloadDocument to="/app/recipe/add" onClick={this.handleClose}><FiPlusSquare /> Ajouter une recette</Link>
+          <Link to="/app" onClick={handleClose}><FiHome /> Home</Link>
+          <Link to="/app/recipe/list" onClick={handleClose}><FiSearch /> Chercher une recette</Link>
+          {loggedIn && 
+            <Link reloadDocument to="/app/recipe/add" onClick={handleClose}><FiPlusSquare /> Ajouter une recette</Link>
           }
-          <Link to="/app/settings" onClick={this.handleClose}><FiSettings /> Paramètres</Link>
+          <Link to="/app/settings" onClick={handleClose}><FiSettings /> Paramètres</Link>
         </div>
         <span className="versionWrapper">
-          <span>{this.state.isLoggedIn ? 'Logged in' : 'Logged out'}</span>
-          <a href="https://github.com/raza6/MaiteInThePocket">{this.state.appName} v{this.state.appVersion}</a>
+          <span>{loggedIn ? 'Logged in' : 'Logged out'}</span>
+          <a href="https://github.com/raza6/MaiteInThePocket">{appName} v{appVersion}</a>
         </span>
       </div>
     );
-  }
+  };
+
+  return (
+    <AuthContext.Provider value={loggedIn}>
+      <Container fluid className="app" id="mainWrapper">
+        <Col id="navbar">
+          <Link to="/app">
+            <Image alt="Maite in the Pocket" src={`${process.env.PUBLIC_URL}/maite.jpg`}></Image>
+          </Link>
+          <Button className="mobile" onClick={handleShow}>
+            <FiMenu />
+          </Button>
+          <div className="laptop" id="laptopMenuWrapper">
+            {renderMenuLink()}
+          </div>
+          <Offcanvas placement="end" show={menuShow} onHide={handleClose}>
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title>Menu</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              {renderMenuLink()}
+            </Offcanvas.Body>
+          </Offcanvas>
+        </Col>
+        <div id="appWrapper">
+          <Routes>
+            <Route index path="/app" element={<Home/>}></Route>
+            <Route path="/app/login" element={<Login/>}></Route>
+            <Route path="/app/recipe/list" element={<RecipeList/>}></Route>
+            <Route path="/app/recipe/list/:currentPage" element={<RecipeList/>}></Route>
+            <Route path="/app/recipe/add" element={<RecipeFormEdit addMode={true}/>}></Route>
+            <Route path="/app/recipe/edit/:id" element={<RecipeFormEdit/>}></Route>
+            <Route path="/app/recipe/detail/:id" element={<RecipeDetail/>}></Route>
+            <Route path="/app/*" element={<NotFound/>} />
+          </Routes>
+        </div>
+      </Container>
+    </AuthContext.Provider>
+  );
 }
 
 export default App;

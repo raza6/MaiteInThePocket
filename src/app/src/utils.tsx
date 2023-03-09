@@ -1,17 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-
-function withRouter(Component: unknown): Function {
-  // @ts-ignore
-  // eslint-disable-next-line react/display-name
-  return (props: unknown) => <Component {...props}
-    router={{
-      params: useParams(), 
-      searchParams: useSearchParams()[0],
-      location: useLocation()
-    }}
-  />;
-}
+import { useEffect, useMemo, useRef } from 'react';
+import config from './config';
 
 function getRandomOfList (list: Array<string>): string {
   return list[Math.floor((Math.random()*list.length))];
@@ -48,8 +36,8 @@ function useDebounce(callback: Function) {
 
 function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
   return hasImg && recipeId !== undefined ?
-    `http://maite.raza6.fr/mp/static/img/${recipeId}.jpg` :
+    `${config.API_URL}/static/img/${recipeId}.jpg` :
     process.env.PUBLIC_URL + '/placeholder.jpg';
 }
 
-export { getRandomOfList, withRouter, debounce, useDebounce, getRecipeImg };
+export { getRandomOfList, debounce, useDebounce, getRecipeImg };

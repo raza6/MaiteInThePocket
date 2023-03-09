@@ -9,22 +9,25 @@ import { getRandomOfList, useDebounce } from '../../utils';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 function RecipeList() {
+  // State
   const [recipes, setRecipes] = useState<Array<RecipeSummaryShort>>([]);
   const [recipesCount, setRecipesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number | undefined>(undefined);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const _listSize = 12;
-
+  // Constant
+  const _listSize = 18;
   const _paginationReach = 2;
 
+  // Circumstantial
+  const { currentPage: currentPageInit } = useParams();
+  const searchInit = useSearchParams()[0].get('search') ?? '';
+
   useEffect(() => {
-    const { currentPage } = useParams();
-    const currentPageClean = currentPage !== undefined ? parseInt(currentPage, 10) : 0;
+    const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
     setCurrentPage(currentPageClean);
-    const search = useSearchParams()[0].get('search') ?? '';
-    setSearch(search);
+    setSearch(searchInit);
   }, []);
 
   useEffect(() => {
@@ -86,10 +89,10 @@ function RecipeList() {
     
     let hasEllipsis = false;
     const paginationStart = [];
-    for (let i = currentPageFromState - 1; i >= 0; i--) {
-      if (i > currentPageFromState - 1 - _paginationReach) {
+    for (let i = currentPageFromState - 1; i >= 0; i--) { // Scan to the left
+      if (i > currentPageFromState - 1 - _paginationReach) { // Between first page and min reach
         paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
-      } else if (i === 0) { //first page
+      } else if (i === 0) { // First page
         paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
@@ -99,10 +102,10 @@ function RecipeList() {
     paginationStart.reverse();
     hasEllipsis = false;
     const paginationEnd = [];
-    for (let i = currentPageFromState + 1; i <= maxPage; i++) {
-      if (i < currentPageFromState + 1 + _paginationReach) {
+    for (let i = currentPageFromState + 1; i <= maxPage; i++) { // Scan to the right
+      if (i < currentPageFromState + 1 + _paginationReach) { // Between last page and max reach
         paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
-      } else if (i === maxPage) { //last page
+      } else if (i === maxPage) { // Last page
         paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;

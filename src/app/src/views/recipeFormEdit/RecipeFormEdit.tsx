@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import RecipeService from '../../services/recipeService';
 import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
-import { getRecipeImg, withRouter } from '../../utils';
+import { getRecipeImg } from '../../utils';
 import './RecipeFormEdit.scss';
 
 enum EModalEdit {
@@ -14,61 +14,27 @@ enum EModalEdit {
   DeleteRecipe = 1
 }
 
-interface RecipeFormEditState {
-  recipe: Recipe<RecipeSummaryEdit> | undefined,
-  recipeImg: File | undefined,
-  recipeImgUrl: string | undefined,
-  show: Array<boolean>,
-  currentModal: EModalEdit | undefined,
-  navigate: string | undefined,
-  errors: Array<string>,
-  addMode: boolean,
-  hasTemp: boolean,
-  exitWithoutTemp: boolean
-}
-
 interface RecipeFormEditProps {
-  router: {
-    params: { id: string },
-    location: Location
-  }
-  addMode: boolean
+  addMode?: boolean
 }
 
-class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState> {  
-  constructor(props: RecipeFormEditProps) {
-    super(props);
-    this.state = {
-      recipe: undefined,
-      recipeImg: undefined,
-      recipeImgUrl: undefined,
-      show: new Array(2).fill(false),
-      currentModal: undefined,
-      navigate: undefined,
-      errors: [],
-      addMode: false,
-      hasTemp: false,
-      exitWithoutTemp: false
-    };
+function RecipeFormEdit(props: RecipeFormEditProps) {
+  // State
+  const [recipe, setRecipe] = useState<Recipe<RecipeSummaryEdit> | undefined>(undefined);
+  const [recipeImg, setRecipeImg] = useState<File | undefined>(undefined);
+  const [recipeImgUrl, setRecipeImgUrl] = useState<string | undefined>(undefined);
+  const [show, setShow] = useState(new Array(2).fill(false));
+  const [navigate, setNavigate] = useState<string | undefined>(undefined);
+  const [errors, setErrors] = useState<Array<string>>([]);
+  const [addMode, setAddMode] = useState(false);
+  const [hasTemp, setHasTemp] = useState(false);
+  const [exitWithoutTemp, setExitWithoutTemp] = useState(false);
 
-    this.handleClose = this.handleClose.bind(this);
-    this.handleShow = this.handleShow.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleImgChange = this.handleImgChange.bind(this);
-    this.handleAddStep = this.handleAddStep.bind(this);
-    this.handleRemoveStep = this.handleRemoveStep.bind(this);
-    this.handleCloseError = this.handleCloseError.bind(this);
-    this.handleAddIngredientGroup = this.handleAddIngredientGroup.bind(this);
-    this.handleAddIngredient = this.handleAddIngredient.bind(this);
-    this.handleRemoveIngredientGroup = this.handleRemoveIngredientGroup.bind(this);
-    this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
-    this.handleTempImport = this.handleTempImport.bind(this);
-  }
+  // Circumstantial
+  const { id: recipeIdInit } = useParams();
 
-  handleRecipeChange(value: string, recipeProperty: Array<string>) {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleRecipeChange = (value: string, recipeProperty: Array<string>) => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     if (recipeProperty[0] === 'summary') {
       if (recipeProperty[1] === 'name') {
         newRecipe.summary.name = value;
@@ -121,148 +87,160 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
           .ingredientsList[parseInt(recipeProperty[3], 10)].optional = value === 'true';
       }
     }
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file !== undefined) {
       if (file.size > 4 * 1024 * 1024) {
-        this.setState({ errors: ['L\'image est trop volumineuse'] });
+        setErrors(['L\'image est trop volumineuse']);
       } else {
         const fileUrl = window.URL.createObjectURL(file);
-        this.setState({ recipeImg: file, recipeImgUrl: fileUrl });
+        setRecipeImg(file);
+        setRecipeImgUrl(fileUrl);
       }
     }
-  }
+  };
 
-  handleAddStep() {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleAddStep = () => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.push('');
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleRemoveStep(index: number) {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleRemoveStep = (index: number) => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.splice(index, 1);
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleAddIngredientGroup() {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleAddIngredientGroup = () => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleRemoveIngredientGroup(index: number) {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleRemoveIngredientGroup = (index: number) => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients.splice(index, 1);
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleAddIngredient(index: number) {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleAddIngredient = (index: number) => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleRemoveIngredient(indexGroup: number, indexIngredient: number) {
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(this.state.recipe));
+  const handleRemoveIngredient = (indexGroup: number, indexIngredient: number) => {
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients[indexGroup].ingredientsList.splice(indexIngredient, 1);
-    this.setState({ recipe: newRecipe });
-  }
+    setRecipe(newRecipe);
+  };
 
-  handleCloseError(index: number) {
-    const newErrors = [...this.state.errors];
+  const handleCloseError = (index: number) => {
+    const newErrors = [...errors];
     newErrors.splice(index, 1);
-    this.setState({ errors: newErrors });
-  }
+    setErrors(newErrors);
+  };
 
-  handleClose(currentModal: EModalEdit) {
-    this.setState({ show: this.state.show.map((v, i) => i === currentModal ? false : v) });
-  }
+  const handleClose = (currentModal: EModalEdit) => {
+    setShow(show.map((v, i) => i === currentModal ? false : v));
+  };
 
-  handleShow(currentModal: EModalEdit) {
-    this.setState({ show: this.state.show.map((v, i) => i === currentModal ? true : v) });
-  }
+  const handleShow = (currentModal: EModalEdit) => {
+    setShow(show.map((v, i) => i === currentModal ? true : v));
+  };
 
-  async handleSubmit() {
-    const errors = this.validateRecipe();
-    if (errors.length === 0 && this.state.recipe !== undefined) {
+  const handleSubmit = async () => {
+    const errors = validateRecipe();
+    if (errors.length === 0 && recipe !== undefined) {
       let recipeId: string | undefined;
-      const recipe = this.state.recipe;
-      if (this.state.addMode) {
+      if (addMode) {
         recipeId = await RecipeService.addRecipe(recipe as Recipe<RecipeSummary>);
       } else {
-        recipeId = this.state.recipe.slugId;
+        recipeId = recipe.slugId;
         if (recipeId !== undefined) {
           await RecipeService.editRecipe(recipeId, recipe as Recipe<RecipeSummary>);
         }
       }
-      if (this.state.recipeImg !== undefined && recipeId !== undefined) {
-        const recipeImg = this.state.recipeImg ?? new File([], '');
-        await RecipeService.addImgRecipe(recipeId, recipeImg);
+      if (recipeImg !== undefined && recipeId !== undefined) {
+        const recipeImgClean = recipeImg ?? new File([], '');
+        await RecipeService.addImgRecipe(recipeId, recipeImgClean);
       }
       setTimeout(() => {
-        this.setState({ navigate: `/app/recipe/detail/${recipeId}`, exitWithoutTemp: true });
+        setNavigate(`/app/recipe/detail/${recipeId}`);
+        setExitWithoutTemp(true);
       }, 1000);
     } else {
-      this.setState({ errors: errors });
+      setErrors(errors);
     }
-  }
+  };
 
-  handleCancel() {
-    const redirectUrl = this.state.addMode ? '/app/recipe/list' : `/app/recipe/detail/${this.state.recipe?.slugId}`;
-    this.setState({ navigate: redirectUrl, exitWithoutTemp: true });
-  }
+  const handleCancel = () => {
+    const redirectUrl = addMode ? '/app/recipe/list' : `/app/recipe/detail/${recipe?.slugId}`;
+    setNavigate(redirectUrl);
+    setExitWithoutTemp(true);
+  };
 
-  async handleDelete() {
-    await RecipeService.deleteRecipe(this.state.recipe?.slugId ?? '');
-    this.setState({ navigate: '/app/recipe/list' });
-  }
+  const handleDelete = async () => {
+    await RecipeService.deleteRecipe(recipe?.slugId ?? '');
+    setNavigate('/app/recipe/list');
+  };
 
-  handleTempImport() {
+  const handleTempImport = () => {
     const recipe: Recipe<RecipeSummaryEdit> = JSON.parse(localStorage.getItem('maite_recipe_temp') ?? '');
     localStorage.removeItem('maite_recipe_temp');
-    this.setState({ recipe, hasTemp: false });
-  }
+    setRecipe(recipe);
+    setHasTemp(false);
+  };
 
-  async componentDidMount() {
-    const addMode = this.props.addMode ?? false;
+  const initRecipeForm = async () => {
+    const addMode = props.addMode ?? false;
     if (addMode) {
-      const recipe = this.defaultRecipe();
+      const recipe = defaultRecipe();
       const hasTemp = localStorage.getItem('maite_recipe_temp') !== null;
-      this.setState({ recipe, addMode, hasTemp });
+      setRecipe(recipe);
+      setAddMode(addMode);
+      setHasTemp(hasTemp);
     } else {
-      const { id } = this.props.router.params;
-      const recipe = await RecipeService.getRecipe(id);
-      if (recipe !== null) {
-        this.setState({ recipe, addMode });
+      if (recipeIdInit !== undefined) {
+        const recipe = await RecipeService.getRecipe(recipeIdInit);
+        if (recipe !== null) {
+          setRecipe(recipe);
+          setAddMode(addMode);
+        } else {
+          setNavigate(`/app/recipe/edit/${recipeIdInit}/notfound`);
+        }
       } else {
-        this.setState({ navigate: `/app/recipe/edit/${id}/notfound` });
+        setNavigate('/app/recipe/edit/undef/notfound');
       }
     }
-  }
+  };
 
-  componentDidUpdate(): void {
-    if (this.state.addMode) {
-      const newRecipe = JSON.stringify(this.state.recipe);
+  useEffect(() => {
+    initRecipeForm();
+
+    return () => {
+      if (addMode && exitWithoutTemp) {
+        localStorage.removeItem('maite_recipe_temp');
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (addMode) {
+      const newRecipe = JSON.stringify(recipe);
   
-      if (newRecipe !== JSON.stringify(this.defaultRecipe())) {
+      if (newRecipe !== JSON.stringify(defaultRecipe())) {
         localStorage.setItem('maite_recipe_temp', newRecipe);
       }
     }
-  }
+  });
 
-  componentWillUnmount(): void {
-    if (this.state.addMode && this.state.exitWithoutTemp) {
-      localStorage.removeItem('maite_recipe_temp');
-    }
-  }
-
-  validateRecipe() {
+  const validateRecipe = () => {
     const errors = [];
-    const recipe = this.state.recipe;
     if (!recipe?.summary.name.trim()) {
       errors.push('Le nom de la recette n\'est pas renseigné');
     }
@@ -301,9 +279,9 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       }
     }
     return errors;
-  }
+  };
 
-  defaultRecipe() {
+  const defaultRecipe = () => {
     return {
       slugId: undefined,
       summary: {
@@ -329,195 +307,193 @@ class RecipeFormEdit extends Component<RecipeFormEditProps, RecipeFormEditState>
       ],
       steps: ['']
     };
-  }
+  };
 
-  render() {
-    return (
-      <Col id="recipeEditWrapper">
-        {this.state.navigate && <Navigate to={this.state.navigate}/>}
-        {this.state.errors.map((error, i) => <Alert dismissible key={`alert_${i}`} variant="danger" onClose={() => this.handleCloseError(i)}>
-          {error}
-        </Alert>)}
-        <h1>{this.state.addMode ? 'Ajouter' : 'Modifier'} une recette</h1>
-        <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
-          <Button variant="success" onClick={this.handleSubmit}><FiCheckSquare /></Button>
-          <Button variant="warning" onClick={() => this.handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
-          {!this.state.addMode && <Button variant="danger" onClick={() => this.handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>}
-          {this.state.hasTemp &&  
-            <OverlayTrigger
-              placement="bottom"
-              overlay={<Tooltip>Restaurer</Tooltip>}
-            >
-              <div id="recipeRecoverWrapper">
-                <FiShare onClick={this.handleTempImport} />
-              </div>
-            </OverlayTrigger>
-          }
-        </Stack>
-        <Form>
-          <Row>
-            <Col id="recipeSummaryDetail">
-              <Form.Control type="text" required id="recipeNameInput"
-                value={this.state.recipe?.summary.name ?? ''} minLength={1} maxLength={50} 
-                onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'name'])}
-              ></Form.Control>
-              <Stack direction="horizontal" gap={3} id="recipeImageInputWrapper">
-                <Image 
-                  alt={`Photo de ${this.state.recipe?.summary.name}`}
-                  src={
-                    this.state.recipeImg !== undefined
-                      ? this.state.recipeImgUrl
-                      : getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)
-                  }
-                ></Image>
-                <Button variant="primary" id="recipeImgButton">
-                  <label htmlFor="recipeImgInput">
-                    <FiImage />
-                  </label>
-                  <input type="file" accept=".jpeg,.jpg,.png,image/jpeg,image/png" name="img" id="recipeImgInput" onChange={this.handleImgChange}></input>
-                </Button>
-              </Stack>
-              <Stack direction="horizontal" gap={4} id="recipeSummaryCounterWrapper"> 
-                <span>
-                  <AiOutlinePieChart />
-                  <Form.Control size="sm" type="number" required id="recipeServingsInput"
-                    value={this.state.recipe?.summary.servings ?? ''} min="1" 
-                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'servings'])}
-                  ></Form.Control>
-                  {` part${(this.state.recipe?.summary.servings ?? 1) > 1 ? 's' : ''}`}
-                </span>
-                <span>
-                  <FiClock />
-                  <Form.Control size="sm" type="number" required id="recipePreptimeInput"
-                    value={this.state.recipe?.summary.prepTime ?? ''} min="0" 
-                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'prepTime'])}
-                  ></Form.Control>mn
-                </span>
-                <span>
-                  <AiOutlineFire />
-                  <Form.Control size="sm" type="number" required id="recipeCookingtimeInput"
-                    value={this.state.recipe?.summary.cookingTime ?? ''} min="0" 
-                    onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'cookingTime'])}
-                  ></Form.Control>mn
-                </span>
-              </Stack>
-              <Stack id="recipeSummaryCommentWrapper">
-                <Form.Label htmlFor="recipeSummaryComment">Commentaire</Form.Label>
-                <Form.Control as="textarea" rows={2} id="recipeSummaryComment" value={this.state.recipe?.summary.comment ?? ''}
-                  onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['summary', 'comment'])}
+  return (
+    <Col id="recipeEditWrapper">
+      {navigate && <Navigate to={navigate}/>}
+      {errors.map((error, i) => <Alert dismissible key={`alert_${i}`} variant="danger" onClose={() => handleCloseError(i)}>
+        {error}
+      </Alert>)}
+      <h1>{addMode ? 'Ajouter' : 'Modifier'} une recette</h1>
+      <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
+        <Button variant="success" onClick={handleSubmit}><FiCheckSquare /></Button>
+        <Button variant="warning" onClick={() => handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
+        {!addMode && <Button variant="danger" onClick={() => handleShow(EModalEdit.DeleteRecipe)}><FiTrash2 /></Button>}
+        {hasTemp &&  
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip>Restaurer</Tooltip>}
+          >
+            <div id="recipeRecoverWrapper">
+              <FiShare onClick={handleTempImport} />
+            </div>
+          </OverlayTrigger>
+        }
+      </Stack>
+      <Form>
+        <Row>
+          <Col id="recipeSummaryDetail">
+            <Form.Control type="text" required id="recipeNameInput"
+              value={recipe?.summary.name ?? ''} minLength={1} maxLength={50} 
+              onChange={(e) => handleRecipeChange(e.currentTarget.value, ['summary', 'name'])}
+            ></Form.Control>
+            <Stack direction="horizontal" gap={3} id="recipeImageInputWrapper">
+              <Image 
+                alt={`Photo de ${recipe?.summary.name}`}
+                src={
+                  recipeImg !== undefined
+                    ? recipeImgUrl
+                    : getRecipeImg(recipe?.slugId, recipe?.summary.hasImg ?? false)
+                }
+              ></Image>
+              <Button variant="primary" id="recipeImgButton">
+                <label htmlFor="recipeImgInput">
+                  <FiImage />
+                </label>
+                <input type="file" accept=".jpeg,.jpg,.png,image/jpeg,image/png" name="img" id="recipeImgInput" onChange={handleImgChange}></input>
+              </Button>
+            </Stack>
+            <Stack direction="horizontal" gap={4} id="recipeSummaryCounterWrapper"> 
+              <span>
+                <AiOutlinePieChart />
+                <Form.Control size="sm" type="number" required id="recipeServingsInput"
+                  value={recipe?.summary.servings ?? ''} min="1" 
+                  onChange={(e) => handleRecipeChange(e.currentTarget.value, ['summary', 'servings'])}
                 ></Form.Control>
-              </Stack>
-            </Col>
-            <Col id="recipeIngredientsWrapper">
-              <h4>Ingrédients :</h4>
-              {this.state.recipe?.ingredients.map((group, i) => 
-                <div className="ingredientGroupWrapper" key={'ingredientGroup_' + i}>
-                  <div className="ingredientGroupInputWrapper">
-                    <Form.Control value={group.ingredientsGroupName ?? ''} className="ingredientGroupInput"
-                      onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredientsGroupName', i.toString()])}
-                    ></Form.Control>
-                    <Button variant="primary" onClick={() => this.handleRemoveIngredientGroup(i)}><FiTrash2 /></Button>
+                {` part${(recipe?.summary.servings ?? 1) > 1 ? 's' : ''}`}
+              </span>
+              <span>
+                <FiClock />
+                <Form.Control size="sm" type="number" required id="recipePreptimeInput"
+                  value={recipe?.summary.prepTime ?? ''} min="0" 
+                  onChange={(e) => handleRecipeChange(e.currentTarget.value, ['summary', 'prepTime'])}
+                ></Form.Control>mn
+              </span>
+              <span>
+                <AiOutlineFire />
+                <Form.Control size="sm" type="number" required id="recipeCookingtimeInput"
+                  value={recipe?.summary.cookingTime ?? ''} min="0" 
+                  onChange={(e) => handleRecipeChange(e.currentTarget.value, ['summary', 'cookingTime'])}
+                ></Form.Control>mn
+              </span>
+            </Stack>
+            <Stack id="recipeSummaryCommentWrapper">
+              <Form.Label htmlFor="recipeSummaryComment">Commentaire</Form.Label>
+              <Form.Control as="textarea" rows={2} id="recipeSummaryComment" value={recipe?.summary.comment ?? ''}
+                onChange={(e) => handleRecipeChange(e.currentTarget.value, ['summary', 'comment'])}
+              ></Form.Control>
+            </Stack>
+          </Col>
+          <Col id="recipeIngredientsWrapper">
+            <h4>Ingrédients :</h4>
+            {recipe?.ingredients.map((group, i) => 
+              <div className="ingredientGroupWrapper" key={'ingredientGroup_' + i}>
+                <div className="ingredientGroupInputWrapper">
+                  <Form.Control value={group.ingredientsGroupName ?? ''} className="ingredientGroupInput"
+                    onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredientsGroupName', i.toString()])}
+                  ></Form.Control>
+                  <Button variant="primary" onClick={() => handleRemoveIngredientGroup(i)}><FiTrash2 /></Button>
+                </div>
+                <ul>
+                  {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
+                    <Stack direction="horizontal" gap={1}>
+                      <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
+                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
+                      ></Form.Control>
+                      <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput" 
+                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'unit', i.toString(), j.toString()])}
+                      >
+                        <option value=''></option>
+                        <option value={EMassUnit.g}>g</option>
+                        <option value={EMassUnit.kg}>kg</option>
+                        <option value={EVolumeUnit.teaspoon}>c.à.c</option>
+                        <option value={EVolumeUnit.tablespoon}>c.à.s</option>
+                        <option value={EVolumeUnit.handfull}>poignée</option>
+                        <option value={EVolumeUnit.pinch}>pincée</option>
+                        <option value={EVolumeUnit.ml}>ml</option>
+                        <option value={EVolumeUnit.cl}>cl</option>
+                        <option value={EVolumeUnit.dl}>dl</option>
+                        <option value={EVolumeUnit.l}>l</option>
+                        <option value={ELengthUnit.mm}>mm</option>
+                        <option value={ELengthUnit.cm}>cm</option>
+                        <option value={ELengthUnit.m}>m</option>
+                      </Form.Select>
+                      <Form.Control value={ingredient.name} 
+                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
+                      ></Form.Control>
+                      <OverlayTrigger
+                        placement="left"
+                        overlay={
+                          <Tooltip>
+                            {ingredient.optional ? 'Facultatif' : 'Non facultatif'}
+                          </Tooltip>
+                        }
+                      >
+                        <div className="ingredientOptionalInput" onClick={() => handleRecipeChange((!ingredient.optional).toString(), ['ingredients', 'optional', i.toString(), j.toString()])}>
+                          {ingredient.optional ? <FiHelpCircle /> : <FiCheckCircle />}
+                        </div>
+                      </OverlayTrigger>
+                      <Button variant="primary" onClick={() => handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
+                    </Stack>
+                  </li>)}
+                  <div className="ingredientAddWrapper">
+                    <Button variant="primary" onClick={() => handleAddIngredient(i)}><FiPlusSquare /> Ingrédient</Button>
                   </div>
-                  <ul>
-                    {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
-                      <Stack direction="horizontal" gap={1}>
-                        <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
-                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
-                        ></Form.Control>
-                        <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput" 
-                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'unit', i.toString(), j.toString()])}
-                        >
-                          <option value=''></option>
-                          <option value={EMassUnit.g}>g</option>
-                          <option value={EMassUnit.kg}>kg</option>
-                          <option value={EVolumeUnit.teaspoon}>c.à.c</option>
-                          <option value={EVolumeUnit.tablespoon}>c.à.s</option>
-                          <option value={EVolumeUnit.handfull}>poignée</option>
-                          <option value={EVolumeUnit.pinch}>pincée</option>
-                          <option value={EVolumeUnit.ml}>ml</option>
-                          <option value={EVolumeUnit.cl}>cl</option>
-                          <option value={EVolumeUnit.dl}>dl</option>
-                          <option value={EVolumeUnit.l}>l</option>
-                          <option value={ELengthUnit.mm}>mm</option>
-                          <option value={ELengthUnit.cm}>cm</option>
-                          <option value={ELengthUnit.m}>m</option>
-                        </Form.Select>
-                        <Form.Control value={ingredient.name} 
-                          onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
-                        ></Form.Control>
-                        <OverlayTrigger
-                          placement="left"
-                          overlay={
-                            <Tooltip>
-                              {ingredient.optional ? 'Facultatif' : 'Non facultatif'}
-                            </Tooltip>
-                          }
-                        >
-                          <div className="ingredientOptionalInput" onClick={() => this.handleRecipeChange((!ingredient.optional).toString(), ['ingredients', 'optional', i.toString(), j.toString()])}>
-                            {ingredient.optional ? <FiHelpCircle /> : <FiCheckCircle />}
-                          </div>
-                        </OverlayTrigger>
-                        <Button variant="primary" onClick={() => this.handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
-                      </Stack>
-                    </li>)}
-                    <div className="ingredientAddWrapper">
-                      <Button variant="primary" onClick={() => this.handleAddIngredient(i)}><FiPlusSquare /> Ingrédient</Button>
-                    </div>
-                  </ul>
-                </div>)}
-              <Button variant="primary" onClick={this.handleAddIngredientGroup}><FiPlusSquare /> Groupe</Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col id="recipeStepsWrapper">
-              <ol>
-                {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>
-                  <div className="recipeStepWrapper">
-                    <Form.Control as="textarea" rows={2} value={step}
-                      onChange={(e) => this.handleRecipeChange(e.currentTarget.value, ['steps', i.toString()])}
-                    />
-                    <Button variant="primary" onClick={() => this.handleRemoveStep(i)}><FiTrash2 /></Button>
-                  </div>
-                </li>)}
-              </ol>
-              <Button variant="primary" onClick={this.handleAddStep}><FiPlusSquare /></Button>
-            </Col>
-          </Row>
-        </Form>
+                </ul>
+              </div>)}
+            <Button variant="primary" onClick={handleAddIngredientGroup}><FiPlusSquare /> Groupe</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col id="recipeStepsWrapper">
+            <ol>
+              {recipe?.steps.map((step, i) => <li key={'step_' + i}>
+                <div className="recipeStepWrapper">
+                  <Form.Control as="textarea" rows={2} value={step}
+                    onChange={(e) => handleRecipeChange(e.currentTarget.value, ['steps', i.toString()])}
+                  />
+                  <Button variant="primary" onClick={() => handleRemoveStep(i)}><FiTrash2 /></Button>
+                </div>
+              </li>)}
+            </ol>
+            <Button variant="primary" onClick={handleAddStep}><FiPlusSquare /></Button>
+          </Col>
+        </Row>
+      </Form>
 
-        <Modal show={this.state.show[EModalEdit.CancelEdit]} onHide={() => this.handleClose(EModalEdit.CancelEdit)}>
-          <Modal.Header>
-            <Modal.Title>Annuler les modifications</Modal.Title>
-          </Modal.Header>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => this.handleClose(EModalEdit.CancelEdit)}>
-              Fermer
-            </Button>
-            <Button variant="warning" onClick={this.handleCancel}>
-              Continuer
-            </Button>
-          </Modal.Footer>
-        </Modal>
+      <Modal show={show[EModalEdit.CancelEdit]} onHide={() => handleClose(EModalEdit.CancelEdit)}>
+        <Modal.Header>
+          <Modal.Title>Annuler les modifications</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handleClose(EModalEdit.CancelEdit)}>
+            Fermer
+          </Button>
+          <Button variant="warning" onClick={handleCancel}>
+            Continuer
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-        <Modal show={this.state.show[EModalEdit.DeleteRecipe]} onHide={() => this.handleClose(EModalEdit.DeleteRecipe)}>
-          <Modal.Header>
-            <Modal.Title>Supprimer la recette</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>La suppression est définitive</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => this.handleClose(EModalEdit.DeleteRecipe)}>
-              Fermer
-            </Button>
-            <Button variant="danger" onClick={this.handleDelete}>
-              Continuer
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Col>
-    );
-  }
+      <Modal show={show[EModalEdit.DeleteRecipe]} onHide={() => handleClose(EModalEdit.DeleteRecipe)}>
+        <Modal.Header>
+          <Modal.Title>Supprimer la recette</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>La suppression est définitive</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handleClose(EModalEdit.DeleteRecipe)}>
+            Fermer
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Continuer
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Col>
+  );
 }
 
-export default withRouter(RecipeFormEdit);
+export default RecipeFormEdit;
