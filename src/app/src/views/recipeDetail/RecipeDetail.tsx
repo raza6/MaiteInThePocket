@@ -1,147 +1,82 @@
-import React, { Component, ReactNode } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import RecipeService from '../../services/recipeService';
 import { Ingredient, Recipe, RecipeSummary } from '../../types/recipes';
-import { getRecipeImg, withRouter } from '../../utils';
+import { getRecipeImg } from '../../utils';
 import Image from 'react-bootstrap/Image';
 import { Button, Col, Row, Stack } from 'react-bootstrap';
 import { FiClock, FiEdit, FiUserMinus, FiUserPlus } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import AuthContext from '../../components/AuthContext';
 import './RecipeDetail.scss';
 
-interface RecipeDetailState { 
-  recipe: Recipe<RecipeSummary> | undefined,
-  navigate: string | undefined
-  currentServings: number,
-}
+function RecipeDetail() {
+  // State
+  const [recipe, setRecipe] = useState<Recipe<RecipeSummary> | undefined>(undefined);
+  const [navigate, setNavigate] = useState<string | undefined>(undefined);
+  const [currentServings, setCurrentServings] = useState(1);
 
-interface RecipeDetailProps { 
-  router: {
-    params: { id: string }
-  }
-}
-
-class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
-  constructor(props: RecipeDetailProps) {
-    super(props);
-    this.state = {
-      recipe: undefined,
-      navigate: undefined,
-      currentServings: 1,
-    };
-
-    this.handleAddServing = this.handleAddServing.bind(this);
-    this.handleRemoveServing = this.handleRemoveServing.bind(this);
-  }
-
-  async componentDidMount() {
-    const { id } = this.props.router.params;
-    const recipe = await RecipeService.getRecipe(id);
-    if (recipe != null) {
-      document.title = `${recipe.summary.name} - Maite in the Pocket`;
-      this.setState({ recipe, currentServings: recipe.summary.servings });
+  // Circumstancial
+  const loggedIn = useContext(AuthContext);
+  const { id: recipeIdInit } = useParams();
+  
+  const initRecipe = async () => {
+    if (recipeIdInit !== undefined) {
+      const recipe = await RecipeService.getRecipe(recipeIdInit);
+      if (recipe != null) {
+        document.title = `${recipe.summary.name} - Maite in the Pocket`;
+        setRecipe(recipe);
+        setCurrentServings(recipe.summary.servings);
+      } else {
+        setNavigate(`/app/recipe/detail/${recipeIdInit}/notfound`);
+      }
     } else {
-      this.setState({ navigate: `/app/recipe/detail/${id}/notfound` });
+      setNavigate('/app/recipe/detail/undef/notfound');
     }
-  }
+  };
 
-  componentWillUnmount() {
-    document.title = 'Maite in the Pocket';
-  }
+  useEffect(() => {
+    initRecipe();
 
-  handleAddServing() {
-    this.setState({ currentServings: this.state.currentServings + 1 });
-  }
+    return () => {
+      document.title = 'Maite in the Pocket';
+    };
+  }, []);
 
-  handleRemoveServing() {
-    this.setState({ currentServings: this.state.currentServings - 1 });
-  }
+  const handleAddServing = () => {
+    setCurrentServings(currentServings + 1);
+  };
 
-  render() {
-    return (
-      <div id="recipeDetailWrapper">
-        {this.state.navigate && <Navigate to={this.state.navigate}/>}
-        <h1>{this.state.recipe?.summary.name}</h1>
-        <Col>
-          <Row id="recipeTopWrapper">
-            <Col id="recipeSummaryDetailWrapper">
-              <div id="recipeSummaryDetail">
-                <Image 
-                  alt={`Photo de ${this.state.recipe?.summary.name}`} 
-                  src={getRecipeImg(this.state.recipe?.slugId, this.state.recipe?.summary.hasImg ?? false)}
-                ></Image>
-                <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper">
-                  {this.state.recipe?.summary.servings !== undefined ? 
-                    <span>
-                      <AiOutlinePieChart />
-                      {`${this.state.currentServings} part${this.state.currentServings > 1 ? 's' : ''}`}
-                    </span>
-                    : ''}
-                  <span><FiClock />{this.state.recipe?.summary.prepTime}mn</span>
-                  <span><AiOutlineFire />{this.state.recipe?.summary.cookingTime}mn</span>
-                </Stack>
-                {
-                  this.state.recipe?.summary.comment &&
-                    <span id="recipeSummaryComment">
-                      <b>Commentaires :</b> {this.state.recipe?.summary.comment}
-                    </span>
-                }
-              </div>
-              {this.renderActions('mobile')}
-            </Col>
-            <Col id="recipeIngredientsWrapper">
-              <h4>Ingrédients :</h4>
-              {this.state.recipe?.ingredients.map((group, i) => 
-                <div key={'ingredientGroup_' + i}>
-                  {group.ingredientsGroupName !== null ? <h5>{group.ingredientsGroupName}</h5> : ''}
-                  <ul>
-                    {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
-                      {this.renderIngredient(ingredient)}
-                    </li>)}
-                  </ul>
-                </div>)}
-            </Col>
-            {this.renderActions('laptop')}
-          </Row>
-          <Row id="recipeStepsWrapper">
-            <ol>
-              {this.state.recipe?.steps.map((step, i) => <li key={'step_' + i}>{step}</li>)}
-            </ol>
-          </Row>
-        </Col>
-      </div>
-    );
-  }
+  const handleRemoveServing = () => {
+    setCurrentServings(currentServings - 1);
+  };
 
-  private renderActions(respMode: string): ReactNode {
-    const loggedIn = this.context as boolean;
+  const renderActions = (respMode: string): ReactNode => {
     return (
       <Col id="recipeActionWrapper" className={respMode}>
         {
           loggedIn &&
-          <Link to={`/app/recipe/edit/${this.state.recipe?.slugId}`}>
+          <Link to={`/app/recipe/edit/${recipe?.slugId}`}>
             <Button>
               <FiEdit/>
             </Button>
           </Link>
         }
-        <Button onClick={this.handleAddServing}>
+        <Button onClick={handleAddServing}>
           <FiUserPlus/>
         </Button>
-        <Button onClick={this.handleRemoveServing} disabled={this.state.currentServings === 1}>
+        <Button onClick={handleRemoveServing} disabled={currentServings === 1}>
           <FiUserMinus/>
         </Button>
       </Col>
     );
-  }
+  };
 
-  private renderIngredient(ingredient: Ingredient): ReactNode {
+  const renderIngredient = (ingredient: Ingredient): ReactNode => {
     const { quantity, unit, name, optional } = ingredient;
     
-    const defaultServings = this.state.recipe?.summary.servings ?? 1;
-    const currentServings = this.state.currentServings;
+    const defaultServings = recipe?.summary.servings ?? 1;
     let adjustedQuantity = quantity;
     let unitClear = '';
     if (quantity) {
@@ -182,8 +117,61 @@ class RecipeDetail extends Component<RecipeDetailProps, RecipeDetailState> {
     }
 
     return `${quantifier}${spacer}${name}${optionalText}`;
-  }
-}
-RecipeDetail.contextType = AuthContext;
+  };
 
-export default withRouter(RecipeDetail);
+  return (
+    <div id="recipeDetailWrapper">
+      {navigate && <Navigate to={navigate}/>}
+      <h1>{recipe?.summary.name}</h1>
+      <Col>
+        <Row id="recipeTopWrapper">
+          <Col id="recipeSummaryDetailWrapper">
+            <div id="recipeSummaryDetail">
+              <Image 
+                alt={`Photo de ${recipe?.summary.name}`} 
+                src={getRecipeImg(recipe?.slugId, recipe?.summary.hasImg ?? false)}
+              ></Image>
+              <Stack direction="horizontal" gap={5} id="recipeSummaryCounterWrapper">
+                {recipe?.summary.servings !== undefined ? 
+                  <span>
+                    <AiOutlinePieChart />
+                    {`${currentServings} part${currentServings > 1 ? 's' : ''}`}
+                  </span>
+                  : ''}
+                <span><FiClock />{recipe?.summary.prepTime}mn</span>
+                <span><AiOutlineFire />{recipe?.summary.cookingTime}mn</span>
+              </Stack>
+              {
+                recipe?.summary.comment &&
+                  <span id="recipeSummaryComment">
+                    <b>Commentaires :</b> {recipe?.summary.comment}
+                  </span>
+              }
+            </div>
+            {renderActions('mobile')}
+          </Col>
+          <Col id="recipeIngredientsWrapper">
+            <h4>Ingrédients :</h4>
+            {recipe?.ingredients.map((group, i) => 
+              <div key={'ingredientGroup_' + i}>
+                {group.ingredientsGroupName !== null ? <h5>{group.ingredientsGroupName}</h5> : ''}
+                <ul>
+                  {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
+                    {renderIngredient(ingredient)}
+                  </li>)}
+                </ul>
+              </div>)}
+          </Col>
+          {renderActions('laptop')}
+        </Row>
+        <Row id="recipeStepsWrapper">
+          <ol>
+            {recipe?.steps.map((step, i) => <li key={'step_' + i}>{step}</li>)}
+          </ol>
+        </Row>
+      </Col>
+    </div>
+  );
+}
+
+export default RecipeDetail;

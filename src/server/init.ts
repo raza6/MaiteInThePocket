@@ -38,7 +38,7 @@ const init = async (): Promise<void> => {
 
   serv.use(passport.initialize());
   serv.use(cors({
-    origin: <string>EnvWrap.get().value('AUTH_APP_URL'), // allow to server to accept request from different origin
+    origin: <string>EnvWrap.get().value('AUTH_APP_URL'), // allow server to accept request from different origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // allow session cookie from browser to pass through
   }));

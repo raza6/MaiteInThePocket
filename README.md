@@ -1,6 +1,7 @@
 # Maite in the Pocket
 <div align="center">
 
+  ![buildApp](https://img.shields.io/github/actions/workflow/status/raza6/MaiteInThePocket/build.yml?label=app%20build)
   ![app](https://img.shields.io/website?label=app&up_message=online&url=https%3A%2F%2Fmaite.raza6.fr%2Fapp)
   ![api](https://img.shields.io/website?label=api&up_message=online&url=https%3A%2F%2Fmaite.raza6.fr%2Fmp%2Ftest)
 
@@ -21,7 +22,7 @@ Additionnaly, a **MongoDB** server needs to be available with a database named `
 To use the app locally:
 
 In `src/server`, copy `.env.template` as `.env` and fill in the information.
-Launch the server using `npm run start` in the directory. You can check that the server is launched by requesting the `/mp/test` GET endpoint.
+Launch the server using `npm run dev` in the directory. You can check that the server is launched by requesting the `/mp/test` GET endpoint.
 
 Launch the app using `npm run start` in the `src/app` directory. Make sure the API_URL constant is correct (`src/app/src/config.ts`). The app should automatically open in your browser of choice.
 
