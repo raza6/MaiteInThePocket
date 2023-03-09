@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 function withRouter(Component: unknown): Function {
@@ -17,12 +17,33 @@ function getRandomOfList (list: Array<string>): string {
   return list[Math.floor((Math.random()*list.length))];
 }
 
-function debounce(func: Function, context: any, timeout = 300): Function {
+const debounce = (func: Function, timeout = 300): Function => {
   let timer: NodeJS.Timeout;
   return (...args: any) => {
+    const context = this;
     clearTimeout(timer);
     timer = setTimeout(() => { func.apply(context, args); }, timeout);
   };
+};
+
+function useDebounce(callback: Function) {
+  const ref = useRef();
+
+  useEffect(() => {
+    // @ts-ignore
+    ref.current = callback;
+  }, [callback]);
+
+  const debouncedCallback = useMemo(() => {
+    const func = () => {
+      // @ts-ignore
+      ref.current?.();
+    };
+
+    return debounce(func, 300);
+  }, []);
+
+  return debouncedCallback;
 }
 
 function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
@@ -31,4 +52,4 @@ function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
     process.env.PUBLIC_URL + '/placeholder.jpg';
 }
 
-export { getRandomOfList, withRouter, debounce, getRecipeImg };
+export { getRandomOfList, withRouter, debounce, useDebounce, getRecipeImg };
