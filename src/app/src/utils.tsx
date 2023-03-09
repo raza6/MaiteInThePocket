@@ -34,10 +34,23 @@ function useDebounce(callback: Function) {
   return debouncedCallback;
 }
 
+const useHasChanged= (value: any) => {
+  const previousValue = usePrevious(value);
+  return previousValue !== value;
+};
+
+const usePrevious = (value: any) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+
 function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
   return hasImg && recipeId !== undefined ?
     `${config.API_URL}/static/img/${recipeId}.jpg` :
     process.env.PUBLIC_URL + '/placeholder.jpg';
 }
 
-export { getRandomOfList, debounce, useDebounce, getRecipeImg };
+export { getRandomOfList, debounce, useDebounce, useHasChanged, getRecipeImg };

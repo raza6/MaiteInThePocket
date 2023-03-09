@@ -1,6 +1,6 @@
 import { Recipe, RecipeSummary, RecipeSummarySearchResponse } from '../types/recipes';
 import config from '../config';
-import { EHttpVerb, MainService } from './mainSercice';
+import { EHttpVerb, MainService } from './mainService';
 
 class RecipeService {
   public static async searchSummary(term: string, pageIndex = 0, pageSize = 20): Promise<RecipeSummarySearchResponse> {

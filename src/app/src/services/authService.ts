@@ -1,5 +1,5 @@
 import config from '../config';
-import { EHttpVerb, MainService } from './mainSercice';
+import { EHttpVerb, MainService } from './mainService';
 
 class AuthService {
   public static async checkAuth(): Promise<any> {

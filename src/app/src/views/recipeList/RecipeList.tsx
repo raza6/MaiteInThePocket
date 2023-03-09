@@ -5,7 +5,7 @@ import { FiSearch, FiXCircle } from 'react-icons/fi';
 import './RecipeList.scss';
 import RecipeService from '../../services/recipeService';
 import { RecipeSummaryShort } from '../../types/recipes';
-import { getRandomOfList, useDebounce } from '../../utils';
+import { getRandomOfList, useDebounce, useHasChanged } from '../../utils';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 function RecipeList() {
@@ -17,12 +17,13 @@ function RecipeList() {
   const [loading, setLoading] = useState(false);
 
   // Constant
-  const _listSize = 18;
+  const _listSize = 12;
   const _paginationReach = 2;
 
   // Circumstantial
   const { currentPage: currentPageInit } = useParams();
   const searchInit = useSearchParams()[0].get('search') ?? '';
+  const currentPageChanged = useHasChanged(currentPage);
 
   useEffect(() => {
     const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
@@ -31,7 +32,9 @@ function RecipeList() {
   }, []);
 
   useEffect(() => {
-    updateRecipeList(currentPage);
+    if (currentPageChanged) {
+      updateRecipeList(currentPage);
+    }
   }, [currentPage]);
 
   const updateRecipeList = async (requestedPage: number = 0): Promise<void> => {
