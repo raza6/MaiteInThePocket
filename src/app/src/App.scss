@@ -2,6 +2,24 @@
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
+.mobile {
+  display: none;
+}
+
+.laptop {
+  display: block;
+}
+
+@include media-breakpoint-down(md) {
+  .mobile {
+    display: block;
+  }
+
+  .laptop {
+    display: none;
+  }
+}
+
 #mainWrapper {
   padding: 0;
 
@@ -21,35 +39,33 @@
   z-index: 10;
   overflow: auto;
   
-  .mobile {
-    display: none;
-  }
-  
-  .laptop {
-    display: block;
-  }
-  
   #laptopMenuWrapper {
     height: calc(100% - 24px - 200px);
-  }
-
-  a {
-    margin: 8px 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
     
-    svg {
-      min-width: 1.3em;
-      min-height: 1.3em;
-      color: var(--mp-theme);
+    a {
+      margin: 8px 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      
+      svg {
+        min-width: 1.3em;
+        min-height: 1.3em;
+        color: var(--mp-theme);
+      }
     }
-
+  }
+  
+  a {
     img {
       width: 100%;
       margin-bottom: 8px;
     }
+  }
+
+  h1 {
+    margin: 0;
   }
 
   @include media-breakpoint-down(lg) {
@@ -66,33 +82,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
+    height: 55px;
     width: 100%;
     padding: 0;
     border-right: none;
     border-bottom: 1px solid var(--mp-dark-lighter);
 
-    .mobile {
-      display: block;
-    }
-
-    .laptop {
-      display: none;
-    }
-
     button {
-      margin-right: 16px;
+      margin: 0 8px;
       height: fit-content;
-    }
-
-    a {
-      margin: 0;
-
-      img {
-        height: 70px;
-        width: auto;
-        margin: 0 0 0 16px;
-      }
     }
   }
 }
@@ -123,6 +121,8 @@
   }
 
   .versionWrapper {
+    display: flex;
+    flex-direction: column;
     font-family: 'Consolas', monospace;
     text-align: right;
     word-break: break-word;

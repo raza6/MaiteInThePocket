@@ -125,6 +125,12 @@
   }
   
   #recipeStepsWrapper {
+    padding-top: 32px;
+
+    @include media-breakpoint-down(md) {
+      padding-top: 8px;
+    }
+
     ol {
       display: flex;
       flex-direction: column;

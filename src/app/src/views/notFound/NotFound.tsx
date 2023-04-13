@@ -3,8 +3,11 @@ import { getRandomOfList } from '../../utils';
 import { Col, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './NotFound.scss';
+import { GenProps } from '../../types/generic';
 
-function NotFound() {
+function NotFound(props: GenProps) {
+  props.pageName('');
+
   return (
     <Col id="notFoundWrapper">
       <h1>Page introuvable {getRandomOfList(['😥', '😲', '🤯', '😠', '🥴', '😓'])}</h1>

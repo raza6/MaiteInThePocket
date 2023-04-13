@@ -7,8 +7,9 @@ import RecipeService from '../../services/recipeService';
 import { RecipeSummaryShort } from '../../types/recipes';
 import { getRandomOfList, useDebounce, useHasChanged } from '../../utils';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { GenProps } from '../../types/generic';
 
-function RecipeList() {
+function RecipeList(props: GenProps) {
   // State
   const [recipes, setRecipes] = useState<Array<RecipeSummaryShort>>([]);
   const [recipesCount, setRecipesCount] = useState(0);
@@ -24,6 +25,8 @@ function RecipeList() {
   const { currentPage: currentPageInit } = useParams();
   const searchInit = useSearchParams()[0].get('search') ?? '';
   const currentPageChanged = useHasChanged(currentPage);
+
+  props.pageName('Recherche');
 
   useEffect(() => {
     const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
@@ -129,8 +132,8 @@ function RecipeList() {
   };
 
   return (
-    <Col>
-      <h1>Chercher une recette</h1>
+    <Col id="recipeListMainWrapper">
+      <h1 className="laptop">Chercher une recette</h1>
       <Form onSubmit={handleSubmit}>
         <InputGroup id="searchBarWrapper">
           <Form.Control

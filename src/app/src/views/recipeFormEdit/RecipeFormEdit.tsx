@@ -4,6 +4,7 @@ import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
 import RecipeService from '../../services/recipeService';
+import { GenProps } from '../../types/generic';
 import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg } from '../../utils';
@@ -14,7 +15,7 @@ enum EModalEdit {
   DeleteRecipe = 1
 }
 
-interface RecipeFormEditProps {
+interface RecipeFormEditProps extends GenProps {
   addMode?: boolean
 }
 
@@ -32,6 +33,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
 
   // Circumstantial
   const { id: recipeIdInit } = useParams();
+
+  props.pageName(addMode ? 'Ajouter' : 'Modifier');
 
   const handleRecipeChange = (value: string, recipeProperty: Array<string>) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
@@ -315,7 +318,7 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       {errors.map((error, i) => <Alert dismissible key={`alert_${i}`} variant="danger" onClose={() => handleCloseError(i)}>
         {error}
       </Alert>)}
-      <h1>{addMode ? 'Ajouter' : 'Modifier'} une recette</h1>
+      <h1 className="laptop">{addMode ? 'Ajouter' : 'Modifier'} une recette</h1>
       <Stack id="recipeEditActionWrapper" direction="horizontal" gap={3}>
         <Button variant="success" onClick={handleSubmit}><FiCheckSquare /></Button>
         <Button variant="warning" onClick={() => handleShow(EModalEdit.CancelEdit)}><FiXSquare /></Button>
@@ -397,44 +400,40 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
                 </div>
                 <ul>
                   {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
-                    <Stack direction="horizontal" gap={1}>
-                      <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
-                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
-                      ></Form.Control>
-                      <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput" 
-                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'unit', i.toString(), j.toString()])}
-                      >
-                        <option value=''></option>
-                        <option value={EMassUnit.g}>g</option>
-                        <option value={EMassUnit.kg}>kg</option>
-                        <option value={EVolumeUnit.teaspoon}>c.à.c</option>
-                        <option value={EVolumeUnit.tablespoon}>c.à.s</option>
-                        <option value={EVolumeUnit.handfull}>poignée</option>
-                        <option value={EVolumeUnit.pinch}>pincée</option>
-                        <option value={EVolumeUnit.ml}>ml</option>
-                        <option value={EVolumeUnit.cl}>cl</option>
-                        <option value={EVolumeUnit.dl}>dl</option>
-                        <option value={EVolumeUnit.l}>l</option>
-                        <option value={ELengthUnit.mm}>mm</option>
-                        <option value={ELengthUnit.cm}>cm</option>
-                        <option value={ELengthUnit.m}>m</option>
-                      </Form.Select>
-                      <Form.Control value={ingredient.name} 
-                        onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
-                      ></Form.Control>
-                      <OverlayTrigger
-                        placement="left"
-                        overlay={
-                          <Tooltip>
-                            {ingredient.optional ? 'Facultatif' : 'Non facultatif'}
-                          </Tooltip>
-                        }
-                      >
+                    <Stack direction="vertical" gap={1}>
+                      <div>
+                        <Form.Control value={ingredient.name} 
+                          onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
+                        ></Form.Control>
+                      </div>
+                      <Stack direction="horizontal" gap={1}>
+
+                        <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
+                          onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
+                        ></Form.Control>
+                        <Form.Select value={ingredient.unit ?? ''} className="ingredientUnitInput" 
+                          onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'unit', i.toString(), j.toString()])}
+                        >
+                          <option value=''></option>
+                          <option value={EMassUnit.g}>g</option>
+                          <option value={EMassUnit.kg}>kg</option>
+                          <option value={EVolumeUnit.teaspoon}>c.à.c</option>
+                          <option value={EVolumeUnit.tablespoon}>c.à.s</option>
+                          <option value={EVolumeUnit.handfull}>poignée</option>
+                          <option value={EVolumeUnit.pinch}>pincée</option>
+                          <option value={EVolumeUnit.ml}>ml</option>
+                          <option value={EVolumeUnit.cl}>cl</option>
+                          <option value={EVolumeUnit.dl}>dl</option>
+                          <option value={EVolumeUnit.l}>l</option>
+                          <option value={ELengthUnit.mm}>mm</option>
+                          <option value={ELengthUnit.cm}>cm</option>
+                          <option value={ELengthUnit.m}>m</option>
+                        </Form.Select>
                         <div className="ingredientOptionalInput" onClick={() => handleRecipeChange((!ingredient.optional).toString(), ['ingredients', 'optional', i.toString(), j.toString()])}>
-                          {ingredient.optional ? <FiHelpCircle /> : <FiCheckCircle />}
+                          {ingredient.optional ? <span><FiHelpCircle /> Facultatif</span> : <span><FiCheckCircle /> Non facultatif</span>}
                         </div>
-                      </OverlayTrigger>
-                      <Button variant="primary" onClick={() => handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
+                        <Button className="ingredientDeleteButton" variant="primary" onClick={() => handleRemoveIngredient(i, j)}><FiTrash2 /></Button>
+                      </Stack>
                     </Stack>
                   </li>)}
                   <div className="ingredientAddWrapper">
@@ -442,11 +441,12 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
                   </div>
                 </ul>
               </div>)}
-            <Button variant="primary" onClick={handleAddIngredientGroup}><FiPlusSquare /> Groupe</Button>
+            <Button variant="primary" onClick={handleAddIngredientGroup}><FiPlusSquare /> Groupe d&apos;ingrédient</Button>
           </Col>
         </Row>
         <Row>
           <Col id="recipeStepsWrapper">
+            <h4>Étapes :</h4>
             <ol>
               {recipe?.steps.map((step, i) => <li key={'step_' + i}>
                 <div className="recipeStepWrapper">
@@ -457,38 +457,38 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
                 </div>
               </li>)}
             </ol>
-            <Button variant="primary" onClick={handleAddStep}><FiPlusSquare /></Button>
+            <Button variant="primary" onClick={handleAddStep}><FiPlusSquare /> Étape</Button>
           </Col>
         </Row>
       </Form>
 
       <Modal show={show[EModalEdit.CancelEdit]} onHide={() => handleClose(EModalEdit.CancelEdit)}>
         <Modal.Header>
-          <Modal.Title>Annuler les modifications</Modal.Title>
+          <Modal.Title>Annuler les modifications ?</Modal.Title>
         </Modal.Header>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => handleClose(EModalEdit.CancelEdit)}>
-            Fermer
+            Non, retour
           </Button>
           <Button variant="warning" onClick={handleCancel}>
-            Continuer
+            Oui, continuer
           </Button>
         </Modal.Footer>
       </Modal>
 
       <Modal show={show[EModalEdit.DeleteRecipe]} onHide={() => handleClose(EModalEdit.DeleteRecipe)}>
         <Modal.Header>
-          <Modal.Title>Supprimer la recette</Modal.Title>
+          <Modal.Title>Supprimer la recette ?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>La suppression est définitive</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => handleClose(EModalEdit.DeleteRecipe)}>
-            Fermer
+            Non, retour
           </Button>
           <Button variant="danger" onClick={handleDelete}>
-            Continuer
+            Oui, continuer
           </Button>
         </Modal.Footer>
       </Modal>

@@ -2,84 +2,86 @@
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
-#searchBarWrapper {
-    width: 80%;
-    margin: 32px auto 0 auto;
-
-    .form-control {
-        background-color: var(--mp-light-lighter);
-        border-color: var(--mp-light-lighter);
-        color: var(--mp-dark-base);
-
-        &:focus {
-            box-shadow: none;
+#recipeListMainWrapper {
+    #searchBarWrapper {
+        width: 80%;
+        margin: 32px auto 0 auto;
+    
+        .form-control {
+            background-color: var(--mp-light-lighter);
+            border-color: var(--mp-light-lighter);
+            color: var(--mp-dark-base);
+    
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    
+        button {
+            background-color: var(--mp-light-base);
+            border-color: var(--mp-light-base);
+            color: var(--mp-dark-base);
+    
+            &:hover, &:focus {
+                background-color: var(--mp-light-darker);
+                border-color: var(--mp-light-darker);
+            }
         }
     }
-
-    button {
-        background-color: var(--mp-light-base);
-        border-color: var(--mp-light-base);
-        color: var(--mp-dark-base);
-
-        &:hover, &:focus {
-            background-color: var(--mp-light-darker);
-            border-color: var(--mp-light-darker);
-        }
-    }
-}
-
-#recipeListOuterWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    #recipeListWrapper {
+    
+    #recipeListOuterWrapper {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 16px;
-        list-style-type: none;
-        margin-top: 32px;
-        padding: 0 32px 16px 32px;
+        flex-direction: column;
+        align-items: center;
     
-        li {
-            width: 250px;
-
-            @include media-breakpoint-down(lg) {
-                width: 200px;
+        #recipeListWrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            list-style-type: none;
+            margin-top: 32px;
+            padding: 0 32px 16px 32px;
+        
+            li {
+                width: 250px;
+    
+                @include media-breakpoint-down(lg) {
+                    width: 200px;
+                }
+    
+                @include media-breakpoint-down(md) {
+                    width: 180px;
+                }
+    
+                @include media-breakpoint-down(sm) {
+                    width: 160px;
+                }
             }
-
-            @include media-breakpoint-down(md) {
-                width: 180px;
-            }
-
-            @include media-breakpoint-down(sm) {
-                width: 160px;
+        
+            #noRecipeWrapper {
+                align-items: center;
+        
+                .mainMessage {
+                    font-weight: 700;
+                    font-size: larger;
+                }
             }
         }
     
-        #noRecipeWrapper {
-            align-items: center;
-    
-            .mainMessage {
-                font-weight: 700;
-                font-size: larger;
-            }
+        .pagination {
+            --bs-pagination-color: var(--mp-dark-base);
+            --bs-pagination-bg: var(--mp-light-base);
+            --bs-pagination-border-color: var(--mp-light-base);
+            --bs-pagination-hover-color: var(--mp-dark-base);
+            --bs-pagination-hover-bg: var(--mp-light-darker);
+            --bs-pagination-hover-border-color: var(--mp-light-base);
+            --bs-pagination-focus-color: var(--mp-dark-darker);
+            --bs-pagination-focus-bg: var(--mp-light-darker);
+            --bs-pagination-focus-box-shadow: none;
+            --bs-pagination-active-color: var(--mp-light-base);
+            --bs-pagination-active-bg: var(--mp-dark-lighter);
+            --bs-pagination-active-border-color: var(--mp-light-base);
         }
-    }
-
-    .pagination {
-        --bs-pagination-color: var(--mp-dark-base);
-        --bs-pagination-bg: var(--mp-light-base);
-        --bs-pagination-border-color: var(--mp-light-base);
-        --bs-pagination-hover-color: var(--mp-dark-base);
-        --bs-pagination-hover-bg: var(--mp-light-darker);
-        --bs-pagination-hover-border-color: var(--mp-light-base);
-        --bs-pagination-focus-color: var(--mp-dark-darker);
-        --bs-pagination-focus-bg: var(--mp-light-darker);
-        --bs-pagination-focus-box-shadow: none;
-        --bs-pagination-active-color: var(--mp-light-base);
-        --bs-pagination-active-bg: var(--mp-dark-lighter);
-        --bs-pagination-active-border-color: var(--mp-light-base);
     }
 }

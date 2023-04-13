@@ -15,6 +15,7 @@ import AuthService from './services/authService';
 function App() {
   const [menuShow, setMenuShow] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [pageName, setPageName] = useState('Maite in the Pocket');
   const [appName] = useState(process.env.REACT_APP_NAME ?? '');
   const [appVersion] = useState(process.env.REACT_APP_VERSION ?? 'x.x.x');
 
@@ -39,7 +40,7 @@ function App() {
     return (
       <div id="menuWrapper">
         <div id="menuLinkWrapper">
-          <Link to="/app" onClick={handleClose}><FiHome /> Home</Link>
+          <Link to="/app" onClick={handleClose}><FiHome /> Accueil</Link>
           <Link to="/app/recipe/list" onClick={handleClose}><FiSearch /> Chercher une recette</Link>
           {loggedIn && 
             <Link reloadDocument to="/app/recipe/add" onClick={handleClose}><FiPlusSquare /> Ajouter une recette</Link>
@@ -58,16 +59,22 @@ function App() {
     <AuthContext.Provider value={loggedIn}>
       <Container fluid className="app" id="mainWrapper">
         <Col id="navbar">
-          <Link to="/app">
+          <Link to="/app" className="laptop">
             <Image alt="Maite in the Pocket" src={`${process.env.PUBLIC_URL}/maite.jpg`}></Image>
           </Link>
           <Button className="mobile" onClick={handleShow}>
             <FiMenu />
           </Button>
+          <h1 className="mobile">{pageName}</h1>
+          <Link className="mobile" to="/app/recipe/list">
+            <Button>
+              <FiSearch />
+            </Button>
+          </Link>
           <div className="laptop" id="laptopMenuWrapper">
             {renderMenuLink()}
           </div>
-          <Offcanvas placement="end" show={menuShow} onHide={handleClose}>
+          <Offcanvas placement="start" show={menuShow} onHide={handleClose}>
             <Offcanvas.Header closeButton>
               <Offcanvas.Title>Menu</Offcanvas.Title>
             </Offcanvas.Header>
@@ -78,14 +85,14 @@ function App() {
         </Col>
         <div id="appWrapper">
           <Routes>
-            <Route index path="/app" element={<Home/>}></Route>
-            <Route path="/app/login" element={<Login/>}></Route>
-            <Route path="/app/recipe/list" element={<RecipeList/>}></Route>
-            <Route path="/app/recipe/list/:currentPage" element={<RecipeList/>}></Route>
-            <Route path="/app/recipe/add" element={<RecipeFormEdit addMode={true}/>}></Route>
-            <Route path="/app/recipe/edit/:id" element={<RecipeFormEdit/>}></Route>
-            <Route path="/app/recipe/detail/:id" element={<RecipeDetail/>}></Route>
-            <Route path="/app/*" element={<NotFound/>} />
+            <Route index path="/app" element={<Home pageName={setPageName}/>}></Route>
+            <Route path="/app/login" element={<Login pageName={setPageName}/>}></Route>
+            <Route path="/app/recipe/list" element={<RecipeList pageName={setPageName}/>}></Route>
+            <Route path="/app/recipe/list/:currentPage" element={<RecipeList pageName={setPageName}/>}></Route>
+            <Route path="/app/recipe/add" element={<RecipeFormEdit addMode={true} pageName={setPageName}/>}></Route>
+            <Route path="/app/recipe/edit/:id" element={<RecipeFormEdit pageName={setPageName}/>}></Route>
+            <Route path="/app/recipe/detail/:id" element={<RecipeDetail pageName={setPageName}/>}></Route>
+            <Route path="/app/*" element={<NotFound pageName={setPageName}/>} />
           </Routes>
         </div>
       </Container>

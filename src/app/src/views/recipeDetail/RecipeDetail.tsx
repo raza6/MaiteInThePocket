@@ -10,8 +10,9 @@ import { EVolumeUnit } from '../../types/units';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import AuthContext from '../../components/AuthContext';
 import './RecipeDetail.scss';
+import { GenProps } from '../../types/generic';
 
-function RecipeDetail() {
+function RecipeDetail(props: GenProps) {
   // State
   const [recipe, setRecipe] = useState<Recipe<RecipeSummary> | undefined>(undefined);
   const [navigate, setNavigate] = useState<string | undefined>(undefined);
@@ -26,6 +27,7 @@ function RecipeDetail() {
       const recipe = await RecipeService.getRecipe(recipeIdInit);
       if (recipe != null) {
         document.title = `${recipe.summary.name} - Maite in the Pocket`;
+        props.pageName(recipe.summary.name);
         setRecipe(recipe);
         setCurrentServings(recipe.summary.servings);
       } else {
@@ -122,7 +124,7 @@ function RecipeDetail() {
   return (
     <div id="recipeDetailWrapper">
       {navigate && <Navigate to={navigate}/>}
-      <h1>{recipe?.summary.name}</h1>
+      <h1 className="laptop">{recipe?.summary.name}</h1>
       <Col>
         <Row id="recipeTopWrapper">
           <Col id="recipeSummaryDetailWrapper">
@@ -165,6 +167,7 @@ function RecipeDetail() {
           {renderActions('laptop')}
         </Row>
         <Row id="recipeStepsWrapper">
+          <h4>Étapes :</h4>
           <ol>
             {recipe?.steps.map((step, i) => <li key={'step_' + i}>{step}</li>)}
           </ol>

@@ -1,3 +1,3 @@
-let ReactProps: {} | Readonly<{}>;
+type GenProps = { pageName: Function};
 
-export { ReactProps };
+export type { GenProps };
