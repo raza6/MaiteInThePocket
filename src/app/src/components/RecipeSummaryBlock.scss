@@ -6,6 +6,7 @@
     background-color: var(--mp-light-base);
     transition: background-color 0.15s ease-in-out 0s;
     height: 100%;
+    --bs-card-border-width: 0;
 
     &:hover {
         background-color: var(--mp-light-darker);

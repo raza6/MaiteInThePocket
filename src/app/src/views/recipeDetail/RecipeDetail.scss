@@ -70,10 +70,8 @@
     }
     
     #recipeActionWrapper {
-      flex-direction: column;
-      gap: 8px;
-      flex: 0;
-      margin-right: 48px;
+      gap: 16px;
+      margin: 8px auto 0 auto;
     }
 
     @include media-breakpoint-down(md) {
@@ -116,10 +114,6 @@
 
       #recipeIngredientsWrapper {
         margin-left: 0;
-      }
-
-      #recipeActionWrapper {
-        margin: 0 0 0 auto;
       }
     }
   }

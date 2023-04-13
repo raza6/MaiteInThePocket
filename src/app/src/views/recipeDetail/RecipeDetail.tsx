@@ -3,7 +3,7 @@ import RecipeService from '../../services/recipeService';
 import { Ingredient, Recipe, RecipeSummary } from '../../types/recipes';
 import { getRecipeImg } from '../../utils';
 import Image from 'react-bootstrap/Image';
-import { Button, Col, Row, Stack } from 'react-bootstrap';
+import { Button, Col, OverlayTrigger, Row, Stack, Tooltip } from 'react-bootstrap';
 import { FiClock, FiEdit, FiUserMinus, FiUserPlus } from 'react-icons/fi';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { EVolumeUnit } from '../../types/units';
@@ -54,24 +54,39 @@ function RecipeDetail(props: GenProps) {
     setCurrentServings(currentServings - 1);
   };
 
-  const renderActions = (respMode: string): ReactNode => {
+  const renderActions = (): ReactNode => {
     return (
-      <Col id="recipeActionWrapper" className={respMode}>
+      <Stack direction="horizontal" id="recipeActionWrapper">
         {
           loggedIn &&
           <Link to={`/app/recipe/edit/${recipe?.slugId}`}>
-            <Button>
-              <FiEdit/>
-            </Button>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Modifier la recette</Tooltip>}
+            >
+              <Button>
+                <FiEdit/>
+              </Button>
+            </OverlayTrigger>
           </Link>
         }
-        <Button onClick={handleAddServing}>
-          <FiUserPlus/>
-        </Button>
-        <Button onClick={handleRemoveServing} disabled={currentServings === 1}>
-          <FiUserMinus/>
-        </Button>
-      </Col>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip>Ajouter une part</Tooltip>}
+        >
+          <Button onClick={handleAddServing}>
+            <FiUserPlus/>
+          </Button>
+        </OverlayTrigger>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip>Retirer une part</Tooltip>}
+        >
+          <Button onClick={handleRemoveServing} disabled={currentServings === 1}>
+            <FiUserMinus/>
+          </Button>
+        </OverlayTrigger>
+      </Stack>
     );
   };
 
@@ -149,8 +164,8 @@ function RecipeDetail(props: GenProps) {
                     <b>Commentaires :</b> {recipe?.summary.comment}
                   </span>
               }
+              {renderActions()}
             </div>
-            {renderActions('mobile')}
           </Col>
           <Col id="recipeIngredientsWrapper">
             <h4>Ingrédients :</h4>
@@ -164,7 +179,6 @@ function RecipeDetail(props: GenProps) {
                 </ul>
               </div>)}
           </Col>
-          {renderActions('laptop')}
         </Row>
         <Row id="recipeStepsWrapper">
           <h4>Étapes :</h4>

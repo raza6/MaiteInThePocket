@@ -35,28 +35,24 @@
         align-items: center;
     
         #recipeListWrapper {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-column-gap: 16px;
+            grid-row-gap: 16px;
             list-style-type: none;
             margin-top: 32px;
-            padding: 0 32px 16px 32px;
+            padding: 0 8px 16px 8px;
+
+            @include media-breakpoint-down(md) {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            @include media-breakpoint-down(sm) {
+                grid-template-columns: repeat(2, 1fr);
+            }
         
             li {
-                width: 250px;
-    
-                @include media-breakpoint-down(lg) {
-                    width: 200px;
-                }
-    
-                @include media-breakpoint-down(md) {
-                    width: 180px;
-                }
-    
-                @include media-breakpoint-down(sm) {
-                    width: 160px;
-                }
+                width: 100%;
             }
         
             #noRecipeWrapper {
