@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { getRandomOfList } from '../../utils';
 import { Col, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,9 @@ import './NotFound.scss';
 import { GenProps } from '../../types/generic';
 
 function NotFound(props: GenProps) {
-  props.pageName('');
+  useEffect(() => {
+    props.pageName('');
+  }, []);
 
   return (
     <Col id="notFoundWrapper">

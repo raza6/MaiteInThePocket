@@ -26,12 +26,12 @@ function RecipeList(props: GenProps) {
   const searchInit = useSearchParams()[0].get('search') ?? '';
   const currentPageChanged = useHasChanged(currentPage);
 
-  props.pageName('Recherche');
-
+  
   useEffect(() => {
     const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
     setCurrentPage(currentPageClean);
     setSearch(searchInit);
+    props.pageName('Recherche');
   }, []);
 
   useEffect(() => {
@@ -150,9 +150,12 @@ function RecipeList(props: GenProps) {
           <Spinner animation="border" />
         </Col> :
         <div id="recipeListOuterWrapper">
-          <ul id="recipeListWrapper">
-            { recipes.length > 0 ? renderRecipeList() : renderNoRecipe() }
-          </ul>
+          { recipes.length > 0 ? 
+            <ul id="recipeListWrapper">
+              { renderRecipeList() }
+            </ul>
+            : renderNoRecipe() 
+          }
           { recipes.length > 0 ? renderPagination() : '' }
         </div>
       }

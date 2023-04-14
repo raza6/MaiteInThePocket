@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
-import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
+import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiMove, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
 import { Navigate, useParams } from 'react-router-dom';
+import { ReactSortable } from 'react-sortablejs';
 import RecipeService from '../../services/recipeService';
 import { GenProps } from '../../types/generic';
 import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
@@ -15,6 +16,11 @@ enum EModalEdit {
   DeleteRecipe = 1
 }
 
+interface RecipeStepSortable {
+  id: string | number,
+  value: string
+}
+
 interface RecipeFormEditProps extends GenProps {
   addMode?: boolean
 }
@@ -22,6 +28,7 @@ interface RecipeFormEditProps extends GenProps {
 function RecipeFormEdit(props: RecipeFormEditProps) {
   // State
   const [recipe, setRecipe] = useState<Recipe<RecipeSummaryEdit> | undefined>(undefined);
+  const [recipeSteps, setRecipeSteps] = useState<Array<RecipeStepSortable>>([]);
   const [recipeImg, setRecipeImg] = useState<File | undefined>(undefined);
   const [recipeImgUrl, setRecipeImgUrl] = useState<string | undefined>(undefined);
   const [show, setShow] = useState(new Array(2).fill(false));
@@ -33,8 +40,6 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
 
   // Circumstantial
   const { id: recipeIdInit } = useParams();
-
-  props.pageName(addMode ? 'Ajouter' : 'Modifier');
 
   const handleRecipeChange = (value: string, recipeProperty: Array<string>) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
@@ -73,6 +78,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       }
     } else if (recipeProperty[0] === 'steps') {
       newRecipe.steps[parseInt(recipeProperty[1], 10)] = value;
+      recipeSteps[parseInt(recipeProperty[1], 10)].value = value;
+      setRecipeSteps(recipeSteps);
     } else if (recipeProperty[0] === 'ingredientsGroupName') {
       newRecipe.ingredients[parseInt(recipeProperty[1], 10)].ingredientsGroupName = value;
     } else if (recipeProperty[0] === 'ingredients') {
@@ -110,12 +117,16 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.push('');
     setRecipe(newRecipe);
+    recipeSteps.push({ id: Math.random(), value: '' });
+    setRecipeSteps(recipeSteps);
   };
 
   const handleRemoveStep = (index: number) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.splice(index, 1);
     setRecipe(newRecipe);
+    recipeSteps.splice(index, 1);
+    setRecipeSteps(recipeSteps);
   };
 
   const handleAddIngredientGroup = () => {
@@ -205,6 +216,7 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       const recipe = defaultRecipe();
       const hasTemp = localStorage.getItem('maite_recipe_temp') !== null;
       setRecipe(recipe);
+      setRecipeSteps(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
       setAddMode(addMode);
       setHasTemp(hasTemp);
     } else {
@@ -212,6 +224,7 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
         const recipe = await RecipeService.getRecipe(recipeIdInit);
         if (recipe !== null) {
           setRecipe(recipe);
+          setRecipeSteps(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
           setAddMode(addMode);
         } else {
           setNavigate(`/app/recipe/edit/${recipeIdInit}/notfound`);
@@ -224,6 +237,7 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
 
   useEffect(() => {
     initRecipeForm();
+    props.pageName(addMode ? 'Ajouter' : 'Modifier');
 
     return () => {
       if (addMode && exitWithoutTemp) {
@@ -241,6 +255,12 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       }
     }
   });
+
+  useEffect(() => { 
+    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
+    newRecipe.steps = recipeSteps.map(rs => rs.value);
+    setRecipe(newRecipe);
+  }, [recipeSteps]);
 
   const validateRecipe = () => {
     const errors = [];
@@ -447,16 +467,23 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
         <Row>
           <Col id="recipeStepsWrapper">
             <h4>Étapes :</h4>
-            <ol>
-              {recipe?.steps.map((step, i) => <li key={'step_' + i}>
-                <div className="recipeStepWrapper">
-                  <Form.Control as="textarea" rows={2} value={step}
-                    onChange={(e) => handleRecipeChange(e.currentTarget.value, ['steps', i.toString()])}
-                  />
-                  <Button variant="primary" onClick={() => handleRemoveStep(i)}><FiTrash2 /></Button>
-                </div>
-              </li>)}
-            </ol>
+            <ReactSortable tag="ol" animation={150} list={recipeSteps} setList={setRecipeSteps} handle=".stepHandle">
+              {recipeSteps.map((step, i) => (
+
+                <li key={step.id}>
+                  <div className="recipeStepWrapper">
+                    <Form.Control as="textarea" rows={2} value={step.value}
+                      onChange={(e) => handleRecipeChange(e.currentTarget.value, ['steps', i.toString()])}
+                    />
+                    <div className="stepActionWrapper">
+                      <Button variant="primary" className="stepHandle"><FiMove /></Button>
+                      <Button variant="primary" onClick={() => handleRemoveStep(i)}><FiTrash2 /></Button>
+                    </div>
+                  </div>
+                </li>
+                
+              ))}
+            </ReactSortable>
             <Button variant="primary" onClick={handleAddStep}><FiPlusSquare /> Étape</Button>
           </Col>
         </Row>

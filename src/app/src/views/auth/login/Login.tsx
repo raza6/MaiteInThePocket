@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col } from 'react-bootstrap';
 import './Login.scss';
-import { AiFillGithub } from 'react-icons/ai';
-import AuthService from '../../../services/authService';
+import { AiFillFacebook, AiFillGithub, AiFillGoogleCircle } from 'react-icons/ai';
 import config from '../../../config';
 import { GenProps } from '../../../types/generic';
 
 function Login(props: GenProps) {
-  props.pageName('Login');
-  
-  const checkAuth = async (): Promise<void> => {
-    await AuthService.checkAuth();
-  };
+  useEffect(() => {
+    props.pageName('Login');
+  }, []);
 
   return (
     <Col id="loginWrapper">
@@ -22,8 +19,13 @@ function Login(props: GenProps) {
           <AiFillGithub />
         </Button>
       </a>
-      <Button onClick={checkAuth}>
-        Check
+      <Button disabled>
+          Login avec Google
+        <AiFillGoogleCircle />
+      </Button>
+      <Button disabled>
+        Login avec Facebook
+        <AiFillFacebook />
       </Button>
     </Col>
   );

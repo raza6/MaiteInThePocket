@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Image, Form, InputGroup } from 'react-bootstrap';
 import { Link, Navigate } from 'react-router-dom';
 import { FiLock, FiPlusSquare, FiSearch, FiSettings, FiUnlock } from 'react-icons/fi';
@@ -15,7 +15,9 @@ function Home(props: GenProps) {
   // Context
   const loggedIn = useContext(AuthContext);
 
-  props.pageName('Maite in the Pocket');
+  useEffect(() => {
+    props.pageName('Maite in the Pocket');
+  }, []);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
     const search = e.currentTarget.value;

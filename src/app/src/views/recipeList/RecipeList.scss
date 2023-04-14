@@ -54,14 +54,15 @@
             li {
                 width: 100%;
             }
-        
-            #noRecipeWrapper {
-                align-items: center;
-        
-                .mainMessage {
-                    font-weight: 700;
-                    font-size: larger;
-                }
+        }
+
+        #noRecipeWrapper {
+            align-items: center;
+            margin-top: 16px;
+    
+            .mainMessage {
+                font-weight: 700;
+                font-size: larger;
             }
         }
     

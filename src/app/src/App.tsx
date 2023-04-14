@@ -5,7 +5,7 @@ import RecipeList from './views/recipeList/RecipeList';
 import RecipeFormEdit from './views/recipeFormEdit/RecipeFormEdit';
 import RecipeDetail from './views/recipeDetail/RecipeDetail';
 import NotFound from './views/notFound/NotFound';
-import { FiHome, FiPlusSquare, FiSearch, FiSettings, FiMenu } from 'react-icons/fi';
+import { FiHome, FiPlusSquare, FiSearch, FiSettings, FiMenu, FiUnlock } from 'react-icons/fi';
 import './App.scss';
 import { Container, Col, Image, Button, Offcanvas } from 'react-bootstrap';
 import Login from './views/auth/login/Login';
@@ -46,6 +46,9 @@ function App() {
             <Link reloadDocument to="/app/recipe/add" onClick={handleClose}><FiPlusSquare /> Ajouter une recette</Link>
           }
           <Link to="/app/settings" onClick={handleClose}><FiSettings /> Paramètres</Link>
+          {!loggedIn && 
+            <Link to="/app/login" onClick={handleClose}><FiUnlock /> Login</Link>
+          }
         </div>
         <span className="versionWrapper">
           <span>{loggedIn ? 'Logged in' : 'Logged out'}</span>
