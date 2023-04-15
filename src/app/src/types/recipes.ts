@@ -53,6 +53,25 @@ interface RecipeRequest {
   pageIndex: number;
 }
 
+interface RecipeStepSortable {
+  id: string | number,
+  value: string
+}
+
+interface RecipeIngredientSortable {
+  id: string | number,
+  value: Ingredient
+}
+
 export type {
-  Recipe, RecipeSummary, RecipeSummaryEdit, RecipeSummaryShort, RecipeRequest, IngredientsGroup, Ingredient, RecipeSummarySearchResponse
+  Recipe,
+  RecipeSummary,
+  RecipeSummaryEdit,
+  RecipeSummaryShort,
+  RecipeRequest,
+  IngredientsGroup,
+  Ingredient,
+  RecipeSummarySearchResponse,
+  RecipeStepSortable,
+  RecipeIngredientSortable
 };

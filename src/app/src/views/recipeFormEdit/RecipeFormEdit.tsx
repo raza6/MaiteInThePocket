@@ -6,7 +6,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { ReactSortable } from 'react-sortablejs';
 import RecipeService from '../../services/recipeService';
 import { GenProps } from '../../types/generic';
-import { Recipe, RecipeSummary, RecipeSummaryEdit } from '../../types/recipes';
+import { Recipe, RecipeSummary, RecipeSummaryEdit, RecipeStepSortable, RecipeIngredientSortable } from '../../types/recipes';
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg } from '../../utils';
 import './RecipeFormEdit.scss';
@@ -16,11 +16,6 @@ enum EModalEdit {
   DeleteRecipe = 1
 }
 
-interface RecipeStepSortable {
-  id: string | number,
-  value: string
-}
-
 interface RecipeFormEditProps extends GenProps {
   addMode?: boolean
 }
@@ -28,7 +23,8 @@ interface RecipeFormEditProps extends GenProps {
 function RecipeFormEdit(props: RecipeFormEditProps) {
   // State
   const [recipe, setRecipe] = useState<Recipe<RecipeSummaryEdit> | undefined>(undefined);
-  const [recipeSteps, setRecipeSteps] = useState<Array<RecipeStepSortable>>([]);
+  const [recipeStepsSort, setRecipeStepsSort] = useState<Array<RecipeStepSortable>>([]);
+  const [recipeIngredientsSort, setRecipeIngredientsSort] = useState<Array<Array<RecipeIngredientSortable>>>([]);
   const [recipeImg, setRecipeImg] = useState<File | undefined>(undefined);
   const [recipeImgUrl, setRecipeImgUrl] = useState<string | undefined>(undefined);
   const [show, setShow] = useState(new Array(2).fill(false));
@@ -40,6 +36,12 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
 
   // Circumstantial
   const { id: recipeIdInit } = useParams();
+
+  const setRecipeIngredientsSortIdx = (value: RecipeIngredientSortable[], index: number) => {
+    const newRecipeIngredientsSort: Array<Array<RecipeIngredientSortable>> = JSON.parse(JSON.stringify(recipeIngredientsSort));
+    newRecipeIngredientsSort[index] = value;
+    setRecipeIngredientsSort(newRecipeIngredientsSort);
+  };
 
   const handleRecipeChange = (value: string, recipeProperty: Array<string>) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
@@ -78,8 +80,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       }
     } else if (recipeProperty[0] === 'steps') {
       newRecipe.steps[parseInt(recipeProperty[1], 10)] = value;
-      recipeSteps[parseInt(recipeProperty[1], 10)].value = value;
-      setRecipeSteps(recipeSteps);
+      recipeStepsSort[parseInt(recipeProperty[1], 10)].value = value;
+      setRecipeStepsSort(recipeStepsSort);
     } else if (recipeProperty[0] === 'ingredientsGroupName') {
       newRecipe.ingredients[parseInt(recipeProperty[1], 10)].ingredientsGroupName = value;
     } else if (recipeProperty[0] === 'ingredients') {
@@ -96,6 +98,9 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
         newRecipe.ingredients[parseInt(recipeProperty[2], 10)]
           .ingredientsList[parseInt(recipeProperty[3], 10)].optional = value === 'true';
       }
+      recipeIngredientsSort[parseInt(recipeProperty[2], 10)][parseInt(recipeProperty[3], 10)].value = 
+        newRecipe.ingredients[parseInt(recipeProperty[2], 10)].ingredientsList[parseInt(recipeProperty[3], 10)];
+      setRecipeIngredientsSort(recipeIngredientsSort);
     }
     setRecipe(newRecipe);
   };
@@ -117,40 +122,51 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.push('');
     setRecipe(newRecipe);
-    recipeSteps.push({ id: Math.random(), value: '' });
-    setRecipeSteps(recipeSteps);
+    recipeStepsSort.push({ id: Math.random(), value: '' });
+    setRecipeStepsSort(recipeStepsSort);
   };
 
   const handleRemoveStep = (index: number) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.steps.splice(index, 1);
     setRecipe(newRecipe);
-    recipeSteps.splice(index, 1);
-    setRecipeSteps(recipeSteps);
+    recipeStepsSort.splice(index, 1);
+    setRecipeStepsSort(recipeStepsSort);
   };
 
   const handleAddIngredientGroup = () => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients.push({ ingredientsGroupName: null, ingredientsList: [] });
     setRecipe(newRecipe);
+    recipeIngredientsSort.push([]);
+    setRecipeIngredientsSort(recipeIngredientsSort);
   };
 
   const handleRemoveIngredientGroup = (index: number) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients.splice(index, 1);
     setRecipe(newRecipe);
+    recipeIngredientsSort.splice(index, 1);
+    setRecipeIngredientsSort(recipeIngredientsSort);
   };
 
   const handleAddIngredient = (index: number) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
-    newRecipe.ingredients[index].ingredientsList.push({ name: '', quantity: null, unit: null, optional: false });
+    const newIngredient = { name: '', quantity: null, unit: null, optional: false };
+    newRecipe.ingredients[index].ingredientsList.push(newIngredient);
     setRecipe(newRecipe);
+    const newRecipeIngredientsSort: Array<Array<RecipeIngredientSortable>> = JSON.parse(JSON.stringify(recipeIngredientsSort));
+    newRecipeIngredientsSort[index].push({ id: Math.random(), value: newIngredient });
+    setRecipeIngredientsSort(newRecipeIngredientsSort);
   };
 
   const handleRemoveIngredient = (indexGroup: number, indexIngredient: number) => {
     const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
     newRecipe.ingredients[indexGroup].ingredientsList.splice(indexIngredient, 1);
     setRecipe(newRecipe);
+    const newRecipeIngredientsSort: Array<Array<RecipeIngredientSortable>> = JSON.parse(JSON.stringify(recipeIngredientsSort));
+    newRecipeIngredientsSort[indexGroup].splice(indexIngredient, 1);
+    setRecipeIngredientsSort(newRecipeIngredientsSort);
   };
 
   const handleCloseError = (index: number) => {
@@ -216,7 +232,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       const recipe = defaultRecipe();
       const hasTemp = localStorage.getItem('maite_recipe_temp') !== null;
       setRecipe(recipe);
-      setRecipeSteps(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
+      setRecipeStepsSort(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
+      setRecipeIngredientsSort(recipe.ingredients.map(g => g.ingredientsList.map(ing => { return { id: Math.random(), value: ing }; })));
       setAddMode(addMode);
       setHasTemp(hasTemp);
     } else {
@@ -224,7 +241,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
         const recipe = await RecipeService.getRecipe(recipeIdInit);
         if (recipe !== null) {
           setRecipe(recipe);
-          setRecipeSteps(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
+          setRecipeStepsSort(recipe.steps.map(s => { return { id: Math.random(), value: s }; }));
+          setRecipeIngredientsSort(recipe.ingredients.map(g => g.ingredientsList.map(ing => { return { id: Math.random(), value: ing }; })));
           setAddMode(addMode);
         } else {
           setNavigate(`/app/recipe/edit/${recipeIdInit}/notfound`);
@@ -256,11 +274,23 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
     }
   });
 
+  useEffect(() => {
+    if (recipe !== undefined) {
+      const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
+      newRecipe.steps = recipeStepsSort.map(rs => rs.value);
+      setRecipe(newRecipe);
+    }
+  }, [recipeStepsSort]);
+
   useEffect(() => { 
-    const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
-    newRecipe.steps = recipeSteps.map(rs => rs.value);
-    setRecipe(newRecipe);
-  }, [recipeSteps]);
+    if (recipe !== undefined) {
+      const newRecipe: Recipe<RecipeSummaryEdit> = JSON.parse(JSON.stringify(recipe));
+      for (let i = 0; i < recipeIngredientsSort.length; i++) {
+        newRecipe.ingredients[i].ingredientsList = recipeIngredientsSort[i].map(ing => ing.value);
+      }
+      setRecipe(newRecipe);
+    }
+  }, [recipeIngredientsSort]);
 
   const validateRecipe = () => {
     const errors = [];
@@ -418,16 +448,16 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
                   ></Form.Control>
                   <Button variant="primary" onClick={() => handleRemoveIngredientGroup(i)}><FiTrash2 /></Button>
                 </div>
-                <ul>
+                <ReactSortable tag="ul" animation={150} list={recipeIngredientsSort[i]} setList={(v) => setRecipeIngredientsSortIdx(v, i)} handle=".recipeHandle">
                   {group.ingredientsList.map((ingredient, j) => <li key={'ingredient_' + i + '_' + j}>
                     <Stack direction="vertical" gap={1}>
-                      <div>
+                      <Stack direction="horizontal" gap={1}>
                         <Form.Control value={ingredient.name} 
                           onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'name', i.toString(), j.toString()])}
                         ></Form.Control>
-                      </div>
+                        <Button variant="primary" className="recipeHandle"><FiMove /></Button>
+                      </Stack>
                       <Stack direction="horizontal" gap={1}>
-
                         <Form.Control type="number" value={ingredient.quantity ?? ''} min={0} className="ingredientQuantityInput"
                           onChange={(e) => handleRecipeChange(e.currentTarget.value, ['ingredients', 'quantity', i.toString(), j.toString()])}
                         ></Form.Control>
@@ -459,7 +489,7 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
                   <div className="ingredientAddWrapper">
                     <Button variant="primary" onClick={() => handleAddIngredient(i)}><FiPlusSquare /> Ingrédient</Button>
                   </div>
-                </ul>
+                </ReactSortable>
               </div>)}
             <Button variant="primary" onClick={handleAddIngredientGroup}><FiPlusSquare /> Groupe d&apos;ingrédient</Button>
           </Col>
@@ -467,8 +497,8 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
         <Row>
           <Col id="recipeStepsWrapper">
             <h4>Étapes :</h4>
-            <ReactSortable tag="ol" animation={150} list={recipeSteps} setList={setRecipeSteps} handle=".stepHandle">
-              {recipeSteps.map((step, i) => (
+            <ReactSortable tag="ol" animation={150} list={recipeStepsSort} setList={setRecipeStepsSort} handle=".stepHandle">
+              {recipeStepsSort.map((step, i) => (
 
                 <li key={step.id}>
                   <div className="recipeStepWrapper">
