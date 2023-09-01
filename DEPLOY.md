@@ -49,7 +49,7 @@ The app is simply served as static files. It just needs to be built by the dedic
 - In `maite/src/app`, make sure to replace the values in the `config.ts` file.
 - In the parent directory, create a `docker-compose.yaml` file based on the configuration available in the appendix. Make sure the configuration is correct.
 - Repeat for the `default.conf` file.
-- Start containers one after the other in the following order : mongo, node server, node app, nginx. `docker-compose up -d container_name`
+- Start containers one after the other in the following order : `mongo`, `maite_server`, `maite_app`, `nginx`. `docker-compose up -d container_name`
 
 ## Appendix - File configuration
 
