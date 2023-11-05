@@ -11,6 +11,7 @@ import { GenProps } from '../../types/generic';
 
 function RecipeList(props: GenProps) {
   // State
+  const [, setSearchParams] = useSearchParams();
   const [recipes, setRecipes] = useState<Array<RecipeSummaryShort>>([]);
   const [recipesCount, setRecipesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number | undefined>(undefined);
@@ -25,7 +26,6 @@ function RecipeList(props: GenProps) {
   const { currentPage: currentPageInit } = useParams();
   const searchInit = useSearchParams()[0].get('search') ?? '';
   const currentPageChanged = useHasChanged(currentPage);
-
   
   useEffect(() => {
     const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
@@ -42,6 +42,9 @@ function RecipeList(props: GenProps) {
 
   const updateRecipeList = async (requestedPage: number = 0): Promise<void> => {
     setLoading(true);
+    if (search !== '') {
+      setSearchParams({ search });
+    }
     const result = await RecipeService.searchSummary(search, requestedPage, _listSize);
     const maxPage = Math.floor((result.count-1)/_listSize);
     let currentPage = requestedPage;

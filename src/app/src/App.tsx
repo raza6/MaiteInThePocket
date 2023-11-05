@@ -9,8 +9,10 @@ import { FiHome, FiPlusSquare, FiSearch, FiSettings, FiMenu, FiUnlock } from 're
 import './App.scss';
 import { Container, Col, Image, Button, Offcanvas } from 'react-bootstrap';
 import Login from './views/auth/login/Login';
+import Settings from './views/settings/Settings';
 import AuthContext from './components/AuthContext';
 import AuthService from './services/authService';
+import Logout from './views/auth/logout/Logout';
 
 function App() {
   const [menuShow, setMenuShow] = useState(false);
@@ -21,7 +23,7 @@ function App() {
 
   const handleLoginCheck = async () => {
     const res = await AuthService.checkAuth();
-    setLoggedIn(res);
+    setLoggedIn(res?.success);
   };
 
   useEffect(() => {
@@ -90,6 +92,8 @@ function App() {
           <Routes>
             <Route index path="/app" element={<Home pageName={setPageName}/>}></Route>
             <Route path="/app/login" element={<Login pageName={setPageName}/>}></Route>
+            <Route path="/app/logout" element={<Logout pageName={setPageName} logoutCallback={handleLoginCheck}/>}></Route>
+            <Route path="/app/settings" element={<Settings pageName={setPageName}/>}></Route>
             <Route path="/app/recipe/list" element={<RecipeList pageName={setPageName}/>}></Route>
             <Route path="/app/recipe/list/:currentPage" element={<RecipeList pageName={setPageName}/>}></Route>
             <Route path="/app/recipe/add" element={<RecipeFormEdit addMode={true} pageName={setPageName}/>}></Route>

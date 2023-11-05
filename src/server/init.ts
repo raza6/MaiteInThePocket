@@ -25,9 +25,10 @@ const init = async (): Promise<void> => {
     resave: true,
     rolling: true,
     saveUninitialized: false,
+    unset: 'destroy',
     cookie: {
       secure: false, // <string>EnvWrap.get().value('RUN_ENV') === 'prod',
-      maxAge: 1000 * 60 * 60, // ms * s * m * h * d
+      maxAge: 1000 * 60 * 60 * 24 * 30, // ms * s * m * h * d
     },
     store: MongoStore.create({
       clientPromise: mongoStart.exposeClient().connect(),

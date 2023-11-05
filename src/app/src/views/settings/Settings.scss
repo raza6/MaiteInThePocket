@@ -1,0 +1,35 @@
+#settingsWrapper {
+  h1 {
+    margin-bottom: 16px;
+  }
+
+  #infoWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-left: 32px;
+
+    #userWrapper {
+      display: flex;
+      gap: 64px;
+      align-items: center;
+      
+        img {
+          width: 128px;;
+        }
+    }
+
+    #loginStatus {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+
+      a button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+
+}

@@ -47,7 +47,11 @@ const authController = (serv: Express, passport: PassportStatic) => {
    * @apiDescription Will return a 200 with "Logout successful" if logout worked for the current user
    */
   serv.post('/mp/auth/logout', (req: Request, res: Response) => {
-    req.logOut(() => {
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(400).send('An error occured while logging out');
+      }
+
       res.status(200).send('Logout successful');
     });
   });
