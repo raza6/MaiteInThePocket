@@ -124,7 +124,7 @@ input[type="number"] {
     }
   }
 
-  .versionWrapper {
+  .metaWrapper {
     display: flex;
     flex-direction: column;
     font-family: 'Consolas', monospace;
@@ -132,6 +132,24 @@ input[type="number"] {
     word-break: break-word;
     align-self: flex-end;
     font-size: small;
+
+    .userWrapper {
+      justify-content: flex-end;
+      margin: 0;
+      column-gap: 8px;
+
+      * {
+        padding: 0;
+      }
+
+      img {
+        width: 36px;
+      }
+
+      a {
+        width: fit-content;
+      }
+    }
   }
 }
 

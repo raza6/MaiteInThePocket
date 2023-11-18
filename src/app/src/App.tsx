@@ -7,7 +7,8 @@ import RecipeDetail from './views/recipeDetail/RecipeDetail';
 import NotFound from './views/notFound/NotFound';
 import { FiHome, FiPlusSquare, FiSearch, FiSettings, FiMenu, FiUnlock } from 'react-icons/fi';
 import './App.scss';
-import { Container, Col, Image, Button, Offcanvas } from 'react-bootstrap';
+import { Container, Col, Image, Button, Offcanvas, Row } from 'react-bootstrap';
+import { User } from './types/user';
 import Login from './views/auth/login/Login';
 import Settings from './views/settings/Settings';
 import AuthContext from './components/AuthContext';
@@ -17,13 +18,15 @@ import Logout from './views/auth/logout/Logout';
 function App() {
   const [menuShow, setMenuShow] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [pageName, setPageName] = useState('Maite in the Pocket');
   const [appName] = useState(process.env.REACT_APP_NAME ?? '');
   const [appVersion] = useState(process.env.REACT_APP_VERSION ?? 'x.x.x');
 
   const handleLoginCheck = async () => {
-    const res = await AuthService.checkAuth();
-    setLoggedIn(res?.success);
+    const authResult = await AuthService.checkAuth();
+    setLoggedIn(authResult?.success);
+    setUser(authResult?.user);
   };
 
   useEffect(() => {
@@ -52,8 +55,12 @@ function App() {
             <Link to="/app/login" onClick={handleClose}><FiUnlock /> Login</Link>
           }
         </div>
-        <span className="versionWrapper">
-          <span>{loggedIn ? 'Logged in' : 'Logged out'}</span>
+        <span className="metaWrapper">
+          {loggedIn ? <Row className="userWrapper">
+            <Image alt="Photo de l'utilisateur" src={user?.avatar}></Image>
+            <Link to="/app/settings"  onClick={handleClose}>{user?.name}</Link>
+          </Row>
+            : <span>Déconnecté</span>}
           <a href="https://github.com/raza6/MaiteInThePocket">{appName} v{appVersion}</a>
         </span>
       </div>

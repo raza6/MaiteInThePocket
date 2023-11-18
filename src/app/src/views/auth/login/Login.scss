@@ -7,16 +7,25 @@
   flex-direction: column;
   align-items: center;
 
-  button {
+  #loginButtonWrapper {
     margin-top: 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    gap: 16px;
+    justify-content: center;
 
-    svg {
-      width: 48px;
-      height: 48px;
+    * {
+      width: fit-content;
+    }
+
+    button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+  
+      svg {
+        width: 48px;
+        height: 48px;
+      }
     }
   }
 }
