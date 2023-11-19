@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Row, Col, Stack, Image, Button, Modal, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { AiOutlineFire, AiOutlinePieChart } from 'react-icons/ai';
 import { FiCheckCircle, FiCheckSquare, FiClock, FiHelpCircle, FiImage, FiMove, FiPlusSquare, FiShare, FiTrash2, FiXSquare } from 'react-icons/fi';
@@ -10,6 +10,7 @@ import { Recipe, RecipeSummary, RecipeSummaryEdit, RecipeStepSortable, RecipeIng
 import { ELengthUnit, EMassUnit, EVolumeUnit, EUnit } from '../../types/units';
 import { getRecipeImg } from '../../utils';
 import './RecipeFormEdit.scss';
+import AuthContext from '../../components/AuthContext';
 
 enum EModalEdit {
   CancelEdit = 0,
@@ -33,6 +34,9 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
   const [addMode, setAddMode] = useState(false);
   const [hasTemp, setHasTemp] = useState(false);
   const [exitWithoutTemp, setExitWithoutTemp] = useState(false);
+
+  // Context
+  const loggedIn = useContext(AuthContext);
 
   // Circumstantial
   const { id: recipeIdInit } = useParams();
@@ -263,6 +267,12 @@ function RecipeFormEdit(props: RecipeFormEditProps) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (loggedIn === false) {
+      setNavigate('/app');
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
     if (addMode) {

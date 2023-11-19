@@ -1,6 +1,7 @@
 import Jimp from 'jimp';
 import { Request, Response, Express } from 'express';
 import recipeService from '../services/recipeService';
+import { ensureAuthenticated } from '../utils/utils';
 
 /**
  * API
@@ -48,8 +49,9 @@ const recipeController = (serv: Express) => {
    * @apiError (400) {string} NoFileAttached No image file attached with the request
    * @apiError (400) {string} RecipeNotFound Recipe with id <code>id</code> was not found
    * @apiError (400) {string} ImageManipulation Fatal error while manipulating the recipe image
+   * @apiError (401) {null} UserNotAuthenticated
    */
-  serv.post('/mp/recipe/img/:id', async (req: Request, res: Response) => {
+  serv.post('/mp/recipe/img/:id', ensureAuthenticated, async (req: Request, res: Response) => {
     let error;
     // check if file is valid
     if (req.files === undefined || req.files === null || req.files.img === undefined) {
@@ -93,8 +95,9 @@ const recipeController = (serv: Express) => {
    * @api {PUT} /mp/recipe/add Add a recipe
    *
    * @apiBody {Recipe} recipe The recipe to add
+   * @apiError (401) {null} UserNotAuthenticated
    */
-  serv.put('/mp/recipe/add', async (req: Request, res: Response) => {
+  serv.put('/mp/recipe/add', ensureAuthenticated, async (req: Request, res: Response) => {
     const result = await recipeService.addRecipe(req.body);
     console.log(result !== null ? '😀 recipe added' : '😔 recipe not added');
     res.status(result !== null ? 200 : 400).send(result);
@@ -107,8 +110,9 @@ const recipeController = (serv: Express) => {
    *
    * @apiParam {string} id Unique identifier of the recipe
    * @apiBody {Recipe} recipe The edited recipe
+   * @apiError (401) {null} UserNotAuthenticated
    */
-  serv.put('/mp/recipe/:id', async (req: Request, res: Response) => {
+  serv.put('/mp/recipe/:id', ensureAuthenticated, async (req: Request, res: Response) => {
     const result = await recipeService.editRecipe(req.params.id, req.body);
     console.log(result ? '😀 recipe edited' : '😔 recipe not edited');
     res.status(result ? 200 : 400).send();
@@ -120,8 +124,9 @@ const recipeController = (serv: Express) => {
    * @api {DELETE} /mp/recipe/:id Delete a recipe
    *
    * @apiParam {string} id Unique identifier of the recipe
+   * @apiError (401) {null} UserNotAuthenticated
    */
-  serv.delete('/mp/recipe/:id', async (req: Request, res: Response) => {
+  serv.delete('/mp/recipe/:id', ensureAuthenticated, async (req: Request, res: Response) => {
     const result = await recipeService.deleteRecipe(req.params.id);
     console.log(result ? '😀 recipe deleted' : '😔 recipe not deleted');
     res.status(result ? 200 : 400).send();

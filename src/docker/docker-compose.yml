@@ -14,7 +14,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=maitepwd
       - MONGO_INITDB_DATABASE=MaiteInThePocket
   node_back:
-    image: node:18.6
+    image: node:20.3
     container_name: node_back
     volumes:
       - "./node/data:/data"

@@ -43,7 +43,8 @@ export default class recipeService {
       ),
     )
     ) {
-      const slugId = new ShortUniqueId()();
+      const slugId = (new ShortUniqueId()).rnd();
+
       const recipeDb = { ...recipe, slugId };
       try {
         const mongo = new MongoDB();
