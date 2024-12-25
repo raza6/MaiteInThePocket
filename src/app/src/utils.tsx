@@ -23,9 +23,9 @@ function useDebounce(callback: Function) {
   }, [callback]);
 
   const debouncedCallback = useMemo(() => {
-    const func = () => {
+    const func = (...args: any[]) => {
       // @ts-ignore
-      ref.current?.();
+      ref.current?.(...args);
     };
 
     return debounce(func, 300);

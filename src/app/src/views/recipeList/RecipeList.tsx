@@ -6,12 +6,12 @@ import './RecipeList.scss';
 import RecipeService from '../../services/recipeService';
 import { RecipeSummaryShort } from '../../types/recipes';
 import { getRandomOfList, useDebounce, useHasChanged } from '../../utils';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { GenProps } from '../../types/generic';
 
 function RecipeList(props: GenProps) {
   // State
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [recipes, setRecipes] = useState<Array<RecipeSummaryShort>>([]);
   const [recipesCount, setRecipesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number | undefined>(undefined);
@@ -26,6 +26,7 @@ function RecipeList(props: GenProps) {
   const { currentPage: currentPageInit } = useParams();
   const searchInit = useSearchParams()[0].get('search') ?? '';
   const currentPageChanged = useHasChanged(currentPage);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const currentPageClean = currentPageInit !== undefined ? parseInt(currentPageInit, 10) : 0;
@@ -36,24 +37,43 @@ function RecipeList(props: GenProps) {
 
   useEffect(() => {
     if (currentPageChanged) {
-      updateRecipeList(currentPage);
+      updateRecipeList(currentPage, search);
     }
   }, [currentPage]);
 
-  const updateRecipeList = async (requestedPage: number = 0): Promise<void> => {
+  useEffect(() => {
+    const searchValueFromUrl = searchParams.get('search') ?? '';
+    if (searchValueFromUrl !== search) {
+      updateRecipeList(0, searchValueFromUrl);
+    }
+  }, [searchParams]);
+
+  const updateSearchUrl = (upcomingPage: number, upcomingSearch: string) => {
+    if (currentPage !== undefined) {
+      const currentSearchParam = searchParams.get('search') ?? '';
+      const needUrlUpdate = upcomingSearch !== currentSearchParam || upcomingPage !== currentPage;
+  
+      if (needUrlUpdate) {
+        navigate(buildPaginationUrl(upcomingPage, upcomingSearch));
+      }
+    }
+  };
+
+  const updateRecipeList = async (requestedPage: number = 0, requestedSearch: string = ''): Promise<void> => {
     setLoading(true);
-    if (search !== '') {
-      setSearchParams({ search });
-    }
-    const result = await RecipeService.searchSummary(search, requestedPage, _listSize);
+
+    const result = await RecipeService.searchSummary(requestedSearch, requestedPage, _listSize);
     const maxPage = Math.floor((result.count-1)/_listSize);
-    let currentPage = requestedPage;
-    if (currentPage === undefined || currentPage > maxPage || currentPage < 0) {
-      currentPage = 0;
+    let upcomingPage = requestedPage;
+    if (upcomingPage === undefined || upcomingPage > maxPage || upcomingPage < 0) {
+      upcomingPage = 0;
     }
+    updateSearchUrl(upcomingPage, requestedSearch);
+
+    setSearch(requestedSearch);
+    setCurrentPage(upcomingPage);
     setRecipes(result.recipes);
     setRecipesCount(result.count);
-    setCurrentPage(currentPage);
     setLoading(false);
   };
 
@@ -62,7 +82,7 @@ function RecipeList(props: GenProps) {
     const search = e.currentTarget.value;
     setSearch(search);
     if (search.length >= 3 || search.length === 0) {
-      updateRecipeListDebounced();
+      updateRecipeListDebounced(0, search);
     }
   };
  
@@ -88,7 +108,7 @@ function RecipeList(props: GenProps) {
     );
   };
 
-  const buildUrl = (index: number = 0, search: string = '') => {
+  const buildPaginationUrl = (index: number = 0, search: string = '') => {
     return `/app/recipe/list/${index}${search !== '' ? `?search=${encodeURI(search)}` : ''}`;
   };
 
@@ -100,9 +120,9 @@ function RecipeList(props: GenProps) {
     const paginationStart = [];
     for (let i = currentPageFromState - 1; i >= 0; i--) { // Scan to the left
       if (i > currentPageFromState - 1 - _paginationReach) { // Between first page and min reach
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildPaginationUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (i === 0) { // First page
-        paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
+        paginationStart.push(<Pagination.Item key={`p_${i}`} href={buildPaginationUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationStart.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -113,9 +133,9 @@ function RecipeList(props: GenProps) {
     const paginationEnd = [];
     for (let i = currentPageFromState + 1; i <= maxPage; i++) { // Scan to the right
       if (i < currentPageFromState + 1 + _paginationReach) { // Between last page and max reach
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildPaginationUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (i === maxPage) { // Last page
-        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildUrl(i, search)}>{i+1}</Pagination.Item>);
+        paginationEnd.push(<Pagination.Item key={`p_${i}`} href={buildPaginationUrl(i, search)}>{i+1}</Pagination.Item>);
       } else if (!hasEllipsis) {
         hasEllipsis = true;
         paginationEnd.push(<Pagination.Ellipsis key={`p_${i}`}></Pagination.Ellipsis>);
@@ -123,13 +143,13 @@ function RecipeList(props: GenProps) {
     }
     return (
       <Pagination>
-        {currentPageFromState !== 0 && <Pagination.First href={buildUrl(0, search)} />}
-        {currentPageFromState !== 0 && <Pagination.Prev href={buildUrl(currentPageFromState - 1, search)} />}
+        {currentPageFromState !== 0 && <Pagination.First href={buildPaginationUrl(0, search)} />}
+        {currentPageFromState !== 0 && <Pagination.Prev href={buildPaginationUrl(currentPageFromState - 1, search)} />}
         {paginationStart.map(v => v)}
         <Pagination.Item active>{currentPageFromState + 1}</Pagination.Item>
         {paginationEnd.map(v => v)}
-        {currentPageFromState !== maxPage && <Pagination.Next href={buildUrl(currentPageFromState + 1, search)} />}
-        {currentPageFromState !== maxPage && <Pagination.Last href={buildUrl(maxPage, search)} />}
+        {currentPageFromState !== maxPage && <Pagination.Next href={buildPaginationUrl(currentPageFromState + 1, search)} />}
+        {currentPageFromState !== maxPage && <Pagination.Last href={buildPaginationUrl(maxPage, search)} />}
       </Pagination>
     );
   };

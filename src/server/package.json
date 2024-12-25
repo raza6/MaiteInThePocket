@@ -1,6 +1,6 @@
 {
   "name": "maite_in_the_pocket_server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -49,5 +49,5 @@
     "server"
   ],
   "author": "raza6",
-  "license": "CC BY-NC-SA 4.0"
+  "license": "CC-BY-NC-SA-4.0"
 }
