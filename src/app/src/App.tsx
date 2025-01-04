@@ -20,8 +20,8 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState<User | undefined>(undefined);
   const [pageName, setPageName] = useState('Maite in the Pocket');
-  const [appName] = useState(process.env.REACT_APP_NAME ?? '');
-  const [appVersion] = useState(process.env.REACT_APP_VERSION ?? 'x.x.x');
+  const [appName] = useState(import.meta.env.VITE_REACT_APP_NAME ?? '');
+  const [appVersion] = useState(import.meta.env.VITE_REACT_APP_VERSION ?? 'x.x.x');
 
   const handleLoginCheck = async () => {
     const authResult = await AuthService.checkAuth();
@@ -48,7 +48,7 @@ function App() {
           <Link to="/app" onClick={handleClose}><FiHome /> Accueil</Link>
           <Link to="/app/recipe/list" onClick={handleClose}><FiSearch /> Chercher une recette</Link>
           {loggedIn && 
-            <Link reloadDocument to="/app/recipe/add" onClick={handleClose}><FiPlusSquare /> Ajouter une recette</Link>
+            <Link to="/app/recipe/add" onClick={handleClose}><FiPlusSquare /> Ajouter une recette</Link>
           }
           <Link to="/app/settings" onClick={handleClose}><FiSettings /> Paramètres</Link>
           {!loggedIn && 
@@ -72,7 +72,7 @@ function App() {
       <Container fluid className="app" id="mainWrapper">
         <Col id="navbar">
           <Link to="/app" className="laptop">
-            <Image alt="Maite in the Pocket" src={`${process.env.PUBLIC_URL}/maite.jpg`}></Image>
+            <Image alt="Maite in the Pocket" src="/maite.jpg"></Image>
           </Link>
           <Button className="mobile" onClick={handleShow}>
             <FiMenu />
