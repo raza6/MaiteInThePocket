@@ -1,6 +1,3 @@
-*/tmp/
-*/static/img/
-
-docker/mongo
-
-import/*
+server/tmp/
+server/static/img/*
+!server/static/img/test.png

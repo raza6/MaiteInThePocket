@@ -1,4 +1,4 @@
-import Jimp from 'jimp';
+import { Jimp } from 'jimp';
 import { Request, Response, Express } from 'express';
 import recipeService from '../services/recipeService';
 import { ensureAuthenticated } from '../utils/utils';
@@ -74,8 +74,8 @@ const recipeController = (serv: Express) => {
           Jimp.read(reqFile.tempFilePath)
             .then(async (image) => {
               await image
-                .cover(600, 400)
-                .writeAsync(`./static/img/${recipeId}.jpg`);
+                .cover({ w: 600, h: 400 })
+                .write(`./static/img/${recipeId}.jpg`);
               await recipeService.setRecipeImg(recipeId, true);
             })
             .catch((err) => {

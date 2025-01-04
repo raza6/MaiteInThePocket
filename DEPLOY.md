@@ -89,7 +89,7 @@ services:
       maite:
         ipv4_address: 10.5.0.5
   maite_server:
-    image: node:20.3
+    image: node:22.12
     container_name: node_maite_server
     volumes:
       - './maite/src/server:/src'
@@ -104,7 +104,7 @@ services:
       maite:
         ipv4_address: 10.5.0.6
   maite_app:
-    image: node:20.3
+    image: node:22.12
     container_name: node_maite_app
     volumes:
       - './maite/src/app:/src'
