@@ -6,12 +6,15 @@ import url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const isProd = mode === 'production';
+
   return {
     build: {
       outDir: 'build',
     },
     plugins: [react()],
+    base: isProd ? '/app/' : '',
     resolve: {
       alias: [
         {
@@ -22,8 +25,8 @@ export default defineConfig(() => {
     },
     server: {
       port: 3000,
-      hot: true,
-      open: true
+      watch: true,
+      open: '/app'
     }
   };
 });

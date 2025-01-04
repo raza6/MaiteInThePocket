@@ -35,7 +35,7 @@ function Home(props: GenProps) {
       <h1 className="laptop">Maite in the Pocket</h1>
       <Container id="homeWrapper">
         <Row className="mobile">
-          <Image alt="Maite in the Pocket" src="/maite.jpg"></Image>
+          <Image alt="Maite in the Pocket" src={`${import.meta.env.BASE_URL}maite.jpg`}></Image>
         </Row>
         <Row>
           <Form onSubmit={handleSubmit}>

@@ -28,7 +28,7 @@ function useDebounce(callback: Function) {
       ref.current?.(...args);
     };
 
-    return debounce(func, 300);
+    return debounce(func, 500);
   }, []);
 
   return debouncedCallback;
@@ -49,7 +49,7 @@ const usePrevious = (value: any) => {
 
 function getRecipeImg(recipeId: string | undefined, hasImg: boolean): string {
   return hasImg && recipeId !== undefined ?
-    `${config.API_URL}/static/img/${recipeId}.jpg` : '/placeholder.jpg';
+    `${config.API_URL}/static/img/${recipeId}.jpg` : `${import.meta.env.BASE_URL}placeholder.jpg`;
 }
 
 export { getRandomOfList, debounce, useDebounce, useHasChanged, getRecipeImg };

@@ -14,7 +14,7 @@ function NotFound(props: GenProps) {
     <Col id="notFoundWrapper">
       <h1>Page introuvable {getRandomOfList(['😥', '😲', '🤯', '😠', '🥴', '😓'])}</h1>
       <Link to="/app">
-        <Image alt="Maite défonce une anguille" src="/maite-anguilles.gif"></Image>
+        <Image alt="Maite défonce une anguille" src={`${import.meta.env.BASE_URL}maite-anguilles.gif`}></Image>
       </Link>
     </Col>
   );

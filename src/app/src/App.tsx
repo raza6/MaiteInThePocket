@@ -72,7 +72,7 @@ function App() {
       <Container fluid className="app" id="mainWrapper">
         <Col id="navbar">
           <Link to="/app" className="laptop">
-            <Image alt="Maite in the Pocket" src="/maite.jpg"></Image>
+            <Image alt="Maite in the Pocket" src={`${import.meta.env.BASE_URL}maite.jpg`}></Image>
           </Link>
           <Button className="mobile" onClick={handleShow}>
             <FiMenu />
