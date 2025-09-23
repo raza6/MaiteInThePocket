@@ -1,4 +1,3 @@
-import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import colors from 'colors';
@@ -47,13 +46,6 @@ const init = async (): Promise<void> => {
   githubAuthConfig(passport);
 
   console.log(`Auth ${colors.bold.blue('OK')}`);
-
-  // Express config
-  serv.use(fileUpload({
-    createParentPath: true,
-    useTempFiles: true,
-    tempFileDir: './tmp/',
-  }));
 
   serv.use(bodyParser.json());
   serv.use(bodyParser.urlencoded({ extended: true }));

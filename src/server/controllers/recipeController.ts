@@ -1,4 +1,5 @@
 import { Jimp } from 'jimp';
+import multer from 'multer';
 import { Request, Response, Express } from 'express';
 import recipeService from '../services/recipeService';
 import { ensureAuthenticated } from '../utils/utils';
@@ -43,7 +44,6 @@ const recipeController = (serv: Express) => {
    * @apiBody {File} files.img The cover image of the recipe
    *
    * @apiError (400) {string} NoFileAttached No image file attached with the request
-   * @apiError (400) {string} ManyFileAttached More than one image file attached with the request
    * @apiError (400) {string} FileAttachedFormat File attached with the request are not .png or .jpg
    * @apiError (400) {string} FileAttachedSize File attached with the request are more than 4MB in size
    * @apiError (400) {string} NoFileAttached No image file attached with the request
@@ -51,15 +51,14 @@ const recipeController = (serv: Express) => {
    * @apiError (400) {string} ImageManipulation Fatal error while manipulating the recipe image
    * @apiError (401) {null} UserNotAuthenticated
    */
-  serv.post('/mp/recipe/img/:id', ensureAuthenticated, async (req: Request, res: Response) => {
-    let error;
-    // check if file is valid
-    if (req.files === undefined || req.files === null || req.files.img === undefined) {
+  const storage = multer.memoryStorage()
+  const upload = multer({ storage: storage });
+  serv.post('/mp/recipe/img/:id', upload.single('img'), ensureAuthenticated, async (req: Request, res: Response) => {
+    let error: string|undefined;
+    if (req.file === undefined || req.file === null) {
       error = 'No img file attached';
-    } else if (Array.isArray(req.files.img)) {
-      error = 'More than 1 img file attached';
     } else {
-      const reqFile = req.files.img;
+      const reqFile = req.file;
 
       if (!['image/jpeg', 'image/png'].includes(reqFile.mimetype)) {
         error = 'Attached file is not a .png or a .jpg';
@@ -71,16 +70,15 @@ const recipeController = (serv: Express) => {
         if (!await recipeService.checkRecipe(recipeId)) {
           error = `Recipe ${recipeId} does not exist`;
         } else {
-          Jimp.read(reqFile.tempFilePath)
-            .then(async (image) => {
-              await image
-                .cover({ w: 600, h: 400 })
-                .write(`./static/img/${recipeId}.jpg`);
-              await recipeService.setRecipeImg(recipeId, true);
-            })
-            .catch((err) => {
-              error = `Error while manipulating image : ${err}`;
-            });
+          try {
+            const image = await Jimp.read(reqFile.buffer);
+            await image
+              .cover({ w: 600, h: 400 })
+              .write(`./static/img/${recipeId}.jpg`);
+            await recipeService.setRecipeImg(recipeId, true);
+          } catch(err) {
+            error = `Error while manipulating image : ${err}`;
+          };
         }
       }
     }
