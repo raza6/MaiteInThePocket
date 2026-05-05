@@ -12,21 +12,24 @@ import githubAuthConfig from './auth/githubAuthConfig';
 import EnvWrap from './utils/envWrapper';
 
 const init = async (): Promise<void> => {
-  const serv = express();
   const PORT = 3005;
   console.log(`🍰 Maite in the Pocket launching on port ${colors.bold.blue(PORT.toString())}`);
+  const serv = express();
+  serv.set('trust proxy', 1); // Make sure X-Forwarded-For, X-Forwarded-Host, and X-Forwarded-Proto are overwritten
   const mongoStart = new MongoDB();
   await mongoStart.start();
 
   // Passport config
   serv.use(session({
     secret: <string>EnvWrap.get().value('SESSION_SECRET'),
-    resave: true,
+    resave: false,
     rolling: true,
     saveUninitialized: false,
     unset: 'destroy',
     cookie: {
-      secure: false, // <string>EnvWrap.get().value('RUN_ENV') === 'prod',
+      secure: <string>EnvWrap.get().value('RUN_ENV') === 'prod',
+      httpOnly: true,
+      sameSite: 'strict',
       maxAge: 1000 * 60 * 60 * 24 * 30, // ms * s * m * h * d
     },
     store: MongoStore.create({

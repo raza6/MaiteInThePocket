@@ -53,7 +53,7 @@ const recipeController = (serv: Express) => {
    */
   const storage = multer.memoryStorage()
   const upload = multer({ storage: storage });
-  serv.post('/mp/recipe/img/:id', upload.single('img'), ensureAuthenticated, async (req: Request, res: Response) => {
+  serv.post('/mp/recipe/img/:id', ensureAuthenticated, upload.single('img'), async (req: Request, res: Response) => {
     let error: string|undefined;
     if (req.file === undefined || req.file === null) {
       error = 'No img file attached';

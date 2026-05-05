@@ -6,6 +6,8 @@ import authConfig from './authConfig';
 import MongoDB from '../mongo/mongo';
 
 const githubAuthConfig = (passport: PassportStatic) => {
+  // We store the full user object in session
+  // If it ever become too big, store only the id and rehydrate it from db in deserialization
   passport.serializeUser((user, done) => {
     done(null, user);
   });
